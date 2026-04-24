@@ -176,7 +176,7 @@
   .slider-track input[type="range"]::-webkit-slider-runnable-track { background: transparent; border: none; }
   .slider-track input[type="range"]::-moz-range-track { background: transparent; border: none; }
 
-  /* Help-icon tooltip (native title) */
+  /* Help icon (tooltip rendered at body level via JS — never clipped) */
   .help {
     display: inline-block;
     width: 14px; height: 14px; line-height: 14px;
@@ -190,6 +190,25 @@
     vertical-align: middle;
   }
   .help:hover { background: var(--accent-soft); color: var(--accent); }
+  #tooltip {
+    position: fixed;
+    z-index: 1000;
+    background: #1d2530;
+    color: white;
+    padding: 7px 10px;
+    border-radius: 4px;
+    font-size: 12px; font-weight: 400;
+    max-width: 300px;
+    text-align: left;
+    line-height: 1.4;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 90ms;
+    text-transform: none;
+    letter-spacing: 0;
+    box-shadow: 0 4px 14px rgba(0,0,0,.15);
+  }
+  #tooltip.visible { opacity: 1; }
 
   /* Invalid text input */
   input.invalid { border-color: var(--danger) !important; background: var(--danger-soft); }
@@ -272,6 +291,11 @@
   table.scenarios th:nth-child(4), table.scenarios td:nth-child(4) {
     text-align: left;
   }
+  /* Retire date always on a single line */
+  table.scenarios th:nth-child(3), table.scenarios td:nth-child(3) {
+    white-space: nowrap;
+    min-width: 110px;
+  }
   table.scenarios th {
     background: #f1f3f6;
     font-weight: 600;
@@ -308,8 +332,8 @@
     position: fixed;
     top: 0; right: 0;
     height: 100vh;
-    width: 560px;
-    max-width: 90vw;
+    width: 740px;
+    max-width: 95vw;
     background: var(--panel);
     border-left: 1px solid var(--border);
     box-shadow: -6px 0 24px rgba(15, 20, 30, 0.08);
@@ -341,6 +365,7 @@
   .drawer table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 12.5px; }
   .drawer table th, .drawer table td { padding: 4px 6px; text-align: left; border-bottom: 1px solid var(--border); }
   .drawer table td.num, .drawer table th.num { text-align: right; }
+  .drawer table td.nowrap, .drawer table th.nowrap { white-space: nowrap; }
   .drawer .kv { display: grid; grid-template-columns: 180px 1fr; gap: 4px 1rem; font-size: 13px; }
   .drawer .kv .k { color: var(--text-muted); }
   .drawer .kv .v { font-variant-numeric: tabular-nums; }
@@ -398,21 +423,21 @@
   <div class="section">
     <h2>Personal</h2>
     <div class="two-col">
-      <div class="field"><label>Birth date <span class="help" title="Used to derive retirement date — convention: retire on Xth birthday.">ⓘ</span></label><input type="date" id="birth_date"></div>
-      <div class="field"><label>Hire date <span class="help" title="Start of Years of Service (YOS). YOS is counted by calendar anniversaries.">ⓘ</span></label><input type="date" id="hire_date"></div>
+      <div class="field"><label>Birth date <span class="help" data-tip="Used to derive retirement date — convention: retire on Xth birthday.">ⓘ</span></label><input type="date" id="birth_date"></div>
+      <div class="field"><label>Hire date <span class="help" data-tip="Start of Years of Service (YOS). YOS is counted by calendar anniversaries.">ⓘ</span></label><input type="date" id="hire_date"></div>
     </div>
     <div class="two-col">
       <div class="field">
-        <label>Current rank <span class="help" title="Your rank as of today. Promotions are modeled per-path in the Promotion paths section below.">ⓘ</span></label>
+        <label>Current rank <span class="help" data-tip="Your rank as of today. Promotions are modeled per-path in the Promotion paths section below.">ⓘ</span></label>
         <select id="current_rank"></select>
       </div>
       <div class="field">
-        <label>Current step <span class="help" title="Your current step within the rank. Steps advance one year apart from the step-arrival date up to the rank's top step.">ⓘ</span></label>
+        <label>Current step <span class="help" data-tip="Your current step within the rank. Steps advance one year apart from the step-arrival date up to the rank's top step.">ⓘ</span></label>
         <input type="number" id="current_step" min="1" max="7" step="1">
       </div>
     </div>
     <div class="field">
-      <label>Arrived at current step <span class="help" title="Date you arrived at the current step. Engine reconstructs the step-clock from this — earlier steps back-compute at one year each.">ⓘ</span></label>
+      <label>Arrived at current step <span class="help" data-tip="Date you arrived at the current step. Engine reconstructs the step-clock from this — earlier steps back-compute at one year each.">ⓘ</span></label>
       <input type="date" id="current_step_arrival_date">
     </div>
   </div>
@@ -421,31 +446,31 @@
     <h2>Rate assumptions</h2>
     <div class="two-col">
       <div class="field">
-        <label>GWI (%/yr) <span class="help" title="General Wage Increase: annual raise applied to the entire pay grid on July 1. Also used to scale the grid backward to compute historical pay before the grid's effective date.">ⓘ</span></label>
+        <label>GWI (%/yr) <span class="help" data-tip="General Wage Increase: annual raise applied to the entire pay grid on July 1. Also used to scale the grid backward to compute historical pay before the grid's effective date.">ⓘ</span></label>
         <input type="number" id="gwi_pct" min="0" max="20" step="0.01">
       </div>
       <div class="field">
-        <label>COLA (%/yr) <span class="help" title="Cost-of-Living Adjustment applied to pension in retirement, starting next Feb 1 (prorated by full months retired). Capped at 2.0% per SJFD plan rules.">ⓘ</span></label>
+        <label>COLA (%/yr) <span class="help" data-tip="Cost-of-Living Adjustment applied to pension in retirement, starting next Feb 1 (prorated by full months retired). Capped at 2.0% per SJFD plan rules.">ⓘ</span></label>
         <input type="number" id="cola_pct" min="0" max="2" step="0.01">
       </div>
     </div>
     <div class="field">
-      <label>Pay grid effective date <span class="help" title="The date the pay grid values above are current as-of. GWI compounds forward from here; the grid scales backward for historical years.">ⓘ</span></label>
+      <label>Pay grid effective date <span class="help" data-tip="The date the pay grid values above are current as-of. GWI compounds forward from here; the grid scales backward for historical years.">ⓘ</span></label>
       <input type="date" id="pay_grid_effective_date">
     </div>
     <div class="field inline">
       <input type="checkbox" id="show_cola">
-      <label for="show_cola">Show COLA projection in audit <span class="help" title="When on, the audit drawer includes a year-by-year pension projection through age 95 with COLA compounding.">ⓘ</span></label>
+      <label for="show_cola">Show COLA projection in audit <span class="help" data-tip="When on, the audit drawer includes a year-by-year pension projection through age 95 with COLA compounding.">ⓘ</span></label>
     </div>
   </div>
 
   <div class="section">
-    <h2>Pay grid <span class="help" title="Bi-weekly pay by rank × step. Defaults are SJFD FY 2026/27 (includes the 3.5% GWI). Editable — a new contract's numbers can be typed in without changing code.">ⓘ</span></h2>
+    <h2>Pay grid <span class="help" data-tip="Bi-weekly pay by rank × step. Defaults are SJFD FY 2026/27 (includes the 3.5% GWI). Editable — a new contract's numbers can be typed in without changing code.">ⓘ</span></h2>
     <button class="btn small" id="open_paygrid" style="width:100%;">Edit pay grid…</button>
   </div>
 
   <div class="section">
-    <h2>Retirement ages <span class="help" title="The grid shows one row per integer age in this range, for every promotion path. Drag either handle to expand/narrow the span. Minimum age below which the plan won't pay (50) is shown with a warning pill.">ⓘ</span></h2>
+    <h2>Retirement ages <span class="help" data-tip="The grid shows one row per integer age in this range, for every promotion path. Drag either handle to expand/narrow the span. Minimum age below which the plan won't pay (50) is shown with a warning pill.">ⓘ</span></h2>
     <div class="age-range">
       <div class="labels">
         <span id="age-min-label">50</span>
@@ -462,7 +487,7 @@
   </div>
 
   <div class="section">
-    <h2>Promotion paths <span class="help" title="A 'path' is one career scenario: a named list of planned promotions (or none). The scenario grid runs every path across every retirement age, so you can compare e.g. 'stay Firefighter' vs 'promote to Engineer at age 42'. Each path can also be toggled to Deferred Vested (separate early, collect pension later).">ⓘ</span></h2>
+    <h2>Promotion paths <span class="help" data-tip="A 'path' is one career scenario: a named list of planned promotions (or none). The scenario grid runs every path across every retirement age, so you can compare e.g. 'stay Firefighter' vs 'promote to Engineer at age 42'. Each path can also be toggled to Deferred Vested (separate early, collect pension later).">ⓘ</span></h2>
     <div id="paths"></div>
     <button class="btn small" id="add_path">+ Add promotion path</button>
   </div>
@@ -487,6 +512,8 @@
 </main>
 
 </div><!-- /.app -->
+
+<div id="tooltip" role="tooltip" aria-hidden="true"></div>
 
 <!-- Pay grid modal -->
 <div class="modal-backdrop" id="paygrid-backdrop">
@@ -758,11 +785,19 @@
     const dv = path.retirement_type === "deferred_vested";
     const dvBlock = dv ? `
       <div class="dv-fields">
-        <div class="field"><label>Separation date</label>
-          <input type="date" data-dv-sep data-path="${i}" value="${escapeAttr(path.separation_date || "")}">
+        <div class="field">
+          <label>Separation date <span class="help" data-tip="Date you separate from service. YOS is counted up to this date and FC is frozen as of this date (GWI after separation does NOT grow FC per plan rules).">ⓘ</span></label>
+          <input type="text" data-dv-sep data-path="${i}"
+                 value="${escapeAttr(path.separation_date || "")}"
+                 placeholder="YYYY-MM-DD"
+                 inputmode="numeric" maxlength="10" autocomplete="off">
         </div>
-        <div class="field"><label>Pension start</label>
-          <input type="date" data-dv-start data-path="${i}" value="${escapeAttr(path.pension_start_date || "")}">
+        <div class="field">
+          <label>Pension start <span class="help" data-tip="Date the pension begins (typically at age 50 or later). Must be on or after separation. Early-retirement reduction is computed from the age at this date, not at separation.">ⓘ</span></label>
+          <input type="text" data-dv-start data-path="${i}"
+                 value="${escapeAttr(path.pension_start_date || "")}"
+                 placeholder="YYYY-MM-DD"
+                 inputmode="numeric" maxlength="10" autocomplete="off">
         </div>
       </div>` : "";
 
@@ -802,7 +837,7 @@
     }
 
     let rowCount = 0;
-    const H = (label, tip) => `<th>${label}${tip ? ` <span class="help" title="${escapeAttr(tip)}">ⓘ</span>` : ""}</th>`;
+    const H = (label, tip) => `<th>${label}${tip ? ` <span class="help" data-tip="${escapeAttr(tip)}">ⓘ</span>` : ""}</th>`;
     let html = `<table class="scenarios"><thead><tr>
       ${H("Path", "Which promotion scenario this row belongs to (from the sidebar).")}
       ${H("Age", "Retirement age. Row is computed as if you retire on your Nth birthday.")}
@@ -902,11 +937,11 @@
     if (Number(bp.tier3_years.toString()) > 0) tierRows.push(`<tr><td>Tier 3 (yrs 26+ @ 3.4%)</td><td class="num">${bp.tier3_years.toString()}</td><td class="num">${pct(bp.tier3_pct)}</td></tr>`);
 
     const fcRows = (r.fc_3yr.yearly_earnings || []).map((y) =>
-      `<tr><td>${fmtDate(y.year_start)} → ${fmtDate(y.year_end)}</td><td class="num">${money(y.annual_base)}</td></tr>`
+      `<tr><td class="nowrap">${fmtDate(y.year_start)} → ${fmtDate(y.year_end)}</td><td class="num">${money(y.annual_base)}</td></tr>`
     ).join("");
 
     const timelineRows = (r.salary_timeline || []).map((s) =>
-      `<tr><td>${fmtDate(s.start)} → ${fmtDate(s.end)}</td><td>${escapeHtml(s.event)}</td><td>${escapeHtml(s.rank)}</td><td class="num">${s.step}</td><td class="num">${money(s.biweekly)}</td><td class="num">${money(s.annual)}</td></tr>`
+      `<tr><td class="nowrap">${fmtDate(s.start)} → ${fmtDate(s.end)}</td><td>${escapeHtml(s.event)}</td><td>${escapeHtml(s.rank)}</td><td class="num">${s.step}</td><td class="num">${money(s.biweekly)}</td><td class="num">${money(s.annual)}</td></tr>`
     ).join("");
 
     const colaRows = (r.cola_rows_3yr || []).map((c) =>
@@ -1130,9 +1165,17 @@
       if (!t.checked) { state.paths[pathIdx].separation_date = null; state.paths[pathIdx].pension_start_date = null; }
       isStructural = true;  // shows/hides dv-fields block
     } else if (t.hasAttribute("data-dv-sep")) {
-      state.paths[pathIdx].separation_date = t.value || null;
+      const v = t.value.trim();
+      const ok = v === "" || isValidIsoDate(v);
+      t.classList.toggle("invalid", !ok);
+      state.paths[pathIdx].separation_date = ok && v !== "" ? v : null;
+      if (!ok) { scheduleGridOnly(); return; }
     } else if (t.hasAttribute("data-dv-start")) {
-      state.paths[pathIdx].pension_start_date = t.value || null;
+      const v = t.value.trim();
+      const ok = v === "" || isValidIsoDate(v);
+      t.classList.toggle("invalid", !ok);
+      state.paths[pathIdx].pension_start_date = ok && v !== "" ? v : null;
+      if (!ok) { scheduleGridOnly(); return; }
     } else {
       return;
     }
@@ -1230,8 +1273,49 @@
   function escapeHtml(s) { return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
   function escapeAttr(s) { return escapeHtml(s); }
 
+  // Tooltip: single body-level element, shown on hover of any .help[data-tip].
+  function bindTooltip() {
+    const tip = document.getElementById("tooltip");
+    let currentTarget = null;
+    function position(el) {
+      const r = el.getBoundingClientRect();
+      // Temporarily show to measure
+      tip.style.maxWidth = "300px";
+      tip.style.left = "0px"; tip.style.top = "0px";
+      tip.classList.add("visible");
+      const tr = tip.getBoundingClientRect();
+      // Default: below, centered on the help icon
+      let left = r.left + (r.width / 2) - (tr.width / 2);
+      let top = r.bottom + 6;
+      // Clamp to viewport
+      const pad = 8;
+      if (left < pad) left = pad;
+      if (left + tr.width > window.innerWidth - pad) left = window.innerWidth - tr.width - pad;
+      // If it would go off the bottom, flip above
+      if (top + tr.height > window.innerHeight - pad) top = r.top - tr.height - 6;
+      tip.style.left = Math.round(left) + "px";
+      tip.style.top = Math.round(top) + "px";
+    }
+    document.addEventListener("mouseover", (e) => {
+      const h = e.target.closest && e.target.closest(".help[data-tip]");
+      if (!h || h === currentTarget) return;
+      currentTarget = h;
+      tip.textContent = h.getAttribute("data-tip") || "";
+      position(h);
+    });
+    document.addEventListener("mouseout", (e) => {
+      const h = e.target.closest && e.target.closest(".help[data-tip]");
+      if (h && !e.relatedTarget?.closest?.(".help[data-tip]")) {
+        tip.classList.remove("visible");
+        currentTarget = null;
+      }
+    });
+    document.addEventListener("scroll", () => { tip.classList.remove("visible"); currentTarget = null; }, true);
+  }
+
   populateRankOptions();
   bindStaticInputs();
+  bindTooltip();
   syncStaticInputs();
   renderAll();
 })();
