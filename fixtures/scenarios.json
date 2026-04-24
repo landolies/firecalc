@@ -1,0 +1,3673 @@
+[
+  {
+    "inputs": {
+      "as_of_date": "2026-04-24",
+      "birth_date": "1968-01-01",
+      "cola_effective_month_day": [
+        2,
+        1
+      ],
+      "cola_rate": "0.020",
+      "current_rank": "Firefighter",
+      "current_step": 1,
+      "current_step_arrival_date": "2020-01-01",
+      "gwi_effective_month_day": [
+        7,
+        1
+      ],
+      "gwi_rate": "0",
+      "hire_date": "2020-01-01",
+      "pay_grid": {
+        "rates": {
+          "Fire Captain|1": "6669.01",
+          "Fire Captain|2": "6995.28",
+          "Fire Captain|3": "7335.23",
+          "Fire Captain|4": "7693.73",
+          "Fire Captain|5": "8079.66",
+          "Fire Engineer|1": "5816.21",
+          "Fire Engineer|2": "6097.55",
+          "Fire Engineer|3": "6391.58",
+          "Fire Engineer|4": "6707.11",
+          "Fire Engineer|5": "7041.59",
+          "Fire Engineer|6": "7384.54",
+          "Firefighter Recruit|1": "4148.72",
+          "Firefighter|1": "4769.02",
+          "Firefighter|2": "4998.58",
+          "Firefighter|3": "5239.87",
+          "Firefighter|4": "5494.83",
+          "Firefighter|5": "5760.53",
+          "Firefighter|6": "6036.98",
+          "Firefighter|7": "6343.70"
+        }
+      },
+      "pay_grid_effective_date": "2026-07-01",
+      "pension_start_date": null,
+      "promotions": [],
+      "retirement_age": 57,
+      "retirement_type": "active",
+      "separation_date": null,
+      "show_cola": false
+    },
+    "name": "vesting.minimum_5yos",
+    "result": {
+      "annual_pension_3yr": "17155.04",
+      "annual_pension_final": "17972.85",
+      "benefit_pct_detail": {
+        "capped": false,
+        "final_pct": "0.1200",
+        "raw_pct": "0.1200",
+        "tier1_pct": "0.1200",
+        "tier1_years": "5.0000",
+        "tier2_pct": "0.0000",
+        "tier2_years": "0.0000",
+        "tier3_pct": "0.0000",
+        "tier3_years": "0.0000",
+        "yos": "5.0000"
+      },
+      "cap_date": null,
+      "cap_reached": false,
+      "cola_rows_3yr": [],
+      "cola_rows_final": [],
+      "early_reduction": {
+        "factor": "1.0000",
+        "reduction_pct": "0.0000",
+        "retirement_age": 57,
+        "years_before_57": 0
+      },
+      "fc_3yr": {
+        "annual_fc": "142958.66",
+        "method": "3yr_avg",
+        "note": "Average of highest 3 consecutive YOS windows",
+        "yearly_earnings": [
+          {
+            "annual_base": "136236.62",
+            "year_end": "2023-01-01",
+            "year_start": "2022-01-01"
+          },
+          {
+            "annual_base": "142865.58",
+            "year_end": "2024-01-01",
+            "year_start": "2023-01-01"
+          },
+          {
+            "annual_base": "149773.78",
+            "year_end": "2025-01-01",
+            "year_start": "2024-01-01"
+          }
+        ]
+      },
+      "fc_final": {
+        "annual_fc": "149773.78",
+        "method": "final",
+        "note": "Annualized final pay: 5760.53 \u00d7 26 = 149773.78",
+        "yearly_earnings": []
+      },
+      "final_rank": "Firefighter",
+      "final_step": 5,
+      "inputs": {
+        "as_of_date": "2026-04-24",
+        "birth_date": "1968-01-01",
+        "cola_effective_month_day": [
+          2,
+          1
+        ],
+        "cola_rate": "0.020",
+        "current_rank": "Firefighter",
+        "current_step": 1,
+        "current_step_arrival_date": "2020-01-01",
+        "gwi_effective_month_day": [
+          7,
+          1
+        ],
+        "gwi_rate": "0",
+        "hire_date": "2020-01-01",
+        "pay_grid": {
+          "rates": {
+            "Fire Captain|1": "6669.01",
+            "Fire Captain|2": "6995.28",
+            "Fire Captain|3": "7335.23",
+            "Fire Captain|4": "7693.73",
+            "Fire Captain|5": "8079.66",
+            "Fire Engineer|1": "5816.21",
+            "Fire Engineer|2": "6097.55",
+            "Fire Engineer|3": "6391.58",
+            "Fire Engineer|4": "6707.11",
+            "Fire Engineer|5": "7041.59",
+            "Fire Engineer|6": "7384.54",
+            "Firefighter Recruit|1": "4148.72",
+            "Firefighter|1": "4769.02",
+            "Firefighter|2": "4998.58",
+            "Firefighter|3": "5239.87",
+            "Firefighter|4": "5494.83",
+            "Firefighter|5": "5760.53",
+            "Firefighter|6": "6036.98",
+            "Firefighter|7": "6343.70"
+          }
+        },
+        "pay_grid_effective_date": "2026-07-01",
+        "pension_start_date": null,
+        "promotions": [],
+        "retirement_age": 57,
+        "retirement_type": "active",
+        "separation_date": null,
+        "show_cola": false
+      },
+      "monthly_pension_3yr": "1429.59",
+      "monthly_pension_final": "1497.74",
+      "retirement_date": "2025-01-01",
+      "salary_timeline": [
+        {
+          "annual": "123994.52",
+          "biweekly": "4769.02",
+          "end": "2020-07-01",
+          "event": "hired",
+          "rank": "Firefighter",
+          "start": "2020-01-01",
+          "step": 1
+        },
+        {
+          "annual": "123994.52",
+          "biweekly": "4769.02",
+          "end": "2021-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2020-07-01",
+          "step": 1
+        },
+        {
+          "annual": "129963.08",
+          "biweekly": "4998.58",
+          "end": "2021-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2021-01-01",
+          "step": 2
+        },
+        {
+          "annual": "129963.08",
+          "biweekly": "4998.58",
+          "end": "2022-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2021-07-01",
+          "step": 2
+        },
+        {
+          "annual": "136236.62",
+          "biweekly": "5239.87",
+          "end": "2022-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2022-01-01",
+          "step": 3
+        },
+        {
+          "annual": "136236.62",
+          "biweekly": "5239.87",
+          "end": "2023-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2022-07-01",
+          "step": 3
+        },
+        {
+          "annual": "142865.58",
+          "biweekly": "5494.83",
+          "end": "2023-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2023-01-01",
+          "step": 4
+        },
+        {
+          "annual": "142865.58",
+          "biweekly": "5494.83",
+          "end": "2024-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2023-07-01",
+          "step": 4
+        },
+        {
+          "annual": "149773.78",
+          "biweekly": "5760.53",
+          "end": "2024-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2024-01-01",
+          "step": 5
+        },
+        {
+          "annual": "149773.78",
+          "biweekly": "5760.53",
+          "end": "2025-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2024-07-01",
+          "step": 5
+        }
+      ],
+      "separation_date": null,
+      "warnings": [],
+      "yos_at_retirement": "5.0000"
+    }
+  },
+  {
+    "inputs": {
+      "as_of_date": "2026-04-24",
+      "birth_date": "1966-01-01",
+      "cola_effective_month_day": [
+        2,
+        1
+      ],
+      "cola_rate": "0.020",
+      "current_rank": "Firefighter",
+      "current_step": 7,
+      "current_step_arrival_date": "1999-01-01",
+      "gwi_effective_month_day": [
+        7,
+        1
+      ],
+      "gwi_rate": "0",
+      "hire_date": "1993-01-01",
+      "pay_grid": {
+        "rates": {
+          "Fire Captain|1": "6669.01",
+          "Fire Captain|2": "6995.28",
+          "Fire Captain|3": "7335.23",
+          "Fire Captain|4": "7693.73",
+          "Fire Captain|5": "8079.66",
+          "Fire Engineer|1": "5816.21",
+          "Fire Engineer|2": "6097.55",
+          "Fire Engineer|3": "6391.58",
+          "Fire Engineer|4": "6707.11",
+          "Fire Engineer|5": "7041.59",
+          "Fire Engineer|6": "7384.54",
+          "Firefighter Recruit|1": "4148.72",
+          "Firefighter|1": "4769.02",
+          "Firefighter|2": "4998.58",
+          "Firefighter|3": "5239.87",
+          "Firefighter|4": "5494.83",
+          "Firefighter|5": "5760.53",
+          "Firefighter|6": "6036.98",
+          "Firefighter|7": "6343.70"
+        }
+      },
+      "pay_grid_effective_date": "2026-07-01",
+      "pension_start_date": null,
+      "promotions": [],
+      "retirement_age": 57,
+      "retirement_type": "active",
+      "separation_date": null,
+      "show_cola": false
+    },
+    "name": "vesting.80pct_cap_30yos",
+    "result": {
+      "annual_pension_3yr": "131948.96",
+      "annual_pension_final": "131948.96",
+      "benefit_pct_detail": {
+        "capped": true,
+        "final_pct": "0.8000",
+        "raw_pct": "0.8000",
+        "tier1_pct": "0.4800",
+        "tier1_years": "20.0000",
+        "tier2_pct": "0.1500",
+        "tier2_years": "5.0000",
+        "tier3_pct": "0.1700",
+        "tier3_years": "5.0000",
+        "yos": "30.0000"
+      },
+      "cap_date": "2023-01-01",
+      "cap_reached": true,
+      "cola_rows_3yr": [],
+      "cola_rows_final": [],
+      "early_reduction": {
+        "factor": "1.0000",
+        "reduction_pct": "0.0000",
+        "retirement_age": 57,
+        "years_before_57": 0
+      },
+      "fc_3yr": {
+        "annual_fc": "164936.20",
+        "method": "3yr_avg",
+        "note": "Average of highest 3 consecutive YOS windows",
+        "yearly_earnings": [
+          {
+            "annual_base": "164936.20",
+            "year_end": "2000-01-01",
+            "year_start": "1999-01-01"
+          },
+          {
+            "annual_base": "164936.20",
+            "year_end": "2001-01-01",
+            "year_start": "2000-01-01"
+          },
+          {
+            "annual_base": "164936.20",
+            "year_end": "2002-01-01",
+            "year_start": "2001-01-01"
+          }
+        ]
+      },
+      "fc_final": {
+        "annual_fc": "164936.20",
+        "method": "final",
+        "note": "Annualized final pay: 6343.70 \u00d7 26 = 164936.20",
+        "yearly_earnings": []
+      },
+      "final_rank": "Firefighter",
+      "final_step": 7,
+      "inputs": {
+        "as_of_date": "2026-04-24",
+        "birth_date": "1966-01-01",
+        "cola_effective_month_day": [
+          2,
+          1
+        ],
+        "cola_rate": "0.020",
+        "current_rank": "Firefighter",
+        "current_step": 7,
+        "current_step_arrival_date": "1999-01-01",
+        "gwi_effective_month_day": [
+          7,
+          1
+        ],
+        "gwi_rate": "0",
+        "hire_date": "1993-01-01",
+        "pay_grid": {
+          "rates": {
+            "Fire Captain|1": "6669.01",
+            "Fire Captain|2": "6995.28",
+            "Fire Captain|3": "7335.23",
+            "Fire Captain|4": "7693.73",
+            "Fire Captain|5": "8079.66",
+            "Fire Engineer|1": "5816.21",
+            "Fire Engineer|2": "6097.55",
+            "Fire Engineer|3": "6391.58",
+            "Fire Engineer|4": "6707.11",
+            "Fire Engineer|5": "7041.59",
+            "Fire Engineer|6": "7384.54",
+            "Firefighter Recruit|1": "4148.72",
+            "Firefighter|1": "4769.02",
+            "Firefighter|2": "4998.58",
+            "Firefighter|3": "5239.87",
+            "Firefighter|4": "5494.83",
+            "Firefighter|5": "5760.53",
+            "Firefighter|6": "6036.98",
+            "Firefighter|7": "6343.70"
+          }
+        },
+        "pay_grid_effective_date": "2026-07-01",
+        "pension_start_date": null,
+        "promotions": [],
+        "retirement_age": 57,
+        "retirement_type": "active",
+        "separation_date": null,
+        "show_cola": false
+      },
+      "monthly_pension_3yr": "10995.75",
+      "monthly_pension_final": "10995.75",
+      "retirement_date": "2023-01-01",
+      "salary_timeline": [
+        {
+          "annual": "123994.52",
+          "biweekly": "4769.02",
+          "end": "1993-07-01",
+          "event": "hired",
+          "rank": "Firefighter",
+          "start": "1993-01-01",
+          "step": 1
+        },
+        {
+          "annual": "123994.52",
+          "biweekly": "4769.02",
+          "end": "1994-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "1993-07-01",
+          "step": 1
+        },
+        {
+          "annual": "129963.08",
+          "biweekly": "4998.58",
+          "end": "1994-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "1994-01-01",
+          "step": 2
+        },
+        {
+          "annual": "129963.08",
+          "biweekly": "4998.58",
+          "end": "1995-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "1994-07-01",
+          "step": 2
+        },
+        {
+          "annual": "136236.62",
+          "biweekly": "5239.87",
+          "end": "1995-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "1995-01-01",
+          "step": 3
+        },
+        {
+          "annual": "136236.62",
+          "biweekly": "5239.87",
+          "end": "1996-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "1995-07-01",
+          "step": 3
+        },
+        {
+          "annual": "142865.58",
+          "biweekly": "5494.83",
+          "end": "1996-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "1996-01-01",
+          "step": 4
+        },
+        {
+          "annual": "142865.58",
+          "biweekly": "5494.83",
+          "end": "1997-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "1996-07-01",
+          "step": 4
+        },
+        {
+          "annual": "149773.78",
+          "biweekly": "5760.53",
+          "end": "1997-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "1997-01-01",
+          "step": 5
+        },
+        {
+          "annual": "149773.78",
+          "biweekly": "5760.53",
+          "end": "1998-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "1997-07-01",
+          "step": 5
+        },
+        {
+          "annual": "156961.48",
+          "biweekly": "6036.98",
+          "end": "1998-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "1998-01-01",
+          "step": 6
+        },
+        {
+          "annual": "156961.48",
+          "biweekly": "6036.98",
+          "end": "1999-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "1998-07-01",
+          "step": 6
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "1999-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "1999-01-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2000-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "1999-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2001-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2000-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2002-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2001-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2003-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2002-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2004-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2003-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2005-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2004-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2006-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2005-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2007-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2006-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2008-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2007-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2009-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2008-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2010-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2009-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2011-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2010-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2012-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2011-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2013-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2012-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2014-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2013-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2015-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2014-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2016-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2015-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2017-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2016-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2018-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2017-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2019-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2018-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2020-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2019-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2021-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2020-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2022-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2021-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2023-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2022-07-01",
+          "step": 7
+        }
+      ],
+      "separation_date": null,
+      "warnings": [],
+      "yos_at_retirement": "30.0000"
+    }
+  },
+  {
+    "inputs": {
+      "as_of_date": "2026-04-24",
+      "birth_date": "1990-01-01",
+      "cola_effective_month_day": [
+        2,
+        1
+      ],
+      "cola_rate": "0.020",
+      "current_rank": "Firefighter",
+      "current_step": 7,
+      "current_step_arrival_date": "2017-01-01",
+      "gwi_effective_month_day": [
+        7,
+        1
+      ],
+      "gwi_rate": "0",
+      "hire_date": "2010-01-01",
+      "pay_grid": {
+        "rates": {
+          "Fire Captain|1": "6669.01",
+          "Fire Captain|2": "6995.28",
+          "Fire Captain|3": "7335.23",
+          "Fire Captain|4": "7693.73",
+          "Fire Captain|5": "8079.66",
+          "Fire Engineer|1": "5816.21",
+          "Fire Engineer|2": "6097.55",
+          "Fire Engineer|3": "6391.58",
+          "Fire Engineer|4": "6707.11",
+          "Fire Engineer|5": "7041.59",
+          "Fire Engineer|6": "7384.54",
+          "Firefighter Recruit|1": "4148.72",
+          "Firefighter|1": "4769.02",
+          "Firefighter|2": "4998.58",
+          "Firefighter|3": "5239.87",
+          "Firefighter|4": "5494.83",
+          "Firefighter|5": "5760.53",
+          "Firefighter|6": "6036.98",
+          "Firefighter|7": "6343.70"
+        }
+      },
+      "pay_grid_effective_date": "2026-07-01",
+      "pension_start_date": null,
+      "promotions": [],
+      "retirement_age": 49,
+      "retirement_type": "active",
+      "separation_date": null,
+      "show_cola": false
+    },
+    "name": "vesting.below_minimum_age",
+    "result": {
+      "annual_pension_3yr": "0.00",
+      "annual_pension_final": "0.00",
+      "benefit_pct_detail": {
+        "capped": false,
+        "final_pct": "0.7660",
+        "raw_pct": "0.7660",
+        "tier1_pct": "0.4800",
+        "tier1_years": "20.0000",
+        "tier2_pct": "0.1500",
+        "tier2_years": "5.0000",
+        "tier3_pct": "0.1360",
+        "tier3_years": "4.0000",
+        "yos": "29.0000"
+      },
+      "cap_date": null,
+      "cap_reached": false,
+      "cola_rows_3yr": [],
+      "cola_rows_final": [],
+      "early_reduction": {
+        "factor": "0.4400",
+        "reduction_pct": "0.5600",
+        "retirement_age": 49,
+        "years_before_57": 8
+      },
+      "fc_3yr": {
+        "annual_fc": "164936.20",
+        "method": "3yr_avg",
+        "note": "Average of highest 3 consecutive YOS windows",
+        "yearly_earnings": [
+          {
+            "annual_base": "164936.20",
+            "year_end": "2018-01-01",
+            "year_start": "2017-01-01"
+          },
+          {
+            "annual_base": "164936.20",
+            "year_end": "2019-01-01",
+            "year_start": "2018-01-01"
+          },
+          {
+            "annual_base": "164936.20",
+            "year_end": "2020-01-01",
+            "year_start": "2019-01-01"
+          }
+        ]
+      },
+      "fc_final": {
+        "annual_fc": "164936.20",
+        "method": "final",
+        "note": "Annualized final pay: 6343.70 \u00d7 26 = 164936.20",
+        "yearly_earnings": []
+      },
+      "final_rank": "Firefighter",
+      "final_step": 7,
+      "inputs": {
+        "as_of_date": "2026-04-24",
+        "birth_date": "1990-01-01",
+        "cola_effective_month_day": [
+          2,
+          1
+        ],
+        "cola_rate": "0.020",
+        "current_rank": "Firefighter",
+        "current_step": 7,
+        "current_step_arrival_date": "2017-01-01",
+        "gwi_effective_month_day": [
+          7,
+          1
+        ],
+        "gwi_rate": "0",
+        "hire_date": "2010-01-01",
+        "pay_grid": {
+          "rates": {
+            "Fire Captain|1": "6669.01",
+            "Fire Captain|2": "6995.28",
+            "Fire Captain|3": "7335.23",
+            "Fire Captain|4": "7693.73",
+            "Fire Captain|5": "8079.66",
+            "Fire Engineer|1": "5816.21",
+            "Fire Engineer|2": "6097.55",
+            "Fire Engineer|3": "6391.58",
+            "Fire Engineer|4": "6707.11",
+            "Fire Engineer|5": "7041.59",
+            "Fire Engineer|6": "7384.54",
+            "Firefighter Recruit|1": "4148.72",
+            "Firefighter|1": "4769.02",
+            "Firefighter|2": "4998.58",
+            "Firefighter|3": "5239.87",
+            "Firefighter|4": "5494.83",
+            "Firefighter|5": "5760.53",
+            "Firefighter|6": "6036.98",
+            "Firefighter|7": "6343.70"
+          }
+        },
+        "pay_grid_effective_date": "2026-07-01",
+        "pension_start_date": null,
+        "promotions": [],
+        "retirement_age": 49,
+        "retirement_type": "active",
+        "separation_date": null,
+        "show_cola": false
+      },
+      "monthly_pension_3yr": "0.00",
+      "monthly_pension_final": "0.00",
+      "retirement_date": "2039-01-01",
+      "salary_timeline": [
+        {
+          "annual": "123994.52",
+          "biweekly": "4769.02",
+          "end": "2010-07-01",
+          "event": "hired",
+          "rank": "Firefighter",
+          "start": "2010-01-01",
+          "step": 1
+        },
+        {
+          "annual": "123994.52",
+          "biweekly": "4769.02",
+          "end": "2011-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2010-07-01",
+          "step": 1
+        },
+        {
+          "annual": "123994.52",
+          "biweekly": "4769.02",
+          "end": "2012-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2011-07-01",
+          "step": 1
+        },
+        {
+          "annual": "129963.08",
+          "biweekly": "4998.58",
+          "end": "2012-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2012-01-01",
+          "step": 2
+        },
+        {
+          "annual": "129963.08",
+          "biweekly": "4998.58",
+          "end": "2013-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2012-07-01",
+          "step": 2
+        },
+        {
+          "annual": "136236.62",
+          "biweekly": "5239.87",
+          "end": "2013-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2013-01-01",
+          "step": 3
+        },
+        {
+          "annual": "136236.62",
+          "biweekly": "5239.87",
+          "end": "2014-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2013-07-01",
+          "step": 3
+        },
+        {
+          "annual": "142865.58",
+          "biweekly": "5494.83",
+          "end": "2014-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2014-01-01",
+          "step": 4
+        },
+        {
+          "annual": "142865.58",
+          "biweekly": "5494.83",
+          "end": "2015-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2014-07-01",
+          "step": 4
+        },
+        {
+          "annual": "149773.78",
+          "biweekly": "5760.53",
+          "end": "2015-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2015-01-01",
+          "step": 5
+        },
+        {
+          "annual": "149773.78",
+          "biweekly": "5760.53",
+          "end": "2016-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2015-07-01",
+          "step": 5
+        },
+        {
+          "annual": "156961.48",
+          "biweekly": "6036.98",
+          "end": "2016-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2016-01-01",
+          "step": 6
+        },
+        {
+          "annual": "156961.48",
+          "biweekly": "6036.98",
+          "end": "2017-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2016-07-01",
+          "step": 6
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2017-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2017-01-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2018-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2017-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2019-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2018-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2020-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2019-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2021-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2020-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2022-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2021-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2023-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2022-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2024-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2023-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2025-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2024-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2026-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2025-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2027-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2026-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2028-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2027-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2029-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2028-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2030-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2029-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2031-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2030-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2032-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2031-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2033-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2032-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2034-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2033-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2035-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2034-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2036-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2035-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2037-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2036-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2038-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2037-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2039-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2038-07-01",
+          "step": 7
+        }
+      ],
+      "separation_date": null,
+      "warnings": [
+        "Retirement age 49 is below the minimum age of 50."
+      ],
+      "yos_at_retirement": "29.0000"
+    }
+  },
+  {
+    "inputs": {
+      "as_of_date": "2026-04-24",
+      "birth_date": "1966-01-01",
+      "cola_effective_month_day": [
+        2,
+        1
+      ],
+      "cola_rate": "0.020",
+      "current_rank": "Firefighter",
+      "current_step": 4,
+      "current_step_arrival_date": "2022-01-01",
+      "gwi_effective_month_day": [
+        7,
+        1
+      ],
+      "gwi_rate": "0",
+      "hire_date": "2019-01-01",
+      "pay_grid": {
+        "rates": {
+          "Fire Captain|1": "6669.01",
+          "Fire Captain|2": "6995.28",
+          "Fire Captain|3": "7335.23",
+          "Fire Captain|4": "7693.73",
+          "Fire Captain|5": "8079.66",
+          "Fire Engineer|1": "5816.21",
+          "Fire Engineer|2": "6097.55",
+          "Fire Engineer|3": "6391.58",
+          "Fire Engineer|4": "6707.11",
+          "Fire Engineer|5": "7041.59",
+          "Fire Engineer|6": "7384.54",
+          "Firefighter Recruit|1": "4148.72",
+          "Firefighter|1": "4769.02",
+          "Firefighter|2": "4998.58",
+          "Firefighter|3": "5239.87",
+          "Firefighter|4": "5494.83",
+          "Firefighter|5": "5760.53",
+          "Firefighter|6": "6036.98",
+          "Firefighter|7": "6343.70"
+        }
+      },
+      "pay_grid_effective_date": "2026-07-01",
+      "pension_start_date": null,
+      "promotions": [],
+      "retirement_age": 57,
+      "retirement_type": "active",
+      "separation_date": null,
+      "show_cola": false
+    },
+    "name": "vesting.not_vested_4yos",
+    "result": {
+      "annual_pension_3yr": "0.00",
+      "annual_pension_final": "0.00",
+      "benefit_pct_detail": {
+        "capped": false,
+        "final_pct": "0.0960",
+        "raw_pct": "0.0960",
+        "tier1_pct": "0.0960",
+        "tier1_years": "4.0000",
+        "tier2_pct": "0.0000",
+        "tier2_years": "0.0000",
+        "tier3_pct": "0.0000",
+        "tier3_years": "0.0000",
+        "yos": "4.0000"
+      },
+      "cap_date": null,
+      "cap_reached": false,
+      "cola_rows_3yr": [],
+      "cola_rows_final": [],
+      "early_reduction": {
+        "factor": "1.0000",
+        "reduction_pct": "0.0000",
+        "retirement_age": 57,
+        "years_before_57": 0
+      },
+      "fc_3yr": {
+        "annual_fc": "136355.09",
+        "method": "3yr_avg",
+        "note": "Average of highest 3 consecutive YOS windows",
+        "yearly_earnings": [
+          {
+            "annual_base": "129963.08",
+            "year_end": "2021-01-01",
+            "year_start": "2020-01-01"
+          },
+          {
+            "annual_base": "136236.62",
+            "year_end": "2022-01-01",
+            "year_start": "2021-01-01"
+          },
+          {
+            "annual_base": "142865.58",
+            "year_end": "2023-01-01",
+            "year_start": "2022-01-01"
+          }
+        ]
+      },
+      "fc_final": {
+        "annual_fc": "142865.58",
+        "method": "final",
+        "note": "Annualized final pay: 5494.83 \u00d7 26 = 142865.58",
+        "yearly_earnings": []
+      },
+      "final_rank": "Firefighter",
+      "final_step": 4,
+      "inputs": {
+        "as_of_date": "2026-04-24",
+        "birth_date": "1966-01-01",
+        "cola_effective_month_day": [
+          2,
+          1
+        ],
+        "cola_rate": "0.020",
+        "current_rank": "Firefighter",
+        "current_step": 4,
+        "current_step_arrival_date": "2022-01-01",
+        "gwi_effective_month_day": [
+          7,
+          1
+        ],
+        "gwi_rate": "0",
+        "hire_date": "2019-01-01",
+        "pay_grid": {
+          "rates": {
+            "Fire Captain|1": "6669.01",
+            "Fire Captain|2": "6995.28",
+            "Fire Captain|3": "7335.23",
+            "Fire Captain|4": "7693.73",
+            "Fire Captain|5": "8079.66",
+            "Fire Engineer|1": "5816.21",
+            "Fire Engineer|2": "6097.55",
+            "Fire Engineer|3": "6391.58",
+            "Fire Engineer|4": "6707.11",
+            "Fire Engineer|5": "7041.59",
+            "Fire Engineer|6": "7384.54",
+            "Firefighter Recruit|1": "4148.72",
+            "Firefighter|1": "4769.02",
+            "Firefighter|2": "4998.58",
+            "Firefighter|3": "5239.87",
+            "Firefighter|4": "5494.83",
+            "Firefighter|5": "5760.53",
+            "Firefighter|6": "6036.98",
+            "Firefighter|7": "6343.70"
+          }
+        },
+        "pay_grid_effective_date": "2026-07-01",
+        "pension_start_date": null,
+        "promotions": [],
+        "retirement_age": 57,
+        "retirement_type": "active",
+        "separation_date": null,
+        "show_cola": false
+      },
+      "monthly_pension_3yr": "0.00",
+      "monthly_pension_final": "0.00",
+      "retirement_date": "2023-01-01",
+      "salary_timeline": [
+        {
+          "annual": "123994.52",
+          "biweekly": "4769.02",
+          "end": "2019-07-01",
+          "event": "hired",
+          "rank": "Firefighter",
+          "start": "2019-01-01",
+          "step": 1
+        },
+        {
+          "annual": "123994.52",
+          "biweekly": "4769.02",
+          "end": "2020-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2019-07-01",
+          "step": 1
+        },
+        {
+          "annual": "129963.08",
+          "biweekly": "4998.58",
+          "end": "2020-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2020-01-01",
+          "step": 2
+        },
+        {
+          "annual": "129963.08",
+          "biweekly": "4998.58",
+          "end": "2021-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2020-07-01",
+          "step": 2
+        },
+        {
+          "annual": "136236.62",
+          "biweekly": "5239.87",
+          "end": "2021-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2021-01-01",
+          "step": 3
+        },
+        {
+          "annual": "136236.62",
+          "biweekly": "5239.87",
+          "end": "2022-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2021-07-01",
+          "step": 3
+        },
+        {
+          "annual": "142865.58",
+          "biweekly": "5494.83",
+          "end": "2022-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2022-01-01",
+          "step": 4
+        },
+        {
+          "annual": "142865.58",
+          "biweekly": "5494.83",
+          "end": "2023-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2022-07-01",
+          "step": 4
+        }
+      ],
+      "separation_date": null,
+      "warnings": [
+        "Not vested: 4.0000 YOS at retirement (minimum 5 required)."
+      ],
+      "yos_at_retirement": "4.0000"
+    }
+  },
+  {
+    "inputs": {
+      "as_of_date": "2026-04-24",
+      "birth_date": "1980-01-01",
+      "cola_effective_month_day": [
+        2,
+        1
+      ],
+      "cola_rate": "0.020",
+      "current_rank": "Firefighter",
+      "current_step": 7,
+      "current_step_arrival_date": "2011-01-01",
+      "gwi_effective_month_day": [
+        7,
+        1
+      ],
+      "gwi_rate": "0",
+      "hire_date": "2005-01-01",
+      "pay_grid": {
+        "rates": {
+          "Fire Captain|1": "6669.01",
+          "Fire Captain|2": "6995.28",
+          "Fire Captain|3": "7335.23",
+          "Fire Captain|4": "7693.73",
+          "Fire Captain|5": "8079.66",
+          "Fire Engineer|1": "5816.21",
+          "Fire Engineer|2": "6097.55",
+          "Fire Engineer|3": "6391.58",
+          "Fire Engineer|4": "6707.11",
+          "Fire Engineer|5": "7041.59",
+          "Fire Engineer|6": "7384.54",
+          "Firefighter Recruit|1": "4148.72",
+          "Firefighter|1": "4769.02",
+          "Firefighter|2": "4998.58",
+          "Firefighter|3": "5239.87",
+          "Firefighter|4": "5494.83",
+          "Firefighter|5": "5760.53",
+          "Firefighter|6": "6036.98",
+          "Firefighter|7": "6343.70"
+        }
+      },
+      "pay_grid_effective_date": "2026-07-01",
+      "pension_start_date": null,
+      "promotions": [
+        {
+          "effective_date": "2034-01-01",
+          "new_rank": "Fire Engineer"
+        }
+      ],
+      "retirement_age": 57,
+      "retirement_type": "active",
+      "separation_date": null,
+      "show_cola": false
+    },
+    "name": "fc_methods.diverge_after_promotion",
+    "result": {
+      "annual_pension_3yr": "146523.80",
+      "annual_pension_final": "153598.43",
+      "benefit_pct_detail": {
+        "capped": true,
+        "final_pct": "0.8000",
+        "raw_pct": "0.8680",
+        "tier1_pct": "0.4800",
+        "tier1_years": "20.0000",
+        "tier2_pct": "0.1500",
+        "tier2_years": "5.0000",
+        "tier3_pct": "0.2380",
+        "tier3_years": "7.0000",
+        "yos": "32.0000"
+      },
+      "cap_date": "2035-01-01",
+      "cap_reached": true,
+      "cola_rows_3yr": [],
+      "cola_rows_final": [],
+      "early_reduction": {
+        "factor": "1.0000",
+        "reduction_pct": "0.0000",
+        "retirement_age": 57,
+        "years_before_57": 0
+      },
+      "fc_3yr": {
+        "annual_fc": "183154.75",
+        "method": "3yr_avg",
+        "note": "Average of highest 3 consecutive YOS windows",
+        "yearly_earnings": [
+          {
+            "annual_base": "174384.86",
+            "year_end": "2035-01-01",
+            "year_start": "2034-01-01"
+          },
+          {
+            "annual_base": "183081.34",
+            "year_end": "2036-01-01",
+            "year_start": "2035-01-01"
+          },
+          {
+            "annual_base": "191998.04",
+            "year_end": "2037-01-01",
+            "year_start": "2036-01-01"
+          }
+        ]
+      },
+      "fc_final": {
+        "annual_fc": "191998.04",
+        "method": "final",
+        "note": "Annualized final pay: 7384.54 \u00d7 26 = 191998.04",
+        "yearly_earnings": []
+      },
+      "final_rank": "Fire Engineer",
+      "final_step": 6,
+      "inputs": {
+        "as_of_date": "2026-04-24",
+        "birth_date": "1980-01-01",
+        "cola_effective_month_day": [
+          2,
+          1
+        ],
+        "cola_rate": "0.020",
+        "current_rank": "Firefighter",
+        "current_step": 7,
+        "current_step_arrival_date": "2011-01-01",
+        "gwi_effective_month_day": [
+          7,
+          1
+        ],
+        "gwi_rate": "0",
+        "hire_date": "2005-01-01",
+        "pay_grid": {
+          "rates": {
+            "Fire Captain|1": "6669.01",
+            "Fire Captain|2": "6995.28",
+            "Fire Captain|3": "7335.23",
+            "Fire Captain|4": "7693.73",
+            "Fire Captain|5": "8079.66",
+            "Fire Engineer|1": "5816.21",
+            "Fire Engineer|2": "6097.55",
+            "Fire Engineer|3": "6391.58",
+            "Fire Engineer|4": "6707.11",
+            "Fire Engineer|5": "7041.59",
+            "Fire Engineer|6": "7384.54",
+            "Firefighter Recruit|1": "4148.72",
+            "Firefighter|1": "4769.02",
+            "Firefighter|2": "4998.58",
+            "Firefighter|3": "5239.87",
+            "Firefighter|4": "5494.83",
+            "Firefighter|5": "5760.53",
+            "Firefighter|6": "6036.98",
+            "Firefighter|7": "6343.70"
+          }
+        },
+        "pay_grid_effective_date": "2026-07-01",
+        "pension_start_date": null,
+        "promotions": [
+          {
+            "effective_date": "2034-01-01",
+            "new_rank": "Fire Engineer"
+          }
+        ],
+        "retirement_age": 57,
+        "retirement_type": "active",
+        "separation_date": null,
+        "show_cola": false
+      },
+      "monthly_pension_3yr": "12210.32",
+      "monthly_pension_final": "12799.87",
+      "retirement_date": "2037-01-01",
+      "salary_timeline": [
+        {
+          "annual": "123994.52",
+          "biweekly": "4769.02",
+          "end": "2005-07-01",
+          "event": "hired",
+          "rank": "Firefighter",
+          "start": "2005-01-01",
+          "step": 1
+        },
+        {
+          "annual": "123994.52",
+          "biweekly": "4769.02",
+          "end": "2006-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2005-07-01",
+          "step": 1
+        },
+        {
+          "annual": "129963.08",
+          "biweekly": "4998.58",
+          "end": "2006-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2006-01-01",
+          "step": 2
+        },
+        {
+          "annual": "129963.08",
+          "biweekly": "4998.58",
+          "end": "2007-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2006-07-01",
+          "step": 2
+        },
+        {
+          "annual": "136236.62",
+          "biweekly": "5239.87",
+          "end": "2007-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2007-01-01",
+          "step": 3
+        },
+        {
+          "annual": "136236.62",
+          "biweekly": "5239.87",
+          "end": "2008-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2007-07-01",
+          "step": 3
+        },
+        {
+          "annual": "142865.58",
+          "biweekly": "5494.83",
+          "end": "2008-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2008-01-01",
+          "step": 4
+        },
+        {
+          "annual": "142865.58",
+          "biweekly": "5494.83",
+          "end": "2009-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2008-07-01",
+          "step": 4
+        },
+        {
+          "annual": "149773.78",
+          "biweekly": "5760.53",
+          "end": "2009-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2009-01-01",
+          "step": 5
+        },
+        {
+          "annual": "149773.78",
+          "biweekly": "5760.53",
+          "end": "2010-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2009-07-01",
+          "step": 5
+        },
+        {
+          "annual": "156961.48",
+          "biweekly": "6036.98",
+          "end": "2010-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2010-01-01",
+          "step": 6
+        },
+        {
+          "annual": "156961.48",
+          "biweekly": "6036.98",
+          "end": "2011-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2010-07-01",
+          "step": 6
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2011-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2011-01-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2012-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2011-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2013-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2012-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2014-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2013-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2015-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2014-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2016-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2015-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2017-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2016-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2018-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2017-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2019-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2018-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2020-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2019-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2021-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2020-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2022-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2021-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2023-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2022-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2024-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2023-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2025-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2024-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2026-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2025-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2027-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2026-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2028-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2027-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2029-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2028-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2030-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2029-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2031-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2030-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2032-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2031-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2033-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2032-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2034-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2033-07-01",
+          "step": 7
+        },
+        {
+          "annual": "174384.86",
+          "biweekly": "6707.11",
+          "end": "2034-07-01",
+          "event": "promotion",
+          "rank": "Fire Engineer",
+          "start": "2034-01-01",
+          "step": 4
+        },
+        {
+          "annual": "174384.86",
+          "biweekly": "6707.11",
+          "end": "2035-01-01",
+          "event": "gwi",
+          "rank": "Fire Engineer",
+          "start": "2034-07-01",
+          "step": 4
+        },
+        {
+          "annual": "183081.34",
+          "biweekly": "7041.59",
+          "end": "2035-07-01",
+          "event": "step_increase",
+          "rank": "Fire Engineer",
+          "start": "2035-01-01",
+          "step": 5
+        },
+        {
+          "annual": "183081.34",
+          "biweekly": "7041.59",
+          "end": "2036-01-01",
+          "event": "gwi",
+          "rank": "Fire Engineer",
+          "start": "2035-07-01",
+          "step": 5
+        },
+        {
+          "annual": "191998.04",
+          "biweekly": "7384.54",
+          "end": "2036-07-01",
+          "event": "step_increase",
+          "rank": "Fire Engineer",
+          "start": "2036-01-01",
+          "step": 6
+        },
+        {
+          "annual": "191998.04",
+          "biweekly": "7384.54",
+          "end": "2037-01-01",
+          "event": "gwi",
+          "rank": "Fire Engineer",
+          "start": "2036-07-01",
+          "step": 6
+        }
+      ],
+      "separation_date": null,
+      "warnings": [],
+      "yos_at_retirement": "32.0000"
+    }
+  },
+  {
+    "inputs": {
+      "as_of_date": "2026-04-24",
+      "birth_date": "1980-01-01",
+      "cola_effective_month_day": [
+        2,
+        1
+      ],
+      "cola_rate": "0.020",
+      "current_rank": "Firefighter",
+      "current_step": 7,
+      "current_step_arrival_date": "2011-01-01",
+      "gwi_effective_month_day": [
+        7,
+        1
+      ],
+      "gwi_rate": "0",
+      "hire_date": "2005-01-01",
+      "pay_grid": {
+        "rates": {
+          "Fire Captain|1": "6669.01",
+          "Fire Captain|2": "6995.28",
+          "Fire Captain|3": "7335.23",
+          "Fire Captain|4": "7693.73",
+          "Fire Captain|5": "8079.66",
+          "Fire Engineer|1": "5816.21",
+          "Fire Engineer|2": "6097.55",
+          "Fire Engineer|3": "6391.58",
+          "Fire Engineer|4": "6707.11",
+          "Fire Engineer|5": "7041.59",
+          "Fire Engineer|6": "7384.54",
+          "Firefighter Recruit|1": "4148.72",
+          "Firefighter|1": "4769.02",
+          "Firefighter|2": "4998.58",
+          "Firefighter|3": "5239.87",
+          "Firefighter|4": "5494.83",
+          "Firefighter|5": "5760.53",
+          "Firefighter|6": "6036.98",
+          "Firefighter|7": "6343.70"
+        }
+      },
+      "pay_grid_effective_date": "2026-07-01",
+      "pension_start_date": null,
+      "promotions": [],
+      "retirement_age": 57,
+      "retirement_type": "active",
+      "separation_date": null,
+      "show_cola": false
+    },
+    "name": "fc_methods.equal_no_promotion_constant_salary",
+    "result": {
+      "annual_pension_3yr": "131948.96",
+      "annual_pension_final": "131948.96",
+      "benefit_pct_detail": {
+        "capped": true,
+        "final_pct": "0.8000",
+        "raw_pct": "0.8680",
+        "tier1_pct": "0.4800",
+        "tier1_years": "20.0000",
+        "tier2_pct": "0.1500",
+        "tier2_years": "5.0000",
+        "tier3_pct": "0.2380",
+        "tier3_years": "7.0000",
+        "yos": "32.0000"
+      },
+      "cap_date": "2035-01-01",
+      "cap_reached": true,
+      "cola_rows_3yr": [],
+      "cola_rows_final": [],
+      "early_reduction": {
+        "factor": "1.0000",
+        "reduction_pct": "0.0000",
+        "retirement_age": 57,
+        "years_before_57": 0
+      },
+      "fc_3yr": {
+        "annual_fc": "164936.20",
+        "method": "3yr_avg",
+        "note": "Average of highest 3 consecutive YOS windows",
+        "yearly_earnings": [
+          {
+            "annual_base": "164936.20",
+            "year_end": "2012-01-01",
+            "year_start": "2011-01-01"
+          },
+          {
+            "annual_base": "164936.20",
+            "year_end": "2013-01-01",
+            "year_start": "2012-01-01"
+          },
+          {
+            "annual_base": "164936.20",
+            "year_end": "2014-01-01",
+            "year_start": "2013-01-01"
+          }
+        ]
+      },
+      "fc_final": {
+        "annual_fc": "164936.20",
+        "method": "final",
+        "note": "Annualized final pay: 6343.70 \u00d7 26 = 164936.20",
+        "yearly_earnings": []
+      },
+      "final_rank": "Firefighter",
+      "final_step": 7,
+      "inputs": {
+        "as_of_date": "2026-04-24",
+        "birth_date": "1980-01-01",
+        "cola_effective_month_day": [
+          2,
+          1
+        ],
+        "cola_rate": "0.020",
+        "current_rank": "Firefighter",
+        "current_step": 7,
+        "current_step_arrival_date": "2011-01-01",
+        "gwi_effective_month_day": [
+          7,
+          1
+        ],
+        "gwi_rate": "0",
+        "hire_date": "2005-01-01",
+        "pay_grid": {
+          "rates": {
+            "Fire Captain|1": "6669.01",
+            "Fire Captain|2": "6995.28",
+            "Fire Captain|3": "7335.23",
+            "Fire Captain|4": "7693.73",
+            "Fire Captain|5": "8079.66",
+            "Fire Engineer|1": "5816.21",
+            "Fire Engineer|2": "6097.55",
+            "Fire Engineer|3": "6391.58",
+            "Fire Engineer|4": "6707.11",
+            "Fire Engineer|5": "7041.59",
+            "Fire Engineer|6": "7384.54",
+            "Firefighter Recruit|1": "4148.72",
+            "Firefighter|1": "4769.02",
+            "Firefighter|2": "4998.58",
+            "Firefighter|3": "5239.87",
+            "Firefighter|4": "5494.83",
+            "Firefighter|5": "5760.53",
+            "Firefighter|6": "6036.98",
+            "Firefighter|7": "6343.70"
+          }
+        },
+        "pay_grid_effective_date": "2026-07-01",
+        "pension_start_date": null,
+        "promotions": [],
+        "retirement_age": 57,
+        "retirement_type": "active",
+        "separation_date": null,
+        "show_cola": false
+      },
+      "monthly_pension_3yr": "10995.75",
+      "monthly_pension_final": "10995.75",
+      "retirement_date": "2037-01-01",
+      "salary_timeline": [
+        {
+          "annual": "123994.52",
+          "biweekly": "4769.02",
+          "end": "2005-07-01",
+          "event": "hired",
+          "rank": "Firefighter",
+          "start": "2005-01-01",
+          "step": 1
+        },
+        {
+          "annual": "123994.52",
+          "biweekly": "4769.02",
+          "end": "2006-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2005-07-01",
+          "step": 1
+        },
+        {
+          "annual": "129963.08",
+          "biweekly": "4998.58",
+          "end": "2006-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2006-01-01",
+          "step": 2
+        },
+        {
+          "annual": "129963.08",
+          "biweekly": "4998.58",
+          "end": "2007-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2006-07-01",
+          "step": 2
+        },
+        {
+          "annual": "136236.62",
+          "biweekly": "5239.87",
+          "end": "2007-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2007-01-01",
+          "step": 3
+        },
+        {
+          "annual": "136236.62",
+          "biweekly": "5239.87",
+          "end": "2008-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2007-07-01",
+          "step": 3
+        },
+        {
+          "annual": "142865.58",
+          "biweekly": "5494.83",
+          "end": "2008-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2008-01-01",
+          "step": 4
+        },
+        {
+          "annual": "142865.58",
+          "biweekly": "5494.83",
+          "end": "2009-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2008-07-01",
+          "step": 4
+        },
+        {
+          "annual": "149773.78",
+          "biweekly": "5760.53",
+          "end": "2009-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2009-01-01",
+          "step": 5
+        },
+        {
+          "annual": "149773.78",
+          "biweekly": "5760.53",
+          "end": "2010-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2009-07-01",
+          "step": 5
+        },
+        {
+          "annual": "156961.48",
+          "biweekly": "6036.98",
+          "end": "2010-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2010-01-01",
+          "step": 6
+        },
+        {
+          "annual": "156961.48",
+          "biweekly": "6036.98",
+          "end": "2011-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2010-07-01",
+          "step": 6
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2011-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2011-01-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2012-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2011-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2013-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2012-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2014-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2013-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2015-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2014-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2016-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2015-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2017-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2016-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2018-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2017-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2019-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2018-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2020-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2019-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2021-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2020-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2022-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2021-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2023-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2022-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2024-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2023-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2025-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2024-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2026-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2025-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2027-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2026-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2028-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2027-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2029-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2028-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2030-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2029-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2031-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2030-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2032-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2031-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2033-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2032-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2034-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2033-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2035-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2034-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2036-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2035-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2037-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2036-07-01",
+          "step": 7
+        }
+      ],
+      "separation_date": null,
+      "warnings": [],
+      "yos_at_retirement": "32.0000"
+    }
+  },
+  {
+    "inputs": {
+      "as_of_date": "2026-04-24",
+      "birth_date": "1986-10-01",
+      "cola_effective_month_day": [
+        2,
+        1
+      ],
+      "cola_rate": "0.020",
+      "current_rank": "Firefighter",
+      "current_step": 7,
+      "current_step_arrival_date": "2025-03-24",
+      "gwi_effective_month_day": [
+        7,
+        1
+      ],
+      "gwi_rate": "0.035",
+      "hire_date": "2019-03-24",
+      "pay_grid": {
+        "rates": {
+          "Fire Captain|1": "6669.01",
+          "Fire Captain|2": "6995.28",
+          "Fire Captain|3": "7335.23",
+          "Fire Captain|4": "7693.73",
+          "Fire Captain|5": "8079.66",
+          "Fire Engineer|1": "5816.21",
+          "Fire Engineer|2": "6097.55",
+          "Fire Engineer|3": "6391.58",
+          "Fire Engineer|4": "6707.11",
+          "Fire Engineer|5": "7041.59",
+          "Fire Engineer|6": "7384.54",
+          "Firefighter Recruit|1": "4148.72",
+          "Firefighter|1": "4769.02",
+          "Firefighter|2": "4998.58",
+          "Firefighter|3": "5239.87",
+          "Firefighter|4": "5494.83",
+          "Firefighter|5": "5760.53",
+          "Firefighter|6": "6036.98",
+          "Firefighter|7": "6343.70"
+        }
+      },
+      "pay_grid_effective_date": "2026-07-01",
+      "pension_start_date": null,
+      "promotions": [],
+      "retirement_age": 57,
+      "retirement_type": "active",
+      "separation_date": null,
+      "show_cola": false
+    },
+    "name": "reference_case.spec_author_gwi35",
+    "result": {
+      "annual_pension_3yr": "174034.51",
+      "annual_pension_final": "182251.44",
+      "benefit_pct_detail": {
+        "capped": false,
+        "final_pct": "0.6157",
+        "raw_pct": "0.6157",
+        "tier1_pct": "0.4800",
+        "tier1_years": "20.0000",
+        "tier2_pct": "0.1357",
+        "tier2_years": "4.5219",
+        "tier3_pct": "0.0000",
+        "tier3_years": "0.0000",
+        "yos": "24.5219"
+      },
+      "cap_date": null,
+      "cap_reached": false,
+      "cola_rows_3yr": [],
+      "cola_rows_final": [],
+      "early_reduction": {
+        "factor": "1.0000",
+        "reduction_pct": "0.0000",
+        "retirement_age": 57,
+        "years_before_57": 0
+      },
+      "fc_3yr": {
+        "annual_fc": "282661.22",
+        "method": "3yr_avg",
+        "note": "Average of highest 3 consecutive YOS windows",
+        "yearly_earnings": [
+          {
+            "annual_base": "273791.15",
+            "year_end": "2042-03-24",
+            "year_start": "2041-03-24"
+          },
+          {
+            "annual_base": "283373.92",
+            "year_end": "2043-03-24",
+            "year_start": "2042-03-24"
+          },
+          {
+            "annual_base": "290818.59",
+            "year_end": "2043-10-01",
+            "year_start": "2043-03-24"
+          }
+        ]
+      },
+      "fc_final": {
+        "annual_fc": "296006.88",
+        "method": "final",
+        "note": "Annualized final pay: 11384.88 \u00d7 26 = 296006.88",
+        "yearly_earnings": []
+      },
+      "final_rank": "Firefighter",
+      "final_step": 7,
+      "inputs": {
+        "as_of_date": "2026-04-24",
+        "birth_date": "1986-10-01",
+        "cola_effective_month_day": [
+          2,
+          1
+        ],
+        "cola_rate": "0.020",
+        "current_rank": "Firefighter",
+        "current_step": 7,
+        "current_step_arrival_date": "2025-03-24",
+        "gwi_effective_month_day": [
+          7,
+          1
+        ],
+        "gwi_rate": "0.035",
+        "hire_date": "2019-03-24",
+        "pay_grid": {
+          "rates": {
+            "Fire Captain|1": "6669.01",
+            "Fire Captain|2": "6995.28",
+            "Fire Captain|3": "7335.23",
+            "Fire Captain|4": "7693.73",
+            "Fire Captain|5": "8079.66",
+            "Fire Engineer|1": "5816.21",
+            "Fire Engineer|2": "6097.55",
+            "Fire Engineer|3": "6391.58",
+            "Fire Engineer|4": "6707.11",
+            "Fire Engineer|5": "7041.59",
+            "Fire Engineer|6": "7384.54",
+            "Firefighter Recruit|1": "4148.72",
+            "Firefighter|1": "4769.02",
+            "Firefighter|2": "4998.58",
+            "Firefighter|3": "5239.87",
+            "Firefighter|4": "5494.83",
+            "Firefighter|5": "5760.53",
+            "Firefighter|6": "6036.98",
+            "Firefighter|7": "6343.70"
+          }
+        },
+        "pay_grid_effective_date": "2026-07-01",
+        "pension_start_date": null,
+        "promotions": [],
+        "retirement_age": 57,
+        "retirement_type": "active",
+        "separation_date": null,
+        "show_cola": false
+      },
+      "monthly_pension_3yr": "14502.88",
+      "monthly_pension_final": "15187.62",
+      "retirement_date": "2043-10-01",
+      "salary_timeline": [
+        {
+          "annual": "94162.90",
+          "biweekly": "3621.65",
+          "end": "2019-07-01",
+          "event": "hired",
+          "rank": "Firefighter",
+          "start": "2019-03-24",
+          "step": 1
+        },
+        {
+          "annual": "97458.66",
+          "biweekly": "3748.41",
+          "end": "2020-03-24",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2019-07-01",
+          "step": 1
+        },
+        {
+          "annual": "102149.84",
+          "biweekly": "3928.84",
+          "end": "2020-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2020-03-24",
+          "step": 2
+        },
+        {
+          "annual": "105725.10",
+          "biweekly": "4066.35",
+          "end": "2021-03-24",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2020-07-01",
+          "step": 2
+        },
+        {
+          "annual": "110828.64",
+          "biweekly": "4262.64",
+          "end": "2021-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2021-03-24",
+          "step": 3
+        },
+        {
+          "annual": "114707.58",
+          "biweekly": "4411.83",
+          "end": "2022-03-24",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2021-07-01",
+          "step": 3
+        },
+        {
+          "annual": "120289.00",
+          "biweekly": "4626.50",
+          "end": "2022-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2022-03-24",
+          "step": 4
+        },
+        {
+          "annual": "124499.18",
+          "biweekly": "4788.43",
+          "end": "2023-03-24",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2022-07-01",
+          "step": 4
+        },
+        {
+          "annual": "130519.22",
+          "biweekly": "5019.97",
+          "end": "2023-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2023-03-24",
+          "step": 5
+        },
+        {
+          "annual": "135087.42",
+          "biweekly": "5195.67",
+          "end": "2024-03-24",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2023-07-01",
+          "step": 5
+        },
+        {
+          "annual": "141570.26",
+          "biweekly": "5445.01",
+          "end": "2024-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2024-03-24",
+          "step": 6
+        },
+        {
+          "annual": "146525.34",
+          "biweekly": "5635.59",
+          "end": "2025-03-24",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2024-07-01",
+          "step": 6
+        },
+        {
+          "annual": "153969.66",
+          "biweekly": "5921.91",
+          "end": "2025-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2025-03-24",
+          "step": 7
+        },
+        {
+          "annual": "159358.68",
+          "biweekly": "6129.18",
+          "end": "2026-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2025-07-01",
+          "step": 7
+        },
+        {
+          "annual": "164936.20",
+          "biweekly": "6343.70",
+          "end": "2027-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2026-07-01",
+          "step": 7
+        },
+        {
+          "annual": "170708.98",
+          "biweekly": "6565.73",
+          "end": "2028-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2027-07-01",
+          "step": 7
+        },
+        {
+          "annual": "176683.78",
+          "biweekly": "6795.53",
+          "end": "2029-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2028-07-01",
+          "step": 7
+        },
+        {
+          "annual": "182867.62",
+          "biweekly": "7033.37",
+          "end": "2030-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2029-07-01",
+          "step": 7
+        },
+        {
+          "annual": "189268.04",
+          "biweekly": "7279.54",
+          "end": "2031-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2030-07-01",
+          "step": 7
+        },
+        {
+          "annual": "195892.58",
+          "biweekly": "7534.33",
+          "end": "2032-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2031-07-01",
+          "step": 7
+        },
+        {
+          "annual": "202748.78",
+          "biweekly": "7798.03",
+          "end": "2033-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2032-07-01",
+          "step": 7
+        },
+        {
+          "annual": "209844.96",
+          "biweekly": "8070.96",
+          "end": "2034-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2033-07-01",
+          "step": 7
+        },
+        {
+          "annual": "217189.44",
+          "biweekly": "8353.44",
+          "end": "2035-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2034-07-01",
+          "step": 7
+        },
+        {
+          "annual": "224791.06",
+          "biweekly": "8645.81",
+          "end": "2036-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2035-07-01",
+          "step": 7
+        },
+        {
+          "annual": "232658.92",
+          "biweekly": "8948.42",
+          "end": "2037-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2036-07-01",
+          "step": 7
+        },
+        {
+          "annual": "240801.86",
+          "biweekly": "9261.61",
+          "end": "2038-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2037-07-01",
+          "step": 7
+        },
+        {
+          "annual": "249230.02",
+          "biweekly": "9585.77",
+          "end": "2039-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2038-07-01",
+          "step": 7
+        },
+        {
+          "annual": "257953.02",
+          "biweekly": "9921.27",
+          "end": "2040-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2039-07-01",
+          "step": 7
+        },
+        {
+          "annual": "266981.26",
+          "biweekly": "10268.51",
+          "end": "2041-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2040-07-01",
+          "step": 7
+        },
+        {
+          "annual": "276325.66",
+          "biweekly": "10627.91",
+          "end": "2042-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2041-07-01",
+          "step": 7
+        },
+        {
+          "annual": "285997.14",
+          "biweekly": "10999.89",
+          "end": "2043-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2042-07-01",
+          "step": 7
+        },
+        {
+          "annual": "296006.88",
+          "biweekly": "11384.88",
+          "end": "2043-10-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2043-07-01",
+          "step": 7
+        }
+      ],
+      "separation_date": null,
+      "warnings": [],
+      "yos_at_retirement": "24.5219"
+    }
+  },
+  {
+    "inputs": {
+      "as_of_date": "2026-04-24",
+      "birth_date": "1975-01-01",
+      "cola_effective_month_day": [
+        2,
+        1
+      ],
+      "cola_rate": "0.020",
+      "current_rank": "Firefighter",
+      "current_step": 7,
+      "current_step_arrival_date": "2014-01-01",
+      "gwi_effective_month_day": [
+        7,
+        1
+      ],
+      "gwi_rate": "0.035",
+      "hire_date": "2008-01-01",
+      "pay_grid": {
+        "rates": {
+          "Firefighter|1": "5769.23",
+          "Firefighter|2": "5769.23",
+          "Firefighter|3": "5769.23",
+          "Firefighter|4": "5769.23",
+          "Firefighter|5": "5769.23",
+          "Firefighter|6": "5769.23",
+          "Firefighter|7": "5769.23"
+        }
+      },
+      "pay_grid_effective_date": "2023-01-01",
+      "pension_start_date": "2032-01-01",
+      "promotions": [],
+      "retirement_age": 57,
+      "retirement_type": "deferred_vested",
+      "separation_date": "2023-01-01",
+      "show_cola": false
+    },
+    "name": "deferred_vested.fc_frozen",
+    "result": {
+      "annual_pension_3yr": "51318.46",
+      "annual_pension_final": "53999.99",
+      "benefit_pct_detail": {
+        "capped": false,
+        "final_pct": "0.3600",
+        "raw_pct": "0.3600",
+        "tier1_pct": "0.3600",
+        "tier1_years": "15.0000",
+        "tier2_pct": "0.0000",
+        "tier2_years": "0.0000",
+        "tier3_pct": "0.0000",
+        "tier3_years": "0.0000",
+        "yos": "15.0000"
+      },
+      "cap_date": null,
+      "cap_reached": false,
+      "cola_rows_3yr": [],
+      "cola_rows_final": [],
+      "early_reduction": {
+        "factor": "1.0000",
+        "reduction_pct": "0.0000",
+        "retirement_age": 57,
+        "years_before_57": 0
+      },
+      "fc_3yr": {
+        "annual_fc": "142551.28",
+        "method": "3yr_avg",
+        "note": "Average of highest 3 consecutive YOS windows",
+        "yearly_earnings": [
+          {
+            "annual_base": "137671.89",
+            "year_end": "2021-01-01",
+            "year_start": "2020-01-01"
+          },
+          {
+            "annual_base": "142497.28",
+            "year_end": "2022-01-01",
+            "year_start": "2021-01-01"
+          },
+          {
+            "annual_base": "147484.66",
+            "year_end": "2023-01-01",
+            "year_start": "2022-01-01"
+          }
+        ]
+      },
+      "fc_final": {
+        "annual_fc": "149999.98",
+        "method": "final",
+        "note": "Annualized final pay: 5769.23 \u00d7 26 = 149999.98",
+        "yearly_earnings": []
+      },
+      "final_rank": "Firefighter",
+      "final_step": 7,
+      "inputs": {
+        "as_of_date": "2026-04-24",
+        "birth_date": "1975-01-01",
+        "cola_effective_month_day": [
+          2,
+          1
+        ],
+        "cola_rate": "0.020",
+        "current_rank": "Firefighter",
+        "current_step": 7,
+        "current_step_arrival_date": "2014-01-01",
+        "gwi_effective_month_day": [
+          7,
+          1
+        ],
+        "gwi_rate": "0.035",
+        "hire_date": "2008-01-01",
+        "pay_grid": {
+          "rates": {
+            "Firefighter|1": "5769.23",
+            "Firefighter|2": "5769.23",
+            "Firefighter|3": "5769.23",
+            "Firefighter|4": "5769.23",
+            "Firefighter|5": "5769.23",
+            "Firefighter|6": "5769.23",
+            "Firefighter|7": "5769.23"
+          }
+        },
+        "pay_grid_effective_date": "2023-01-01",
+        "pension_start_date": "2032-01-01",
+        "promotions": [],
+        "retirement_age": 57,
+        "retirement_type": "deferred_vested",
+        "separation_date": "2023-01-01",
+        "show_cola": false
+      },
+      "monthly_pension_3yr": "4276.54",
+      "monthly_pension_final": "4500.00",
+      "retirement_date": "2032-01-01",
+      "salary_timeline": [
+        {
+          "annual": "89533.60",
+          "biweekly": "3443.60",
+          "end": "2008-07-01",
+          "event": "hired",
+          "rank": "Firefighter",
+          "start": "2008-01-01",
+          "step": 1
+        },
+        {
+          "annual": "92667.38",
+          "biweekly": "3564.13",
+          "end": "2009-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2008-07-01",
+          "step": 1
+        },
+        {
+          "annual": "92667.38",
+          "biweekly": "3564.13",
+          "end": "2009-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2009-01-01",
+          "step": 2
+        },
+        {
+          "annual": "95910.62",
+          "biweekly": "3688.87",
+          "end": "2010-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2009-07-01",
+          "step": 2
+        },
+        {
+          "annual": "95910.62",
+          "biweekly": "3688.87",
+          "end": "2010-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2010-01-01",
+          "step": 3
+        },
+        {
+          "annual": "99267.48",
+          "biweekly": "3817.98",
+          "end": "2011-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2010-07-01",
+          "step": 3
+        },
+        {
+          "annual": "99267.48",
+          "biweekly": "3817.98",
+          "end": "2011-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2011-01-01",
+          "step": 4
+        },
+        {
+          "annual": "102741.86",
+          "biweekly": "3951.61",
+          "end": "2012-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2011-07-01",
+          "step": 4
+        },
+        {
+          "annual": "102741.86",
+          "biweekly": "3951.61",
+          "end": "2012-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2012-01-01",
+          "step": 5
+        },
+        {
+          "annual": "106337.92",
+          "biweekly": "4089.92",
+          "end": "2013-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2012-07-01",
+          "step": 5
+        },
+        {
+          "annual": "106337.92",
+          "biweekly": "4089.92",
+          "end": "2013-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2013-01-01",
+          "step": 6
+        },
+        {
+          "annual": "110059.56",
+          "biweekly": "4233.06",
+          "end": "2014-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2013-07-01",
+          "step": 6
+        },
+        {
+          "annual": "110059.56",
+          "biweekly": "4233.06",
+          "end": "2014-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2014-01-01",
+          "step": 7
+        },
+        {
+          "annual": "113911.72",
+          "biweekly": "4381.22",
+          "end": "2015-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2014-07-01",
+          "step": 7
+        },
+        {
+          "annual": "117898.56",
+          "biweekly": "4534.56",
+          "end": "2016-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2015-07-01",
+          "step": 7
+        },
+        {
+          "annual": "122025.02",
+          "biweekly": "4693.27",
+          "end": "2017-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2016-07-01",
+          "step": 7
+        },
+        {
+          "annual": "126296.04",
+          "biweekly": "4857.54",
+          "end": "2018-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2017-07-01",
+          "step": 7
+        },
+        {
+          "annual": "130716.30",
+          "biweekly": "5027.55",
+          "end": "2019-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2018-07-01",
+          "step": 7
+        },
+        {
+          "annual": "135291.26",
+          "biweekly": "5203.51",
+          "end": "2020-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2019-07-01",
+          "step": 7
+        },
+        {
+          "annual": "140026.64",
+          "biweekly": "5385.64",
+          "end": "2021-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2020-07-01",
+          "step": 7
+        },
+        {
+          "annual": "144927.64",
+          "biweekly": "5574.14",
+          "end": "2022-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2021-07-01",
+          "step": 7
+        },
+        {
+          "annual": "149999.98",
+          "biweekly": "5769.23",
+          "end": "2023-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2022-07-01",
+          "step": 7
+        }
+      ],
+      "separation_date": "2023-01-01",
+      "warnings": [],
+      "yos_at_retirement": "15.0000"
+    }
+  },
+  {
+    "inputs": {
+      "as_of_date": "2026-04-24",
+      "birth_date": "1975-01-01",
+      "cola_effective_month_day": [
+        2,
+        1
+      ],
+      "cola_rate": "0.020",
+      "current_rank": "Firefighter",
+      "current_step": 7,
+      "current_step_arrival_date": "2016-01-01",
+      "gwi_effective_month_day": [
+        7,
+        1
+      ],
+      "gwi_rate": "0.035",
+      "hire_date": "2010-01-01",
+      "pay_grid": {
+        "rates": {
+          "Fire Captain|1": "6669.01",
+          "Fire Captain|2": "6995.28",
+          "Fire Captain|3": "7335.23",
+          "Fire Captain|4": "7693.73",
+          "Fire Captain|5": "8079.66",
+          "Fire Engineer|1": "5816.21",
+          "Fire Engineer|2": "6097.55",
+          "Fire Engineer|3": "6391.58",
+          "Fire Engineer|4": "6707.11",
+          "Fire Engineer|5": "7041.59",
+          "Fire Engineer|6": "7384.54",
+          "Firefighter Recruit|1": "4148.72",
+          "Firefighter|1": "4769.02",
+          "Firefighter|2": "4998.58",
+          "Firefighter|3": "5239.87",
+          "Firefighter|4": "5494.83",
+          "Firefighter|5": "5760.53",
+          "Firefighter|6": "6036.98",
+          "Firefighter|7": "6343.70"
+        }
+      },
+      "pay_grid_effective_date": "2026-07-01",
+      "pension_start_date": "2032-01-01",
+      "promotions": [],
+      "retirement_age": 57,
+      "retirement_type": "deferred_vested",
+      "separation_date": "2023-01-01",
+      "show_cola": false
+    },
+    "name": "deferred_vested.fc_does_not_grow_with_gwi",
+    "result": {
+      "annual_pension_3yr": "42617.60",
+      "annual_pension_final": "44844.52",
+      "benefit_pct_detail": {
+        "capped": false,
+        "final_pct": "0.3120",
+        "raw_pct": "0.3120",
+        "tier1_pct": "0.3120",
+        "tier1_years": "13.0000",
+        "tier2_pct": "0.0000",
+        "tier2_years": "0.0000",
+        "tier3_pct": "0.0000",
+        "tier3_years": "0.0000",
+        "yos": "13.0000"
+      },
+      "cap_date": null,
+      "cap_reached": false,
+      "cola_rows_3yr": [],
+      "cola_rows_final": [],
+      "early_reduction": {
+        "factor": "1.0000",
+        "reduction_pct": "0.0000",
+        "retirement_age": 57,
+        "years_before_57": 0
+      },
+      "fc_3yr": {
+        "annual_fc": "136594.88",
+        "method": "3yr_avg",
+        "note": "Average of highest 3 consecutive YOS windows",
+        "yearly_earnings": [
+          {
+            "annual_base": "131919.37",
+            "year_end": "2021-01-01",
+            "year_start": "2020-01-01"
+          },
+          {
+            "annual_base": "136543.09",
+            "year_end": "2022-01-01",
+            "year_start": "2021-01-01"
+          },
+          {
+            "annual_base": "141322.17",
+            "year_end": "2023-01-01",
+            "year_start": "2022-01-01"
+          }
+        ]
+      },
+      "fc_final": {
+        "annual_fc": "143732.42",
+        "method": "final",
+        "note": "Annualized final pay: 5528.17 \u00d7 26 = 143732.42",
+        "yearly_earnings": []
+      },
+      "final_rank": "Firefighter",
+      "final_step": 7,
+      "inputs": {
+        "as_of_date": "2026-04-24",
+        "birth_date": "1975-01-01",
+        "cola_effective_month_day": [
+          2,
+          1
+        ],
+        "cola_rate": "0.020",
+        "current_rank": "Firefighter",
+        "current_step": 7,
+        "current_step_arrival_date": "2016-01-01",
+        "gwi_effective_month_day": [
+          7,
+          1
+        ],
+        "gwi_rate": "0.035",
+        "hire_date": "2010-01-01",
+        "pay_grid": {
+          "rates": {
+            "Fire Captain|1": "6669.01",
+            "Fire Captain|2": "6995.28",
+            "Fire Captain|3": "7335.23",
+            "Fire Captain|4": "7693.73",
+            "Fire Captain|5": "8079.66",
+            "Fire Engineer|1": "5816.21",
+            "Fire Engineer|2": "6097.55",
+            "Fire Engineer|3": "6391.58",
+            "Fire Engineer|4": "6707.11",
+            "Fire Engineer|5": "7041.59",
+            "Fire Engineer|6": "7384.54",
+            "Firefighter Recruit|1": "4148.72",
+            "Firefighter|1": "4769.02",
+            "Firefighter|2": "4998.58",
+            "Firefighter|3": "5239.87",
+            "Firefighter|4": "5494.83",
+            "Firefighter|5": "5760.53",
+            "Firefighter|6": "6036.98",
+            "Firefighter|7": "6343.70"
+          }
+        },
+        "pay_grid_effective_date": "2026-07-01",
+        "pension_start_date": "2032-01-01",
+        "promotions": [],
+        "retirement_age": 57,
+        "retirement_type": "deferred_vested",
+        "separation_date": "2023-01-01",
+        "show_cola": false
+      },
+      "monthly_pension_3yr": "3551.47",
+      "monthly_pension_final": "3737.04",
+      "retirement_date": "2032-01-01",
+      "salary_timeline": [
+        {
+          "annual": "69090.32",
+          "biweekly": "2657.32",
+          "end": "2010-07-01",
+          "event": "hired",
+          "rank": "Firefighter",
+          "start": "2010-01-01",
+          "step": 1
+        },
+        {
+          "annual": "71508.32",
+          "biweekly": "2750.32",
+          "end": "2011-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2010-07-01",
+          "step": 1
+        },
+        {
+          "annual": "74950.46",
+          "biweekly": "2882.71",
+          "end": "2011-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2011-01-01",
+          "step": 2
+        },
+        {
+          "annual": "77573.86",
+          "biweekly": "2983.61",
+          "end": "2012-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2011-07-01",
+          "step": 2
+        },
+        {
+          "annual": "81318.38",
+          "biweekly": "3127.63",
+          "end": "2012-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2012-01-01",
+          "step": 3
+        },
+        {
+          "annual": "84164.60",
+          "biweekly": "3237.10",
+          "end": "2013-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2012-07-01",
+          "step": 3
+        },
+        {
+          "annual": "88259.86",
+          "biweekly": "3394.61",
+          "end": "2013-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2013-01-01",
+          "step": 4
+        },
+        {
+          "annual": "91348.92",
+          "biweekly": "3513.42",
+          "end": "2014-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2013-07-01",
+          "step": 4
+        },
+        {
+          "annual": "95766.06",
+          "biweekly": "3683.31",
+          "end": "2014-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2014-01-01",
+          "step": 5
+        },
+        {
+          "annual": "99117.72",
+          "biweekly": "3812.22",
+          "end": "2015-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2014-07-01",
+          "step": 5
+        },
+        {
+          "annual": "103874.42",
+          "biweekly": "3995.17",
+          "end": "2015-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2015-01-01",
+          "step": 6
+        },
+        {
+          "annual": "107510.00",
+          "biweekly": "4135.00",
+          "end": "2016-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2015-07-01",
+          "step": 6
+        },
+        {
+          "annual": "112972.34",
+          "biweekly": "4345.09",
+          "end": "2016-07-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2016-01-01",
+          "step": 7
+        },
+        {
+          "annual": "116926.42",
+          "biweekly": "4497.17",
+          "end": "2017-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2016-07-01",
+          "step": 7
+        },
+        {
+          "annual": "121018.82",
+          "biweekly": "4654.57",
+          "end": "2018-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2017-07-01",
+          "step": 7
+        },
+        {
+          "annual": "125254.48",
+          "biweekly": "4817.48",
+          "end": "2019-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2018-07-01",
+          "step": 7
+        },
+        {
+          "annual": "129638.34",
+          "biweekly": "4986.09",
+          "end": "2020-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2019-07-01",
+          "step": 7
+        },
+        {
+          "annual": "134175.60",
+          "biweekly": "5160.60",
+          "end": "2021-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2020-07-01",
+          "step": 7
+        },
+        {
+          "annual": "138871.98",
+          "biweekly": "5341.23",
+          "end": "2022-07-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2021-07-01",
+          "step": 7
+        },
+        {
+          "annual": "143732.42",
+          "biweekly": "5528.17",
+          "end": "2023-01-01",
+          "event": "gwi",
+          "rank": "Firefighter",
+          "start": "2022-07-01",
+          "step": 7
+        }
+      ],
+      "separation_date": "2023-01-01",
+      "warnings": [],
+      "yos_at_retirement": "13.0000"
+    }
+  }
+]
