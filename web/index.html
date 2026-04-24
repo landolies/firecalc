@@ -118,45 +118,107 @@
   aside .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
 
   .paygrid {
-    width: 100%;
     border-collapse: collapse;
-    font-size: 12px;
+    font-size: 13px;
     font-variant-numeric: tabular-nums;
   }
-  .paygrid th, .paygrid td { padding: 2px 3px; text-align: right; }
-  .paygrid th:first-child, .paygrid td:first-child { text-align: left; padding-left: 0; }
-  .paygrid th { font-weight: 500; color: var(--text-muted); }
+  .paygrid th, .paygrid td { padding: 4px 8px; text-align: right; }
+  .paygrid th:first-child, .paygrid td:first-child { text-align: left; padding-left: 0; padding-right: 12px; white-space: nowrap; }
+  .paygrid th { font-weight: 500; color: var(--text-muted); border-bottom: 1px solid var(--border); }
   .paygrid input {
-    width: 64px;
-    padding: 2px 4px;
-    font-size: 12px;
+    width: 88px;
+    padding: 3px 6px;
+    font-size: 13px;
     text-align: right;
     font-variant-numeric: tabular-nums;
   }
   .paygrid .empty-cell { color: #c0c4cc; }
 
-  .chips { display: flex; flex-wrap: wrap; gap: .3rem; }
-  .chip {
-    display: inline-flex;
-    align-items: center;
-    gap: .3rem;
-    padding: 3px 8px;
-    border: 1px solid var(--border-strong);
-    border-radius: 999px;
-    background: white;
-    font-size: 12px;
-    font-variant-numeric: tabular-nums;
+  /* Dual-handle range slider for retirement-age span */
+  .age-range { padding: .25rem 0 .5rem; }
+  .age-range .labels {
+    display: flex; justify-content: space-between;
+    font-size: 13px; font-variant-numeric: tabular-nums; font-weight: 600;
+    margin-bottom: .35rem;
   }
-  .chip button {
-    border: none;
+  .age-range .labels .muted { color: var(--text-muted); font-weight: 400; font-size: 12px; }
+  .slider-track {
+    position: relative; height: 28px;
+  }
+  .slider-track .rail {
+    position: absolute; top: 12px; left: 0; right: 0; height: 4px;
+    background: var(--border); border-radius: 2px;
+  }
+  .slider-track .selected {
+    position: absolute; top: 12px; height: 4px;
+    background: var(--accent); border-radius: 2px;
+  }
+  .slider-track input[type="range"] {
+    position: absolute; top: 0; left: 0; right: 0;
+    width: 100%; height: 28px;
+    appearance: none; -webkit-appearance: none;
     background: transparent;
-    color: var(--text-muted);
-    font-size: 14px;
-    line-height: 1;
-    padding: 0;
-    margin: 0;
+    pointer-events: none;
+    padding: 0; border: none; margin: 0;
   }
-  .chip button:hover { color: var(--danger); }
+  .slider-track input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: white; border: 2px solid var(--accent);
+    pointer-events: auto; cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,.15);
+  }
+  .slider-track input[type="range"]::-moz-range-thumb {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: white; border: 2px solid var(--accent);
+    pointer-events: auto; cursor: pointer;
+  }
+  .slider-track input[type="range"]::-webkit-slider-runnable-track { background: transparent; border: none; }
+  .slider-track input[type="range"]::-moz-range-track { background: transparent; border: none; }
+
+  /* Help-icon tooltip (native title) */
+  .help {
+    display: inline-block;
+    width: 14px; height: 14px; line-height: 14px;
+    text-align: center;
+    border-radius: 50%;
+    background: var(--border);
+    color: var(--text-muted);
+    font-size: 10px; font-weight: 700;
+    cursor: help;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .help:hover { background: var(--accent-soft); color: var(--accent); }
+
+  /* Invalid text input */
+  input.invalid { border-color: var(--danger) !important; background: var(--danger-soft); }
+
+  /* Modal */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(15, 20, 30, .45);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 40;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--panel);
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(15, 20, 30, .2);
+    max-width: 90vw; max-height: 85vh;
+    overflow: auto;
+    display: flex; flex-direction: column;
+  }
+  .modal header {
+    position: sticky; top: 0; background: var(--panel);
+    padding: .75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: .75rem;
+  }
+  .modal header h2 { font-size: 15px; }
+  .modal .body { padding: 1rem 1.25rem; }
 
   .path {
     border: 1px solid var(--border);
@@ -336,21 +398,21 @@
   <div class="section">
     <h2>Personal</h2>
     <div class="two-col">
-      <div class="field"><label>Birth date</label><input type="date" id="birth_date"></div>
-      <div class="field"><label>Hire date</label><input type="date" id="hire_date"></div>
+      <div class="field"><label>Birth date <span class="help" title="Used to derive retirement date — convention: retire on Xth birthday.">ⓘ</span></label><input type="date" id="birth_date"></div>
+      <div class="field"><label>Hire date <span class="help" title="Start of Years of Service (YOS). YOS is counted by calendar anniversaries.">ⓘ</span></label><input type="date" id="hire_date"></div>
     </div>
     <div class="two-col">
       <div class="field">
-        <label>Current rank</label>
+        <label>Current rank <span class="help" title="Your rank as of today. Promotions are modeled per-path in the Promotion paths section below.">ⓘ</span></label>
         <select id="current_rank"></select>
       </div>
       <div class="field">
-        <label>Current step</label>
+        <label>Current step <span class="help" title="Your current step within the rank. Steps advance one year apart from the step-arrival date up to the rank's top step.">ⓘ</span></label>
         <input type="number" id="current_step" min="1" max="7" step="1">
       </div>
     </div>
     <div class="field">
-      <label>Arrived at current step</label>
+      <label>Arrived at current step <span class="help" title="Date you arrived at the current step. Engine reconstructs the step-clock from this — earlier steps back-compute at one year each.">ⓘ</span></label>
       <input type="date" id="current_step_arrival_date">
     </div>
   </div>
@@ -359,40 +421,48 @@
     <h2>Rate assumptions</h2>
     <div class="two-col">
       <div class="field">
-        <label>GWI (%/yr)</label>
+        <label>GWI (%/yr) <span class="help" title="General Wage Increase: annual raise applied to the entire pay grid on July 1. Also used to scale the grid backward to compute historical pay before the grid's effective date.">ⓘ</span></label>
         <input type="number" id="gwi_pct" min="0" max="20" step="0.01">
       </div>
       <div class="field">
-        <label>COLA (%/yr)</label>
+        <label>COLA (%/yr) <span class="help" title="Cost-of-Living Adjustment applied to pension in retirement, starting next Feb 1 (prorated by full months retired). Capped at 2.0% per SJFD plan rules.">ⓘ</span></label>
         <input type="number" id="cola_pct" min="0" max="2" step="0.01">
       </div>
     </div>
     <div class="field">
-      <label>Pay grid effective date</label>
+      <label>Pay grid effective date <span class="help" title="The date the pay grid values above are current as-of. GWI compounds forward from here; the grid scales backward for historical years.">ⓘ</span></label>
       <input type="date" id="pay_grid_effective_date">
     </div>
     <div class="field inline">
       <input type="checkbox" id="show_cola">
-      <label for="show_cola">Show COLA projection in audit</label>
+      <label for="show_cola">Show COLA projection in audit <span class="help" title="When on, the audit drawer includes a year-by-year pension projection through age 95 with COLA compounding.">ⓘ</span></label>
     </div>
   </div>
 
   <div class="section">
-    <h2>Pay grid (bi-weekly)</h2>
-    <table class="paygrid" id="paygrid"></table>
+    <h2>Pay grid <span class="help" title="Bi-weekly pay by rank × step. Defaults are SJFD FY 2026/27 (includes the 3.5% GWI). Editable — a new contract's numbers can be typed in without changing code.">ⓘ</span></h2>
+    <button class="btn small" id="open_paygrid" style="width:100%;">Edit pay grid…</button>
   </div>
 
   <div class="section">
-    <h2>Retirement ages</h2>
-    <div class="chips" id="ages-chips"></div>
-    <div class="row" style="margin-top: .4rem;">
-      <input type="number" id="new_age" placeholder="Add age" min="40" max="80" step="1" style="width: 90px;">
-      <button class="btn small" id="add_age">Add</button>
+    <h2>Retirement ages <span class="help" title="The grid shows one row per integer age in this range, for every promotion path. Drag either handle to expand/narrow the span. Minimum age below which the plan won't pay (50) is shown with a warning pill.">ⓘ</span></h2>
+    <div class="age-range">
+      <div class="labels">
+        <span id="age-min-label">50</span>
+        <span class="muted">to</span>
+        <span id="age-max-label">70</span>
+      </div>
+      <div class="slider-track" id="age-slider">
+        <div class="rail"></div>
+        <div class="selected" id="age-selected"></div>
+        <input type="range" id="age_min" min="45" max="75" step="1">
+        <input type="range" id="age_max" min="45" max="75" step="1">
+      </div>
     </div>
   </div>
 
   <div class="section">
-    <h2>Promotion paths</h2>
+    <h2>Promotion paths <span class="help" title="A 'path' is one career scenario: a named list of planned promotions (or none). The scenario grid runs every path across every retirement age, so you can compare e.g. 'stay Firefighter' vs 'promote to Engineer at age 42'. Each path can also be toggled to Deferred Vested (separate early, collect pension later).">ⓘ</span></h2>
     <div id="paths"></div>
     <button class="btn small" id="add_path">+ Add promotion path</button>
   </div>
@@ -418,6 +488,23 @@
 
 </div><!-- /.app -->
 
+<!-- Pay grid modal -->
+<div class="modal-backdrop" id="paygrid-backdrop">
+  <div class="modal" id="paygrid-modal" role="dialog" aria-labelledby="paygrid-title">
+    <header>
+      <h2 id="paygrid-title">Pay grid (bi-weekly)</h2>
+      <span class="subtitle" style="color: var(--text-muted); font-size: 12px;">FY 2026/27 defaults · editable</span>
+      <button class="btn small" id="close_paygrid" style="margin-left:auto;">Close</button>
+    </header>
+    <div class="body">
+      <table class="paygrid" id="paygrid"></table>
+      <p style="color: var(--text-muted); font-size: 12px; margin: 1rem 0 0; max-width: 560px;">
+        These rates are applied as-of the "Pay grid effective date" in the sidebar. GWI scales them forward (and backward for years prior). Empty steps don't exist for that rank (e.g. Captain step 6 is empty).
+      </p>
+    </div>
+  </div>
+</div>
+
 <div class="drawer-backdrop" id="drawer-backdrop"></div>
 <aside class="drawer" id="drawer" aria-hidden="true">
   <header>
@@ -439,7 +526,9 @@
   if (!fc) { alert("firecalc engine failed to load"); return; }
 
   const STORAGE_KEY = "sjfd_retirement_calculator_v1";
-  const SCHEMA_VERSION = 1;
+  const SCHEMA_VERSION = 2;
+  const AGE_RANGE_FLOOR = 45;
+  const AGE_RANGE_CEILING = 75;
 
   // ---- Default state ----------------------------------------------------
 
@@ -459,7 +548,7 @@
       rates: { gwi_rate: "0.035", cola_rate: "0.020" },
       pay_grid: grid,
       pay_grid_effective_date: "2026-07-01",
-      retirement_ages: [50, 52, 55, 57, 60, 65, 70],
+      retirement_age_range: { min: 50, max: 70 },
       paths: [
         { name: "No promotions", retirement_type: "active", separation_date: null, pension_start_date: null, promotions: [] },
       ],
@@ -471,11 +560,26 @@
 
   let state = loadState();
 
+  function migrate(parsed) {
+    if (!parsed) return defaultState();
+    // v1 → v2: replace retirement_ages:number[] with retirement_age_range:{min,max}.
+    if (parsed.schemaVersion === 1 && Array.isArray(parsed.retirement_ages)) {
+      const ages = parsed.retirement_ages.filter((n) => Number.isFinite(n));
+      const min = ages.length ? Math.max(AGE_RANGE_FLOOR, Math.min(...ages)) : 50;
+      const max = ages.length ? Math.min(AGE_RANGE_CEILING, Math.max(...ages)) : 70;
+      parsed.retirement_age_range = { min, max: Math.max(min, max) };
+      delete parsed.retirement_ages;
+      parsed.schemaVersion = 2;
+    }
+    return parsed;
+  }
+
   function loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return defaultState();
-      const parsed = JSON.parse(raw);
+      let parsed = JSON.parse(raw);
+      parsed = migrate(parsed);
       if (!parsed || parsed.schemaVersion !== SCHEMA_VERSION) {
         console.warn("stored state schema mismatch; resetting");
         return defaultState();
@@ -496,6 +600,7 @@
     if (!confirm("Reset all inputs to FY 2026/27 defaults? Your current settings will be lost.")) return;
     state = defaultState();
     saveState();
+    syncStaticInputs();
     renderAll();
   }
 
@@ -608,14 +713,24 @@
     el.innerHTML = html;
   }
 
-  // ---- Render: retirement ages chips -----------------------------------
+  // ---- Render: age range slider ---------------------------------------
 
   function renderAges() {
-    const el = document.getElementById("ages-chips");
-    el.innerHTML = state.retirement_ages
-      .sort((a, b) => a - b)
-      .map((a) => `<span class="chip">${a}<button data-remove-age="${a}" aria-label="Remove">×</button></span>`)
-      .join("");
+    const r = state.retirement_age_range;
+    const minEl = document.getElementById("age_min");
+    const maxEl = document.getElementById("age_max");
+    minEl.min = AGE_RANGE_FLOOR; minEl.max = AGE_RANGE_CEILING;
+    maxEl.min = AGE_RANGE_FLOOR; maxEl.max = AGE_RANGE_CEILING;
+    minEl.value = r.min;
+    maxEl.value = r.max;
+    document.getElementById("age-min-label").textContent = r.min;
+    document.getElementById("age-max-label").textContent = r.max;
+    const span = AGE_RANGE_CEILING - AGE_RANGE_FLOOR;
+    const leftPct = ((r.min - AGE_RANGE_FLOOR) / span) * 100;
+    const rightPct = ((r.max - AGE_RANGE_FLOOR) / span) * 100;
+    const sel = document.getElementById("age-selected");
+    sel.style.left = leftPct + "%";
+    sel.style.width = (rightPct - leftPct) + "%";
   }
 
   // ---- Render: promotion paths -----------------------------------------
@@ -631,7 +746,11 @@
         .map((r) => `<option value="${r}"${p.new_rank === r ? " selected" : ""}>${r}</option>`).join("");
       return `<div class="promo">
         <select data-promo-rank data-path="${i}" data-promo="${j}">${ranks}</select>
-        <input type="date" data-promo-date data-path="${i}" data-promo="${j}" value="${escapeAttr(p.effective_date || "")}">
+        <input type="text" data-promo-date data-path="${i}" data-promo="${j}"
+               value="${escapeAttr(p.effective_date || "")}"
+               placeholder="YYYY-MM-DD"
+               inputmode="numeric" maxlength="10" autocomplete="off"
+               title="Type the promotion date as YYYY-MM-DD (e.g. 2028-10-01). Invalid dates are highlighted in red.">
         <button class="btn small" data-remove-promo data-path="${i}" data-promo="${j}">×</button>
       </div>`;
     }).join("");
@@ -671,22 +790,34 @@
   function renderGrid() {
     const host = document.getElementById("grid-container");
     const meta = document.getElementById("grid-meta");
-    const ages = state.retirement_ages.slice().sort((a, b) => a - b);
+    const r = state.retirement_age_range;
+    const ages = [];
+    for (let a = r.min; a <= r.max; a++) ages.push(a);
     lastResults = [];
 
     if (state.paths.length === 0 || ages.length === 0) {
-      host.innerHTML = `<div class="empty-hint">Add at least one promotion path and one retirement age to see scenarios.</div>`;
+      host.innerHTML = `<div class="empty-hint">Add at least one promotion path and widen the retirement-age slider to see scenarios.</div>`;
       meta.textContent = "";
       return;
     }
 
     let rowCount = 0;
+    const H = (label, tip) => `<th>${label}${tip ? ` <span class="help" title="${escapeAttr(tip)}">ⓘ</span>` : ""}</th>`;
     let html = `<table class="scenarios"><thead><tr>
-      <th>Path</th><th>Age</th><th>Retire date</th><th>Final rank/step</th>
-      <th>YOS</th><th>FC (3yr)</th><th>FC (final)</th><th>Benefit %</th>
-      <th>Cap?</th><th>Penalty</th>
-      <th>Annual (3yr)</th><th>Monthly (3yr)</th>
-      <th>Annual (final)</th><th>Monthly (final)</th>
+      ${H("Path", "Which promotion scenario this row belongs to (from the sidebar).")}
+      ${H("Age", "Retirement age. Row is computed as if you retire on your Nth birthday.")}
+      ${H("Retire date", "Your Nth birthday, computed from the birth date.")}
+      ${H("Final rank/step", "Rank and step at retirement, after all promotions and step progression on this path.")}
+      ${H("YOS", "Years of Service at retirement (or separation for deferred-vested), by calendar anniversaries.")}
+      ${H("FC (3yr)", "Final Compensation, method 1: average of the highest 3 consecutive years-of-service windows by base pay. The plan uses this method.")}
+      ${H("FC (final)", "Final Compensation, method 2: annualized pay rate in effect on the last day of service. Shown for comparison; not what the plan uses.")}
+      ${H("Benefit %", "Percent of FC you receive as pension. Tiered: 2.4%/yr for years 1–20, 3.0%/yr for 21–25, 3.4%/yr for 26+. Hard-capped at 80%.")}
+      ${H("Cap?", "Yes if you've hit the 80% benefit cap (reached at exactly 30 YOS).")}
+      ${H("Penalty", "Early-retirement reduction. 7% per year for every year you retire before 57. Zero at age 57+.")}
+      ${H("Annual (3yr)", "Annual pension using FC 3-year-average method × benefit % × early-reduction factor. This is the plan's figure.")}
+      ${H("Monthly (3yr)", "Annual (3yr) ÷ 12.")}
+      ${H("Annual (final)", "Same formula but using FC final-year method. For comparison.")}
+      ${H("Monthly (final)", "Annual (final) ÷ 12.")}
     </tr></thead><tbody>`;
 
     state.paths.forEach((path, pi) => {
@@ -902,40 +1033,44 @@
   // ---- Sidebar bindings -------------------------------------------------
 
   function bindStaticInputs() {
-    // Personal / rates
-    document.getElementById("birth_date").addEventListener("change", (e) => { state.personal.birth_date = e.target.value; scheduleRender(); });
-    document.getElementById("hire_date").addEventListener("change", (e) => { state.personal.hire_date = e.target.value; scheduleRender(); });
-    document.getElementById("current_rank").addEventListener("change", (e) => { state.personal.current_rank = e.target.value; scheduleRender(); });
-    document.getElementById("current_step").addEventListener("input", (e) => { state.personal.current_step = Math.max(1, Number(e.target.value) || 1); scheduleRender(); });
-    document.getElementById("current_step_arrival_date").addEventListener("change", (e) => { state.personal.current_step_arrival_date = e.target.value; scheduleRender(); });
-    document.getElementById("gwi_pct").addEventListener("input", (e) => { state.rates.gwi_rate = (Number(e.target.value || 0) / 100).toFixed(4); scheduleRender(); });
-    document.getElementById("cola_pct").addEventListener("input", (e) => { state.rates.cola_rate = (Number(e.target.value || 0) / 100).toFixed(4); scheduleRender(); });
-    document.getElementById("pay_grid_effective_date").addEventListener("change", (e) => { state.pay_grid_effective_date = e.target.value; scheduleRender(); });
-    document.getElementById("show_cola").addEventListener("change", (e) => { state.show_cola = e.target.checked; scheduleRender(); });
+    // Personal / rates — use scheduleGridOnly so typing doesn't reset the input mid-keystroke.
+    document.getElementById("birth_date").addEventListener("change", (e) => { state.personal.birth_date = e.target.value; scheduleGridOnly(); });
+    document.getElementById("hire_date").addEventListener("change", (e) => { state.personal.hire_date = e.target.value; scheduleGridOnly(); });
+    document.getElementById("current_rank").addEventListener("change", (e) => { state.personal.current_rank = e.target.value; scheduleGridOnly(); });
+    document.getElementById("current_step").addEventListener("input", (e) => { state.personal.current_step = Math.max(1, Number(e.target.value) || 1); scheduleGridOnly(); });
+    document.getElementById("current_step_arrival_date").addEventListener("change", (e) => { state.personal.current_step_arrival_date = e.target.value; scheduleGridOnly(); });
+    document.getElementById("gwi_pct").addEventListener("input", (e) => { state.rates.gwi_rate = (Number(e.target.value || 0) / 100).toFixed(4); scheduleGridOnly(); });
+    document.getElementById("cola_pct").addEventListener("input", (e) => { state.rates.cola_rate = (Number(e.target.value || 0) / 100).toFixed(4); scheduleGridOnly(); });
+    document.getElementById("pay_grid_effective_date").addEventListener("change", (e) => { state.pay_grid_effective_date = e.target.value; scheduleGridOnly(); });
+    document.getElementById("show_cola").addEventListener("change", (e) => { state.show_cola = e.target.checked; scheduleGridOnly(); });
 
-    // Pay grid (event delegation)
+    // Pay grid (delegated; scheduleGridOnly preserves input focus during typing).
     document.getElementById("paygrid").addEventListener("input", (e) => {
       const key = e.target.getAttribute("data-paygrid-key");
       if (!key) return;
       state.pay_grid[key] = e.target.value;
-      scheduleRender();
+      scheduleGridOnly();
     });
 
-    // Retirement ages
-    document.getElementById("ages-chips").addEventListener("click", (e) => {
-      const age = e.target.getAttribute("data-remove-age");
-      if (age) {
-        state.retirement_ages = state.retirement_ages.filter((a) => a !== Number(age));
-        scheduleRender();
-      }
-    });
-    document.getElementById("add_age").addEventListener("click", () => {
-      const v = Number(document.getElementById("new_age").value);
-      if (!v || v < 40 || v > 80) return;
-      if (!state.retirement_ages.includes(v)) state.retirement_ages.push(v);
-      document.getElementById("new_age").value = "";
-      scheduleRender();
-    });
+    // Pay-grid modal open/close
+    const paygridBackdrop = document.getElementById("paygrid-backdrop");
+    document.getElementById("open_paygrid").addEventListener("click", () => paygridBackdrop.classList.add("open"));
+    document.getElementById("close_paygrid").addEventListener("click", () => paygridBackdrop.classList.remove("open"));
+    paygridBackdrop.addEventListener("click", (e) => { if (e.target === paygridBackdrop) paygridBackdrop.classList.remove("open"); });
+
+    // Retirement age range slider — keep handles from crossing; update live.
+    const minEl = document.getElementById("age_min");
+    const maxEl = document.getElementById("age_max");
+    function applyRangeFromInputs() {
+      let lo = Number(minEl.value);
+      let hi = Number(maxEl.value);
+      if (lo > hi) { if (document.activeElement === minEl) hi = lo; else lo = hi; }
+      state.retirement_age_range = { min: lo, max: hi };
+      renderAges();  // re-sync handles + selected-bar without scheduling a full render
+      scheduleGridOnly();
+    }
+    minEl.addEventListener("input", applyRangeFromInputs);
+    maxEl.addEventListener("input", applyRangeFromInputs);
 
     // Promotion paths (event delegation)
     document.getElementById("paths").addEventListener("input", handlePathInput);
@@ -959,29 +1094,51 @@
       window.print();
       setTimeout(() => document.body.classList.remove("print-audit-only"), 500);
     });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDrawer(); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closeDrawer();
+        document.getElementById("paygrid-backdrop").classList.remove("open");
+      }
+    });
+  }
+
+  function isValidIsoDate(s) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+    const [y, m, d] = s.split("-").map(Number);
+    if (m < 1 || m > 12 || d < 1 || d > 31) return false;
+    const dt = new Date(Date.UTC(y, m - 1, d));
+    return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
   }
 
   function handlePathInput(e) {
     const t = e.target;
     const pathIdx = Number(t.getAttribute("data-path") || t.getAttribute("data-path-name") || t.getAttribute("data-dv-toggle"));
+    let isStructural = false;
+
     if (t.hasAttribute("data-path-name")) {
       state.paths[Number(t.getAttribute("data-path-name"))].name = t.value;
     } else if (t.hasAttribute("data-promo-rank")) {
       state.paths[pathIdx].promotions[Number(t.getAttribute("data-promo"))].new_rank = t.value;
     } else if (t.hasAttribute("data-promo-date")) {
-      state.paths[pathIdx].promotions[Number(t.getAttribute("data-promo"))].effective_date = t.value;
+      const v = t.value.trim();
+      const ok = v === "" || isValidIsoDate(v);
+      t.classList.toggle("invalid", !ok);
+      state.paths[pathIdx].promotions[Number(t.getAttribute("data-promo"))].effective_date = ok ? v : "";
+      if (!ok) { scheduleGridOnly(); return; }   // keep typing-in-progress, skip grid run until valid
     } else if (t.hasAttribute("data-dv-toggle")) {
       state.paths[pathIdx].retirement_type = t.checked ? "deferred_vested" : "active";
       if (!t.checked) { state.paths[pathIdx].separation_date = null; state.paths[pathIdx].pension_start_date = null; }
+      isStructural = true;  // shows/hides dv-fields block
     } else if (t.hasAttribute("data-dv-sep")) {
-      state.paths[pathIdx].separation_date = t.value;
+      state.paths[pathIdx].separation_date = t.value || null;
     } else if (t.hasAttribute("data-dv-start")) {
-      state.paths[pathIdx].pension_start_date = t.value;
+      state.paths[pathIdx].pension_start_date = t.value || null;
     } else {
       return;
     }
-    scheduleRender();
+
+    if (isStructural) scheduleRender();
+    else scheduleGridOnly();
   }
 
   function handlePathClick(e) {
@@ -1031,19 +1188,36 @@
 
   // ---- Render orchestration --------------------------------------------
 
-  let renderPending = false;
+  let fullRenderPending = false;
+  let gridRenderPending = false;
+
+  // Full render rebuilds the sidebar (destroys and recreates path inputs / pay-grid inputs);
+  // only trigger on structural mutations (add/remove path, add/remove promotion, reset, load).
   function scheduleRender() {
-    if (renderPending) return;
-    renderPending = true;
+    if (fullRenderPending) return;
+    fullRenderPending = true;
     requestAnimationFrame(() => {
-      renderPending = false;
+      fullRenderPending = false; gridRenderPending = false;
       saveState();
       renderAll();
     });
   }
 
+  // Grid-only render for value mutations (typing in path name, editing a pay-grid cell,
+  // dragging the slider). Preserves input focus and selection in the sidebar.
+  function scheduleGridOnly() {
+    if (gridRenderPending || fullRenderPending) return;
+    gridRenderPending = true;
+    requestAnimationFrame(() => {
+      gridRenderPending = false;
+      saveState();
+      renderSummary();
+      renderGrid();
+    });
+  }
+
+  // Called once at boot and after reset — NOT on every render (would reset the user's cursor mid-typing).
   function renderAll() {
-    syncStaticInputs();
     renderSummary();
     renderPayGrid();
     renderAges();
@@ -1058,6 +1232,7 @@
 
   populateRankOptions();
   bindStaticInputs();
+  syncStaticInputs();
   renderAll();
 })();
 </script>
