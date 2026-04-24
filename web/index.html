@@ -266,7 +266,7 @@
   }
   .grid-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .75rem; }
   .grid-header h2 { font-size: 16px; }
-  .grid-header .actions { display: flex; gap: .5rem; }
+  .grid-header .actions { display: flex; gap: 1rem; align-items: center; }
 
   table.scenarios {
     width: 100%;
@@ -313,6 +313,37 @@
   table.scenarios tr.path-start td { border-top: 2px solid var(--border-strong); }
   table.scenarios .path-cell { font-weight: 600; color: var(--text); }
   table.scenarios .muted { color: var(--text-muted); }
+
+  /* Visual grouping for the optional "final-year" columns */
+  table.scenarios th.final-col, table.scenarios td.final-col {
+    background: #fafaf7;
+  }
+  table.scenarios th.final-col-first, table.scenarios td.final-col-first {
+    border-left: 2px solid var(--border-strong);
+  }
+  table.scenarios tr.group-header th {
+    background: #f6f3ee;
+    font-weight: 500;
+    text-transform: none;
+    font-size: 11px;
+    color: var(--warn);
+    letter-spacing: 0;
+    border-bottom: 1px solid var(--border);
+    padding-top: 8px; padding-bottom: 8px;
+    position: static;
+  }
+  table.scenarios tr.group-header th.empty { background: transparent; border-bottom: 1px solid var(--border); }
+
+  .final-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: 12px;
+    color: var(--text-muted);
+    user-select: none;
+    cursor: pointer;
+  }
+  .final-toggle input { margin: 0; }
 
   .pill {
     display: inline-block;
@@ -505,6 +536,11 @@
   <div class="grid-header">
     <h2>Scenarios</h2>
     <div class="actions">
+      <label class="final-toggle no-print">
+        <input type="checkbox" id="toggle_final">
+        Show final-year FC method
+        <span class="help" data-tip="Adds three reference columns using the final-year FC method (single most-recent year of pay, annualized). The SJFD plan does NOT use this method — it uses the 3-year average. Shown here for scenario comparison only.">ⓘ</span>
+      </label>
       <span class="muted no-print" id="grid-meta"></span>
     </div>
   </div>
@@ -580,6 +616,7 @@
         { name: "No promotions", retirement_type: "active", separation_date: null, pension_start_date: null, promotions: [] },
       ],
       show_cola: false,
+      show_final_method: false,
     };
   }
 
@@ -837,23 +874,43 @@
     }
 
     let rowCount = 0;
-    const H = (label, tip) => `<th>${label}${tip ? ` <span class="help" data-tip="${escapeAttr(tip)}">ⓘ</span>` : ""}</th>`;
-    let html = `<table class="scenarios"><thead><tr>
-      ${H("Path", "Which promotion scenario this row belongs to (from the sidebar).")}
-      ${H("Age", "Retirement age. Row is computed as if you retire on your Nth birthday.")}
-      ${H("Retire date", "Your Nth birthday, computed from the birth date.")}
-      ${H("Final rank/step", "Rank and step at retirement, after all promotions and step progression on this path.")}
-      ${H("YOS", "Years of Service at retirement (or separation for deferred-vested), by calendar anniversaries.")}
-      ${H("FC (3yr)", "Final Compensation, method 1: average of the highest 3 consecutive years-of-service windows by base pay. The plan uses this method.")}
-      ${H("FC (final)", "Final Compensation, method 2: annualized pay rate in effect on the last day of service. Shown for comparison; not what the plan uses.")}
-      ${H("Benefit %", "Percent of FC you receive as pension. Tiered: 2.4%/yr for years 1–20, 3.0%/yr for 21–25, 3.4%/yr for 26+. Hard-capped at 80%.")}
-      ${H("Cap?", "Yes if you've hit the 80% benefit cap (reached at exactly 30 YOS).")}
-      ${H("Penalty", "Early-retirement reduction. 7% per year for every year you retire before 57. Zero at age 57+.")}
-      ${H("Annual (3yr)", "Annual pension using FC 3-year-average method × benefit % × early-reduction factor. This is the plan's figure.")}
-      ${H("Monthly (3yr)", "Annual (3yr) ÷ 12.")}
-      ${H("Annual (final)", "Same formula but using FC final-year method. For comparison.")}
-      ${H("Monthly (final)", "Annual (final) ÷ 12.")}
-    </tr></thead><tbody>`;
+    const showFinal = !!state.show_final_method;
+    const H = (label, tip, cls) => `<th${cls ? ` class="${cls}"` : ""}>${label}${tip ? ` <span class="help" data-tip="${escapeAttr(tip)}">ⓘ</span>` : ""}</th>`;
+
+    // Primary columns — always rendered.
+    const primaryCols = [
+      H("Path", "Which promotion scenario this row belongs to (from the sidebar)."),
+      H("Age", "Retirement age. Row is computed as if you retire on your Nth birthday."),
+      H("Retire date", "Your Nth birthday, computed from the birth date."),
+      H("Final rank/step", "Rank and step at retirement, after all promotions and step progression on this path."),
+      H("YOS", "Years of Service at retirement (or separation for deferred-vested), by calendar anniversaries."),
+      H("FC (3yr)", "Final Compensation: average of the highest 3 consecutive years-of-service windows by base pay. The SJFD plan uses this method."),
+      H("Benefit %", "Percent of FC you receive as pension. Tiered: 2.4%/yr for years 1–20, 3.0%/yr for 21–25, 3.4%/yr for 26+. Hard-capped at 80%."),
+      H("Cap?", "Yes if you've hit the 80% benefit cap (reached at exactly 30 YOS)."),
+      H("Penalty", "Early-retirement reduction. 7% per year for every year you retire before 57. Zero at age 57+."),
+      H("Annual (3yr)", "Annual pension using FC 3-year-average method × benefit % × early-reduction factor. This is the plan's figure."),
+      H("Monthly (3yr)", "Annual (3yr) ÷ 12."),
+    ];
+
+    // Final-method (reference-only) columns — rendered when toggle is on.
+    const finalCols = showFinal ? [
+      H("FC (final)", "Reference only. Final Compensation using the single final-year pay rate (annualized). The plan does NOT use this.", "final-col final-col-first"),
+      H("Annual (final)", "Reference only. Annual pension using final-year FC method.", "final-col"),
+      H("Monthly (final)", "Reference only. Annual (final) ÷ 12.", "final-col"),
+    ] : [];
+
+    const totalCols = primaryCols.length + finalCols.length;
+
+    let html = `<table class="scenarios"><thead>`;
+
+    if (showFinal) {
+      // Grouped header row above the column labels.
+      html += `<tr class="group-header">
+        <th class="empty" colspan="${primaryCols.length}"></th>
+        <th colspan="${finalCols.length}" class="final-col final-col-first">Final-year FC method · reference only, not used for pension calculation</th>
+      </tr>`;
+    }
+    html += `<tr>${primaryCols.join("")}${finalCols.join("")}</tr></thead><tbody>`;
 
     state.paths.forEach((path, pi) => {
       ages.forEach((age, ai) => {
@@ -866,22 +923,30 @@
           html += `<tr${ai === 0 ? ' class="path-start"' : ""} data-result-idx="${idx}">
             <td class="path-cell">${ai === 0 ? escapeHtml(path.name) : ""}</td>
             <td>${age}</td>
-            <td colspan="12"><span class="pill danger">Error:</span> ${escapeHtml(result.error)}</td>
+            <td colspan="${totalCols - 2}"><span class="pill danger">Error:</span> ${escapeHtml(result.error)}</td>
           </tr>`;
           return;
         }
 
         const hasWarn = result.warnings && result.warnings.length > 0;
-        const warnCell = hasWarn
+        const warnPill = hasWarn
           ? `<span class="pill warn" title="${escapeAttr(result.warnings.join(' · '))}">${escapeHtml(result.warnings.length + ' warning' + (result.warnings.length > 1 ? 's' : ''))}</span>`
           : "";
 
-        const pensionCells = hasWarn
-          ? `<td colspan="4">${warnCell}</td>`
-          : `<td>${money(result.annual_pension_3yr)}</td>
-             <td>${money(result.monthly_pension_3yr)}</td>
-             <td>${money(result.annual_pension_final)}</td>
-             <td>${money(result.monthly_pension_final)}</td>`;
+        // Primary pension cells (always rendered).
+        const primaryPension = hasWarn
+          ? `<td colspan="2">${warnPill}</td>`
+          : `<td>${money(result.annual_pension_3yr)}</td><td>${money(result.monthly_pension_3yr)}</td>`;
+
+        // Final-method cells (only when toggle on). FC (final) is always valid;
+        // pension (final) pair collapses to the warning pill when warnings exist.
+        let finalCells = "";
+        if (showFinal) {
+          finalCells = `<td class="final-col final-col-first">${money(result.fc_final.annual_fc)}</td>`;
+          finalCells += hasWarn
+            ? `<td class="final-col" colspan="2">${warnPill}</td>`
+            : `<td class="final-col">${money(result.annual_pension_final)}</td><td class="final-col">${money(result.monthly_pension_final)}</td>`;
+        }
 
         html += `<tr${ai === 0 ? ' class="path-start"' : ""} data-result-idx="${idx}">
           <td class="path-cell">${ai === 0 ? escapeHtml(path.name) : ""}</td>
@@ -890,11 +955,11 @@
           <td>${escapeHtml(result.final_rank)} · ${result.final_step}</td>
           <td>${result.yos_at_retirement._dp !== undefined ? result.yos_at_retirement.toFixed(2) : result.yos_at_retirement.toString()}</td>
           <td>${money(result.fc_3yr.annual_fc)}</td>
-          <td>${money(result.fc_final.annual_fc)}</td>
           <td>${pct(result.benefit_pct_detail.final_pct)}</td>
           <td>${result.cap_reached ? '<span class="pill cap">cap</span>' : '<span class="muted">—</span>'}</td>
           <td>${result.early_reduction.years_before_57 > 0 ? pct(result.early_reduction.reduction_pct) : '<span class="muted">—</span>'}</td>
-          ${pensionCells}
+          ${primaryPension}
+          ${finalCells}
         </tr>`;
       });
     });
@@ -1021,31 +1086,38 @@
 
   function exportCsv() {
     if (lastResults.length === 0) { alert("No scenarios to export."); return; }
+    const showFinal = !!state.show_final_method;
     const headers = [
       "Path", "Retirement Age", "Retirement Date", "Final Rank", "Final Step",
-      "YOS", "FC 3yr", "FC Final", "Benefit %", "Cap Reached", "Early Penalty %",
+      "YOS", "FC 3yr", "Benefit %", "Cap Reached", "Early Penalty %",
       "Annual Pension (3yr)", "Monthly Pension (3yr)",
-      "Annual Pension (final)", "Monthly Pension (final)", "Warnings",
+      ...(showFinal ? ["FC Final (ref)", "Annual Pension final (ref)", "Monthly Pension final (ref)"] : []),
+      "Warnings",
     ];
     const rows = lastResults.map(({ path, age, result: r }) => {
-      if (r.error) return [path.name, age, "", "", "", "", "", "", "", "", "", "", "", "", "", "ERROR: " + r.error];
+      if (r.error) {
+        const blanks = Array(headers.length - 3).fill("");
+        return [path.name, age, ...blanks, "ERROR: " + r.error];
+      }
       const warn = (r.warnings || []).join(" | ");
-      return [
+      const primary = [
         path.name, age,
         fmtDate(r.retirement_date),
         r.final_rank, r.final_step,
         r.yos_at_retirement._dp !== undefined ? r.yos_at_retirement.toFixed(4) : r.yos_at_retirement.toString(),
         r.fc_3yr.annual_fc.toFixed(2),
-        r.fc_final.annual_fc.toFixed(2),
         (Number(r.benefit_pct_detail.final_pct.toString()) * 100).toFixed(2) + "%",
         r.cap_reached ? "Yes" : "No",
         r.early_reduction.years_before_57 > 0 ? (Number(r.early_reduction.reduction_pct.toString()) * 100).toFixed(2) + "%" : "",
         r.annual_pension_3yr.toFixed(2),
         r.monthly_pension_3yr.toFixed(2),
+      ];
+      const final = showFinal ? [
+        r.fc_final.annual_fc.toFixed(2),
         r.annual_pension_final.toFixed(2),
         r.monthly_pension_final.toFixed(2),
-        warn,
-      ];
+      ] : [];
+      return [...primary, ...final, warn];
     });
     const csv = [headers, ...rows].map((row) =>
       row.map((cell) => {
@@ -1078,6 +1150,7 @@
     document.getElementById("cola_pct").addEventListener("input", (e) => { state.rates.cola_rate = (Number(e.target.value || 0) / 100).toFixed(4); scheduleGridOnly(); });
     document.getElementById("pay_grid_effective_date").addEventListener("change", (e) => { state.pay_grid_effective_date = e.target.value; scheduleGridOnly(); });
     document.getElementById("show_cola").addEventListener("change", (e) => { state.show_cola = e.target.checked; scheduleGridOnly(); });
+    document.getElementById("toggle_final").addEventListener("change", (e) => { state.show_final_method = e.target.checked; scheduleGridOnly(); });
 
     // Pay grid (delegated; scheduleGridOnly preserves input focus during typing).
     document.getElementById("paygrid").addEventListener("input", (e) => {
@@ -1219,6 +1292,7 @@
     document.getElementById("cola_pct").value = (Number(state.rates.cola_rate) * 100).toFixed(2);
     document.getElementById("pay_grid_effective_date").value = state.pay_grid_effective_date;
     document.getElementById("show_cola").checked = !!state.show_cola;
+    document.getElementById("toggle_final").checked = !!state.show_final_method;
   }
 
   // Click on a grid row opens the drawer
