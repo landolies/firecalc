@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SJFD Tier 2 Retirement Calculator</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --panel: #ffffff;
+    --border: #e3e6ea;
+    --border-strong: #c9ced5;
+    --text: #1d2530;
+    --text-muted: #5b6573;
+    --accent: #1f5be8;
+    --accent-soft: #eaf0fe;
+    --ok: #1a7f37;
+    --warn: #b7791f;
+    --warn-soft: #fff7e6;
+    --cap: #0b7285;
+    --cap-soft: #e3f4f8;
+    --danger: #b11616;
+    --danger-soft: #fdeaea;
+    --row-hover: #f0f4fb;
+    --radius: 6px;
+    --shadow: 0 1px 3px rgba(15, 20, 30, 0.06), 0 4px 12px rgba(15, 20, 30, 0.05);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.45;
+  }
+  h1, h2, h3, h4 { margin: 0; font-weight: 600; line-height: 1.2; }
+  button { font: inherit; cursor: pointer; }
+  input[type="date"], input[type="number"], input[type="text"], select {
+    font: inherit;
+    padding: 4px 7px;
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    background: white;
+    width: 100%;
+  }
+  input[type="checkbox"] { width: auto; margin-right: .4rem; transform: translateY(1px); }
+  input:focus, select:focus, button:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  label { font-weight: 500; color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: .03em; }
+  .row { display: flex; gap: .5rem; align-items: center; }
+  .btn {
+    border: 1px solid var(--border-strong);
+    background: white;
+    color: var(--text);
+    padding: 5px 11px;
+    border-radius: 4px;
+    font-size: 13px;
+    transition: background 80ms;
+  }
+  .btn:hover { background: var(--row-hover); }
+  .btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+  .btn.primary:hover { background: #164ccf; }
+  .btn.danger { color: var(--danger); border-color: var(--danger); }
+  .btn.small { padding: 2px 7px; font-size: 12px; }
+
+  /* Layout: sticky header + sidebar + main */
+  .app {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 360px 1fr;
+    grid-template-areas: "header header" "sidebar main";
+    height: 100vh;
+  }
+  header {
+    grid-area: header;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: .75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    z-index: 20;
+  }
+  header h1 { font-size: 15px; font-weight: 600; white-space: nowrap; }
+  header .subtitle { color: var(--text-muted); font-size: 12px; }
+  .summary-pill {
+    margin-left: auto;
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    font-size: 13px;
+  }
+  .summary-pill .item { display: flex; flex-direction: column; }
+  .summary-pill .k { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: .03em; }
+  .summary-pill .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  aside {
+    grid-area: sidebar;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 1rem 1rem 1.5rem;
+  }
+  aside .section { margin-bottom: 1.25rem; }
+  aside .section h2 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--text-muted);
+    margin-bottom: .5rem;
+    padding-bottom: .25rem;
+    border-bottom: 1px solid var(--border);
+  }
+  aside .field { margin-bottom: .5rem; display: flex; flex-direction: column; gap: 3px; }
+  aside .field.inline { flex-direction: row; align-items: center; gap: .5rem; }
+  aside .field.inline label { flex: 1; }
+  aside .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+
+  .paygrid {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  .paygrid th, .paygrid td { padding: 2px 3px; text-align: right; }
+  .paygrid th:first-child, .paygrid td:first-child { text-align: left; padding-left: 0; }
+  .paygrid th { font-weight: 500; color: var(--text-muted); }
+  .paygrid input {
+    width: 64px;
+    padding: 2px 4px;
+    font-size: 12px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .paygrid .empty-cell { color: #c0c4cc; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: .3rem; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    padding: 3px 8px;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    background: white;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  .chip button {
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    margin: 0;
+  }
+  .chip button:hover { color: var(--danger); }
+
+  .path {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .5rem;
+    margin-bottom: .5rem;
+    background: #fafbfc;
+  }
+  .path .path-header { display: flex; gap: .5rem; align-items: center; margin-bottom: .4rem; }
+  .path .path-header input[type="text"] { flex: 1; }
+  .path .promotions { margin: .25rem 0; }
+  .path .promo {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: .25rem;
+    margin-bottom: .25rem;
+    font-size: 12px;
+  }
+  .path .promo select, .path .promo input { font-size: 12px; padding: 3px 5px; }
+  .path .dv-fields { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; margin-top: .3rem; }
+
+  main {
+    grid-area: main;
+    overflow: auto;
+    padding: 1rem 1.25rem 3rem;
+  }
+  .grid-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .75rem; }
+  .grid-header h2 { font-size: 16px; }
+  .grid-header .actions { display: flex; gap: .5rem; }
+
+  table.scenarios {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-variant-numeric: tabular-nums;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  table.scenarios th, table.scenarios td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+    font-size: 13px;
+  }
+  table.scenarios th:first-child, table.scenarios td:first-child,
+  table.scenarios th:nth-child(2), table.scenarios td:nth-child(2),
+  table.scenarios th:nth-child(3), table.scenarios td:nth-child(3),
+  table.scenarios th:nth-child(4), table.scenarios td:nth-child(4) {
+    text-align: left;
+  }
+  table.scenarios th {
+    background: #f1f3f6;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-size: 10.5px;
+    letter-spacing: .04em;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-bottom: 1px solid var(--border-strong);
+  }
+  table.scenarios tbody tr { cursor: pointer; transition: background 60ms; }
+  table.scenarios tbody tr:hover { background: var(--row-hover); }
+  table.scenarios tr.path-start td { border-top: 2px solid var(--border-strong); }
+  table.scenarios .path-cell { font-weight: 600; color: var(--text); }
+  table.scenarios .muted { color: var(--text-muted); }
+
+  .pill {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .pill.ok { background: #e7f5eb; color: var(--ok); }
+  .pill.warn { background: var(--warn-soft); color: var(--warn); }
+  .pill.cap { background: var(--cap-soft); color: var(--cap); }
+  .pill.danger { background: var(--danger-soft); color: var(--danger); }
+
+  /* Audit drawer */
+  .drawer {
+    position: fixed;
+    top: 0; right: 0;
+    height: 100vh;
+    width: 560px;
+    max-width: 90vw;
+    background: var(--panel);
+    border-left: 1px solid var(--border);
+    box-shadow: -6px 0 24px rgba(15, 20, 30, 0.08);
+    transform: translateX(100%);
+    transition: transform 180ms ease-out;
+    overflow-y: auto;
+    z-index: 30;
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer header {
+    position: sticky; top: 0; z-index: 2;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: .75rem 1rem;
+    display: flex; align-items: center; gap: .75rem;
+  }
+  .drawer header h2 { font-size: 15px; }
+  .drawer .body { padding: 1rem 1.25rem 2rem; }
+  .drawer .group { margin-bottom: 1.5rem; }
+  .drawer .group h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 3px;
+    margin-bottom: .5rem;
+  }
+  .drawer table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 12.5px; }
+  .drawer table th, .drawer table td { padding: 4px 6px; text-align: left; border-bottom: 1px solid var(--border); }
+  .drawer table td.num, .drawer table th.num { text-align: right; }
+  .drawer .kv { display: grid; grid-template-columns: 180px 1fr; gap: 4px 1rem; font-size: 13px; }
+  .drawer .kv .k { color: var(--text-muted); }
+  .drawer .kv .v { font-variant-numeric: tabular-nums; }
+  .drawer .formula { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; color: var(--text); background: #f6f7fa; padding: 8px 10px; border-radius: 4px; }
+  .drawer .warning { background: var(--warn-soft); color: var(--warn); padding: 8px 10px; border-radius: 4px; margin-bottom: .5rem; font-weight: 500; }
+  .drawer-backdrop {
+    position: fixed; inset: 0; background: rgba(15, 20, 30, .25);
+    opacity: 0; pointer-events: none; transition: opacity 180ms;
+    z-index: 25;
+  }
+  .drawer-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .empty-hint {
+    padding: 3rem 1rem; text-align: center; color: var(--text-muted);
+    background: var(--panel); border: 1px dashed var(--border-strong); border-radius: var(--radius);
+  }
+
+  /* Print */
+  @media print {
+    body { background: white; }
+    .app { display: block; height: auto; }
+    header, aside, .grid-header .actions, .no-print { display: none !important; }
+    main { padding: 0; overflow: visible; }
+    table.scenarios { box-shadow: none; border: 1px solid #999; }
+    table.scenarios th { background: #eee !important; -webkit-print-color-adjust: exact; }
+    .drawer { position: static; transform: none; width: 100%; box-shadow: none; border: none; }
+    .drawer-backdrop { display: none; }
+    body.print-audit-only main > .grid-header,
+    body.print-audit-only table.scenarios { display: none; }
+    body:not(.print-audit-only) .drawer { display: none; }
+  }
+
+  /* Small screens: stack sidebar above main */
+  @media (max-width: 900px) {
+    .app {
+      grid-template-columns: 1fr;
+      grid-template-areas: "header" "sidebar" "main";
+      height: auto;
+    }
+    aside { border-right: none; border-bottom: 1px solid var(--border); }
+    .drawer { width: 100vw; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+<header>
+  <h1>SJFD Tier 2 Retirement Calculator</h1>
+  <span class="subtitle">Planning tool · not official</span>
+  <div class="summary-pill" id="summary-pill"></div>
+</header>
+
+<aside>
+  <div class="section">
+    <h2>Personal</h2>
+    <div class="two-col">
+      <div class="field"><label>Birth date</label><input type="date" id="birth_date"></div>
+      <div class="field"><label>Hire date</label><input type="date" id="hire_date"></div>
+    </div>
+    <div class="two-col">
+      <div class="field">
+        <label>Current rank</label>
+        <select id="current_rank"></select>
+      </div>
+      <div class="field">
+        <label>Current step</label>
+        <input type="number" id="current_step" min="1" max="7" step="1">
+      </div>
+    </div>
+    <div class="field">
+      <label>Arrived at current step</label>
+      <input type="date" id="current_step_arrival_date">
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Rate assumptions</h2>
+    <div class="two-col">
+      <div class="field">
+        <label>GWI (%/yr)</label>
+        <input type="number" id="gwi_pct" min="0" max="20" step="0.01">
+      </div>
+      <div class="field">
+        <label>COLA (%/yr)</label>
+        <input type="number" id="cola_pct" min="0" max="2" step="0.01">
+      </div>
+    </div>
+    <div class="field">
+      <label>Pay grid effective date</label>
+      <input type="date" id="pay_grid_effective_date">
+    </div>
+    <div class="field inline">
+      <input type="checkbox" id="show_cola">
+      <label for="show_cola">Show COLA projection in audit</label>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Pay grid (bi-weekly)</h2>
+    <table class="paygrid" id="paygrid"></table>
+  </div>
+
+  <div class="section">
+    <h2>Retirement ages</h2>
+    <div class="chips" id="ages-chips"></div>
+    <div class="row" style="margin-top: .4rem;">
+      <input type="number" id="new_age" placeholder="Add age" min="40" max="80" step="1" style="width: 90px;">
+      <button class="btn small" id="add_age">Add</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Promotion paths</h2>
+    <div id="paths"></div>
+    <button class="btn small" id="add_path">+ Add promotion path</button>
+  </div>
+
+  <div class="section">
+    <h2>Actions</h2>
+    <div class="row" style="flex-wrap: wrap; gap: .4rem;">
+      <button class="btn" id="export_csv">Export CSV</button>
+      <button class="btn danger" id="reset">Reset to defaults</button>
+    </div>
+  </div>
+</aside>
+
+<main>
+  <div class="grid-header">
+    <h2>Scenarios</h2>
+    <div class="actions">
+      <span class="muted no-print" id="grid-meta"></span>
+    </div>
+  </div>
+  <div id="grid-container"></div>
+</main>
+
+</div><!-- /.app -->
+
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <header>
+    <h2 id="drawer-title">Scenario</h2>
+    <div style="margin-left:auto; display:flex; gap:.4rem;">
+      <button class="btn small" id="print_audit">Print</button>
+      <button class="btn small" id="close_drawer">Close</button>
+    </div>
+  </header>
+  <div class="body" id="drawer-body"></div>
+</aside>
+
+<script src="vendor/decimal.min.js"></script>
+<script src="engine.js"></script>
+<script>
+(function () {
+  "use strict";
+  const fc = window.firecalc;
+  if (!fc) { alert("firecalc engine failed to load"); return; }
+
+  const STORAGE_KEY = "sjfd_retirement_calculator_v1";
+  const SCHEMA_VERSION = 1;
+
+  // ---- Default state ----------------------------------------------------
+
+  function defaultState() {
+    const grid = {};
+    // Flatten firecalc.FY2627_PAY_GRID.rates (Map) into string-keyed object for storage.
+    for (const [k, v] of fc.FY2627_PAY_GRID.rates) grid[k] = v.toString();
+    return {
+      schemaVersion: SCHEMA_VERSION,
+      personal: {
+        birth_date: "1986-10-01",
+        hire_date: "2019-03-24",
+        current_rank: "Firefighter",
+        current_step: 7,
+        current_step_arrival_date: "2025-03-24",
+      },
+      rates: { gwi_rate: "0.035", cola_rate: "0.020" },
+      pay_grid: grid,
+      pay_grid_effective_date: "2026-07-01",
+      retirement_ages: [50, 52, 55, 57, 60, 65, 70],
+      paths: [
+        { name: "No promotions", retirement_type: "active", separation_date: null, pension_start_date: null, promotions: [] },
+      ],
+      show_cola: false,
+    };
+  }
+
+  // ---- State persistence -----------------------------------------------
+
+  let state = loadState();
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return defaultState();
+      const parsed = JSON.parse(raw);
+      if (!parsed || parsed.schemaVersion !== SCHEMA_VERSION) {
+        console.warn("stored state schema mismatch; resetting");
+        return defaultState();
+      }
+      return parsed;
+    } catch (e) {
+      console.warn("failed to load state:", e);
+      return defaultState();
+    }
+  }
+
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch (e) { console.warn("save failed:", e); }
+  }
+
+  function resetAll() {
+    if (!confirm("Reset all inputs to FY 2026/27 defaults? Your current settings will be lost.")) return;
+    state = defaultState();
+    saveState();
+    renderAll();
+  }
+
+  // ---- Engine bridge ---------------------------------------------------
+
+  function buildScenarioInputs(path, age) {
+    const rates = new Map();
+    for (const k of Object.keys(state.pay_grid)) {
+      if (state.pay_grid[k] !== "" && state.pay_grid[k] != null) {
+        rates.set(k, new Decimal(state.pay_grid[k]));
+      }
+    }
+    return {
+      birth_date: fc.parseIsoDate(state.personal.birth_date),
+      hire_date: fc.parseIsoDate(state.personal.hire_date),
+      current_rank: state.personal.current_rank,
+      current_step: Number(state.personal.current_step),
+      current_step_arrival_date: fc.parseIsoDate(state.personal.current_step_arrival_date),
+      pay_grid: { rates },
+      pay_grid_effective_date: fc.parseIsoDate(state.pay_grid_effective_date),
+      gwi_rate: new Decimal(state.rates.gwi_rate),
+      cola_rate: new Decimal(state.rates.cola_rate),
+      gwi_effective_month_day: [7, 1],
+      cola_effective_month_day: [2, 1],
+      retirement_age: age,
+      promotions: (path.promotions || []).map((p) => ({
+        new_rank: p.new_rank,
+        effective_date: fc.parseIsoDate(p.effective_date),
+      })),
+      retirement_type: path.retirement_type,
+      separation_date: path.separation_date ? fc.parseIsoDate(path.separation_date) : null,
+      pension_start_date: path.pension_start_date ? fc.parseIsoDate(path.pension_start_date) : null,
+      show_cola: !!state.show_cola,
+      as_of_date: fc.parseIsoDate(new Date().toISOString().slice(0, 10)),
+    };
+  }
+
+  function runScenario(path, age) {
+    try {
+      return fc.computeRetirementScenario(buildScenarioInputs(path, age));
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+
+  // ---- Formatters -------------------------------------------------------
+
+  const money = (d) => {
+    if (d == null) return "—";
+    const n = Number(d.toString());
+    if (!Number.isFinite(n)) return "—";
+    return "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+  const pct = (d) => {
+    if (d == null) return "—";
+    const n = Number(d.toString()) * 100;
+    return n.toFixed(2) + "%";
+  };
+  const fmtDate = (d) => (d && typeof d === "object") ? fc.isoDate(d) : (d || "—");
+
+  // ---- Render: summary pill --------------------------------------------
+
+  function renderSummary() {
+    const el = document.getElementById("summary-pill");
+    const p = state.personal;
+    const rates = new Map();
+    for (const k of Object.keys(state.pay_grid)) {
+      if (state.pay_grid[k] !== "") rates.set(k, new Decimal(state.pay_grid[k]));
+    }
+    const bw = rates.get(`${p.current_rank}|${p.current_step}`);
+    const annual = bw ? Number(bw.times(26).toString()) : null;
+    const today = fc.parseIsoDate(new Date().toISOString().slice(0, 10));
+    let yosNow = "—";
+    try {
+      const hire = fc.parseIsoDate(p.hire_date);
+      if (fc.compareDates(today, hire) > 0) {
+        const y = fc.computeYos(hire, today);
+        yosNow = (y._dp !== undefined ? y.toFixed(2) : y.toString());
+      }
+    } catch (e) { /* ignore invalid dates */ }
+
+    el.innerHTML =
+      `<div class="item"><span class="k">Rank · Step</span><span class="v">${escapeHtml(p.current_rank)} · ${p.current_step}</span></div>` +
+      `<div class="item"><span class="k">YOS today</span><span class="v">${yosNow}</span></div>` +
+      `<div class="item"><span class="k">Current annual</span><span class="v">${annual != null ? ("$" + annual.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })) : "—"}</span></div>`;
+  }
+
+  // ---- Render: pay grid -------------------------------------------------
+
+  function renderPayGrid() {
+    const el = document.getElementById("paygrid");
+    const ranks = fc.RANK_ORDER;
+    let html = "<thead><tr><th></th>";
+    for (let s = 1; s <= 7; s++) html += `<th>${s}</th>`;
+    html += "</tr></thead><tbody>";
+    for (const rank of ranks) {
+      html += `<tr><td>${escapeHtml(rank.replace("Firefighter Recruit", "FF Recruit").replace("Firefighter", "FF").replace("Fire Engineer", "Engineer").replace("Fire Captain", "Captain"))}</td>`;
+      for (let s = 1; s <= 7; s++) {
+        const key = `${rank}|${s}`;
+        const val = state.pay_grid[key];
+        if (val == null) {
+          html += `<td class="empty-cell">—</td>`;
+        } else {
+          html += `<td><input type="number" step="0.01" data-paygrid-key="${escapeAttr(key)}" value="${escapeAttr(val)}"></td>`;
+        }
+      }
+      html += "</tr>";
+    }
+    html += "</tbody>";
+    el.innerHTML = html;
+  }
+
+  // ---- Render: retirement ages chips -----------------------------------
+
+  function renderAges() {
+    const el = document.getElementById("ages-chips");
+    el.innerHTML = state.retirement_ages
+      .sort((a, b) => a - b)
+      .map((a) => `<span class="chip">${a}<button data-remove-age="${a}" aria-label="Remove">×</button></span>`)
+      .join("");
+  }
+
+  // ---- Render: promotion paths -----------------------------------------
+
+  function renderPaths() {
+    const el = document.getElementById("paths");
+    el.innerHTML = state.paths.map((path, i) => renderPath(path, i)).join("");
+  }
+
+  function renderPath(path, i) {
+    const promotions = (path.promotions || []).map((p, j) => {
+      const ranks = ["Fire Engineer", "Fire Captain"]
+        .map((r) => `<option value="${r}"${p.new_rank === r ? " selected" : ""}>${r}</option>`).join("");
+      return `<div class="promo">
+        <select data-promo-rank data-path="${i}" data-promo="${j}">${ranks}</select>
+        <input type="date" data-promo-date data-path="${i}" data-promo="${j}" value="${escapeAttr(p.effective_date || "")}">
+        <button class="btn small" data-remove-promo data-path="${i}" data-promo="${j}">×</button>
+      </div>`;
+    }).join("");
+
+    const dv = path.retirement_type === "deferred_vested";
+    const dvBlock = dv ? `
+      <div class="dv-fields">
+        <div class="field"><label>Separation date</label>
+          <input type="date" data-dv-sep data-path="${i}" value="${escapeAttr(path.separation_date || "")}">
+        </div>
+        <div class="field"><label>Pension start</label>
+          <input type="date" data-dv-start data-path="${i}" value="${escapeAttr(path.pension_start_date || "")}">
+        </div>
+      </div>` : "";
+
+    const removeBtn = i === 0 ? "" : `<button class="btn small danger" data-remove-path="${i}">Remove</button>`;
+
+    return `<div class="path">
+      <div class="path-header">
+        <input type="text" data-path-name="${i}" value="${escapeAttr(path.name)}">
+        ${removeBtn}
+      </div>
+      <div class="field inline">
+        <input type="checkbox" id="dv_${i}" data-dv-toggle="${i}"${dv ? " checked" : ""}>
+        <label for="dv_${i}">Deferred vested</label>
+      </div>
+      ${dvBlock}
+      <div class="promotions">${promotions}</div>
+      <button class="btn small" data-add-promo="${i}">+ Add promotion</button>
+    </div>`;
+  }
+
+  // ---- Render: main scenario grid --------------------------------------
+
+  let lastResults = [];
+
+  function renderGrid() {
+    const host = document.getElementById("grid-container");
+    const meta = document.getElementById("grid-meta");
+    const ages = state.retirement_ages.slice().sort((a, b) => a - b);
+    lastResults = [];
+
+    if (state.paths.length === 0 || ages.length === 0) {
+      host.innerHTML = `<div class="empty-hint">Add at least one promotion path and one retirement age to see scenarios.</div>`;
+      meta.textContent = "";
+      return;
+    }
+
+    let rowCount = 0;
+    let html = `<table class="scenarios"><thead><tr>
+      <th>Path</th><th>Age</th><th>Retire date</th><th>Final rank/step</th>
+      <th>YOS</th><th>FC (3yr)</th><th>FC (final)</th><th>Benefit %</th>
+      <th>Cap?</th><th>Penalty</th>
+      <th>Annual (3yr)</th><th>Monthly (3yr)</th>
+      <th>Annual (final)</th><th>Monthly (final)</th>
+    </tr></thead><tbody>`;
+
+    state.paths.forEach((path, pi) => {
+      ages.forEach((age, ai) => {
+        const result = runScenario(path, age);
+        const idx = lastResults.length;
+        lastResults.push({ path, age, result });
+        rowCount++;
+
+        if (result.error) {
+          html += `<tr${ai === 0 ? ' class="path-start"' : ""} data-result-idx="${idx}">
+            <td class="path-cell">${ai === 0 ? escapeHtml(path.name) : ""}</td>
+            <td>${age}</td>
+            <td colspan="12"><span class="pill danger">Error:</span> ${escapeHtml(result.error)}</td>
+          </tr>`;
+          return;
+        }
+
+        const hasWarn = result.warnings && result.warnings.length > 0;
+        const warnCell = hasWarn
+          ? `<span class="pill warn" title="${escapeAttr(result.warnings.join(' · '))}">${escapeHtml(result.warnings.length + ' warning' + (result.warnings.length > 1 ? 's' : ''))}</span>`
+          : "";
+
+        const pensionCells = hasWarn
+          ? `<td colspan="4">${warnCell}</td>`
+          : `<td>${money(result.annual_pension_3yr)}</td>
+             <td>${money(result.monthly_pension_3yr)}</td>
+             <td>${money(result.annual_pension_final)}</td>
+             <td>${money(result.monthly_pension_final)}</td>`;
+
+        html += `<tr${ai === 0 ? ' class="path-start"' : ""} data-result-idx="${idx}">
+          <td class="path-cell">${ai === 0 ? escapeHtml(path.name) : ""}</td>
+          <td>${age}</td>
+          <td>${fmtDate(result.retirement_date)}</td>
+          <td>${escapeHtml(result.final_rank)} · ${result.final_step}</td>
+          <td>${result.yos_at_retirement._dp !== undefined ? result.yos_at_retirement.toFixed(2) : result.yos_at_retirement.toString()}</td>
+          <td>${money(result.fc_3yr.annual_fc)}</td>
+          <td>${money(result.fc_final.annual_fc)}</td>
+          <td>${pct(result.benefit_pct_detail.final_pct)}</td>
+          <td>${result.cap_reached ? '<span class="pill cap">cap</span>' : '<span class="muted">—</span>'}</td>
+          <td>${result.early_reduction.years_before_57 > 0 ? pct(result.early_reduction.reduction_pct) : '<span class="muted">—</span>'}</td>
+          ${pensionCells}
+        </tr>`;
+      });
+    });
+    html += "</tbody></table>";
+    host.innerHTML = html;
+    meta.textContent = `${rowCount} scenario${rowCount === 1 ? "" : "s"}`;
+  }
+
+  // ---- Render: audit drawer --------------------------------------------
+
+  function openDrawer(idx) {
+    const entry = lastResults[idx];
+    if (!entry) return;
+    const { path, age, result } = entry;
+    document.getElementById("drawer-title").textContent = `${path.name} · age ${age}`;
+    document.getElementById("drawer-body").innerHTML = renderAudit(path, age, result);
+    document.getElementById("drawer").classList.add("open");
+    document.getElementById("drawer").setAttribute("aria-hidden", "false");
+    document.getElementById("drawer-backdrop").classList.add("open");
+  }
+  function closeDrawer() {
+    document.getElementById("drawer").classList.remove("open");
+    document.getElementById("drawer").setAttribute("aria-hidden", "true");
+    document.getElementById("drawer-backdrop").classList.remove("open");
+    document.body.classList.remove("print-audit-only");
+  }
+
+  function renderAudit(path, age, r) {
+    if (r.error) return `<div class="warning">Error: ${escapeHtml(r.error)}</div>`;
+    const bp = r.benefit_pct_detail;
+    const er = r.early_reduction;
+
+    const warningsHtml = (r.warnings && r.warnings.length)
+      ? r.warnings.map((w) => `<div class="warning">${escapeHtml(w)}</div>`).join("")
+      : "";
+
+    const tierRows = [];
+    if (Number(bp.tier1_years.toString()) > 0) tierRows.push(`<tr><td>Tier 1 (yrs 1–20 @ 2.4%)</td><td class="num">${bp.tier1_years.toString()}</td><td class="num">${pct(bp.tier1_pct)}</td></tr>`);
+    if (Number(bp.tier2_years.toString()) > 0) tierRows.push(`<tr><td>Tier 2 (yrs 21–25 @ 3.0%)</td><td class="num">${bp.tier2_years.toString()}</td><td class="num">${pct(bp.tier2_pct)}</td></tr>`);
+    if (Number(bp.tier3_years.toString()) > 0) tierRows.push(`<tr><td>Tier 3 (yrs 26+ @ 3.4%)</td><td class="num">${bp.tier3_years.toString()}</td><td class="num">${pct(bp.tier3_pct)}</td></tr>`);
+
+    const fcRows = (r.fc_3yr.yearly_earnings || []).map((y) =>
+      `<tr><td>${fmtDate(y.year_start)} → ${fmtDate(y.year_end)}</td><td class="num">${money(y.annual_base)}</td></tr>`
+    ).join("");
+
+    const timelineRows = (r.salary_timeline || []).map((s) =>
+      `<tr><td>${fmtDate(s.start)} → ${fmtDate(s.end)}</td><td>${escapeHtml(s.event)}</td><td>${escapeHtml(s.rank)}</td><td class="num">${s.step}</td><td class="num">${money(s.biweekly)}</td><td class="num">${money(s.annual)}</td></tr>`
+    ).join("");
+
+    const colaRows = (r.cola_rows_3yr || []).map((c) =>
+      `<tr><td class="num">${c.age}</td><td class="num">${c.year}</td><td class="num">${money(c.annual_pension)}</td><td class="num">${money(c.monthly_pension)}</td></tr>`
+    ).join("");
+
+    return `
+      ${warningsHtml}
+      <div class="group">
+        <h3>Snapshot</h3>
+        <div class="kv">
+          <div class="k">Birth date</div><div class="v">${fmtDate(r.inputs.birth_date)}</div>
+          <div class="k">Hire date</div><div class="v">${fmtDate(r.inputs.hire_date)}</div>
+          <div class="k">Retirement date</div><div class="v">${fmtDate(r.retirement_date)}</div>
+          ${r.separation_date ? `<div class="k">Separation date</div><div class="v">${fmtDate(r.separation_date)}</div>` : ""}
+          <div class="k">YOS at ${r.inputs.retirement_type === "deferred_vested" ? "separation" : "retirement"}</div>
+          <div class="v">${r.yos_at_retirement._dp !== undefined ? r.yos_at_retirement.toFixed(4) : r.yos_at_retirement.toString()}</div>
+          <div class="k">Final rank · step</div><div class="v">${escapeHtml(r.final_rank)} · ${r.final_step}</div>
+          <div class="k">Cap reached</div><div class="v">${r.cap_reached ? "Yes (80%)" : "No"}${r.cap_date ? " at " + fmtDate(r.cap_date) : ""}</div>
+        </div>
+      </div>
+
+      <div class="group">
+        <h3>Benefit % derivation</h3>
+        <table>
+          <thead><tr><th>Tier</th><th class="num">Years</th><th class="num">Contribution</th></tr></thead>
+          <tbody>${tierRows.join("") || '<tr><td colspan="3" class="muted">No service credited</td></tr>'}</tbody>
+          <tfoot>
+            <tr><td>Raw total</td><td></td><td class="num">${pct(bp.raw_pct)}</td></tr>
+            <tr><td>After 80% cap</td><td></td><td class="num"><strong>${pct(bp.final_pct)}</strong></td></tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="group">
+        <h3>Early retirement reduction</h3>
+        ${er.years_before_57 > 0
+          ? `<div class="formula">Retire at ${er.retirement_age}, which is ${er.years_before_57} year${er.years_before_57 === 1 ? "" : "s"} before 57. Reduction = ${er.years_before_57} × 7% = ${pct(er.reduction_pct)}. Factor = ${er.factor.toFixed(4)}.</div>`
+          : `<div class="formula">No reduction (retiring at age ${er.retirement_age}, ≥ 57).</div>`}
+      </div>
+
+      <div class="group">
+        <h3>Final Compensation</h3>
+        <div class="kv">
+          <div class="k">FC (3yr avg)</div><div class="v">${money(r.fc_3yr.annual_fc)}</div>
+          <div class="k">FC (final year)</div><div class="v">${money(r.fc_final.annual_fc)}</div>
+          <div class="k">Note</div><div class="v">${escapeHtml(r.fc_3yr.note || "")}</div>
+        </div>
+        ${fcRows ? `<table style="margin-top:.5rem"><thead><tr><th>3-yr window</th><th class="num">Annual base</th></tr></thead><tbody>${fcRows}</tbody></table>` : ""}
+      </div>
+
+      <div class="group">
+        <h3>Pension figures</h3>
+        <div class="kv">
+          <div class="k">Annual (3yr FC)</div><div class="v"><strong>${money(r.annual_pension_3yr)}</strong></div>
+          <div class="k">Monthly (3yr FC)</div><div class="v"><strong>${money(r.monthly_pension_3yr)}</strong></div>
+          <div class="k">Annual (final FC)</div><div class="v">${money(r.annual_pension_final)}</div>
+          <div class="k">Monthly (final FC)</div><div class="v">${money(r.monthly_pension_final)}</div>
+        </div>
+      </div>
+
+      <div class="group">
+        <h3>Salary timeline</h3>
+        <table>
+          <thead><tr><th>Period</th><th>Event</th><th>Rank</th><th class="num">Step</th><th class="num">Bi-weekly</th><th class="num">Annual</th></tr></thead>
+          <tbody>${timelineRows || '<tr><td colspan="6" class="muted">No segments</td></tr>'}</tbody>
+        </table>
+      </div>
+
+      ${colaRows ? `<div class="group"><h3>COLA projection (3yr FC)</h3>
+        <table><thead><tr><th class="num">Age</th><th class="num">Year</th><th class="num">Annual</th><th class="num">Monthly</th></tr></thead>
+        <tbody>${colaRows}</tbody></table></div>` : ""}
+    `;
+  }
+
+  // ---- CSV export -------------------------------------------------------
+
+  function exportCsv() {
+    if (lastResults.length === 0) { alert("No scenarios to export."); return; }
+    const headers = [
+      "Path", "Retirement Age", "Retirement Date", "Final Rank", "Final Step",
+      "YOS", "FC 3yr", "FC Final", "Benefit %", "Cap Reached", "Early Penalty %",
+      "Annual Pension (3yr)", "Monthly Pension (3yr)",
+      "Annual Pension (final)", "Monthly Pension (final)", "Warnings",
+    ];
+    const rows = lastResults.map(({ path, age, result: r }) => {
+      if (r.error) return [path.name, age, "", "", "", "", "", "", "", "", "", "", "", "", "", "ERROR: " + r.error];
+      const warn = (r.warnings || []).join(" | ");
+      return [
+        path.name, age,
+        fmtDate(r.retirement_date),
+        r.final_rank, r.final_step,
+        r.yos_at_retirement._dp !== undefined ? r.yos_at_retirement.toFixed(4) : r.yos_at_retirement.toString(),
+        r.fc_3yr.annual_fc.toFixed(2),
+        r.fc_final.annual_fc.toFixed(2),
+        (Number(r.benefit_pct_detail.final_pct.toString()) * 100).toFixed(2) + "%",
+        r.cap_reached ? "Yes" : "No",
+        r.early_reduction.years_before_57 > 0 ? (Number(r.early_reduction.reduction_pct.toString()) * 100).toFixed(2) + "%" : "",
+        r.annual_pension_3yr.toFixed(2),
+        r.monthly_pension_3yr.toFixed(2),
+        r.annual_pension_final.toFixed(2),
+        r.monthly_pension_final.toFixed(2),
+        warn,
+      ];
+    });
+    const csv = [headers, ...rows].map((row) =>
+      row.map((cell) => {
+        const s = String(cell ?? "");
+        return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+      }).join(",")
+    ).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const ymd = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `sjfd-retirement-scenarios-${ymd}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  // ---- Sidebar bindings -------------------------------------------------
+
+  function bindStaticInputs() {
+    // Personal / rates
+    document.getElementById("birth_date").addEventListener("change", (e) => { state.personal.birth_date = e.target.value; scheduleRender(); });
+    document.getElementById("hire_date").addEventListener("change", (e) => { state.personal.hire_date = e.target.value; scheduleRender(); });
+    document.getElementById("current_rank").addEventListener("change", (e) => { state.personal.current_rank = e.target.value; scheduleRender(); });
+    document.getElementById("current_step").addEventListener("input", (e) => { state.personal.current_step = Math.max(1, Number(e.target.value) || 1); scheduleRender(); });
+    document.getElementById("current_step_arrival_date").addEventListener("change", (e) => { state.personal.current_step_arrival_date = e.target.value; scheduleRender(); });
+    document.getElementById("gwi_pct").addEventListener("input", (e) => { state.rates.gwi_rate = (Number(e.target.value || 0) / 100).toFixed(4); scheduleRender(); });
+    document.getElementById("cola_pct").addEventListener("input", (e) => { state.rates.cola_rate = (Number(e.target.value || 0) / 100).toFixed(4); scheduleRender(); });
+    document.getElementById("pay_grid_effective_date").addEventListener("change", (e) => { state.pay_grid_effective_date = e.target.value; scheduleRender(); });
+    document.getElementById("show_cola").addEventListener("change", (e) => { state.show_cola = e.target.checked; scheduleRender(); });
+
+    // Pay grid (event delegation)
+    document.getElementById("paygrid").addEventListener("input", (e) => {
+      const key = e.target.getAttribute("data-paygrid-key");
+      if (!key) return;
+      state.pay_grid[key] = e.target.value;
+      scheduleRender();
+    });
+
+    // Retirement ages
+    document.getElementById("ages-chips").addEventListener("click", (e) => {
+      const age = e.target.getAttribute("data-remove-age");
+      if (age) {
+        state.retirement_ages = state.retirement_ages.filter((a) => a !== Number(age));
+        scheduleRender();
+      }
+    });
+    document.getElementById("add_age").addEventListener("click", () => {
+      const v = Number(document.getElementById("new_age").value);
+      if (!v || v < 40 || v > 80) return;
+      if (!state.retirement_ages.includes(v)) state.retirement_ages.push(v);
+      document.getElementById("new_age").value = "";
+      scheduleRender();
+    });
+
+    // Promotion paths (event delegation)
+    document.getElementById("paths").addEventListener("input", handlePathInput);
+    document.getElementById("paths").addEventListener("change", handlePathInput);
+    document.getElementById("paths").addEventListener("click", handlePathClick);
+
+    document.getElementById("add_path").addEventListener("click", () => {
+      state.paths.push({ name: `Path ${state.paths.length + 1}`, retirement_type: "active", separation_date: null, pension_start_date: null, promotions: [] });
+      scheduleRender();
+    });
+
+    // Actions
+    document.getElementById("reset").addEventListener("click", resetAll);
+    document.getElementById("export_csv").addEventListener("click", exportCsv);
+
+    // Drawer
+    document.getElementById("close_drawer").addEventListener("click", closeDrawer);
+    document.getElementById("drawer-backdrop").addEventListener("click", closeDrawer);
+    document.getElementById("print_audit").addEventListener("click", () => {
+      document.body.classList.add("print-audit-only");
+      window.print();
+      setTimeout(() => document.body.classList.remove("print-audit-only"), 500);
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDrawer(); });
+  }
+
+  function handlePathInput(e) {
+    const t = e.target;
+    const pathIdx = Number(t.getAttribute("data-path") || t.getAttribute("data-path-name") || t.getAttribute("data-dv-toggle"));
+    if (t.hasAttribute("data-path-name")) {
+      state.paths[Number(t.getAttribute("data-path-name"))].name = t.value;
+    } else if (t.hasAttribute("data-promo-rank")) {
+      state.paths[pathIdx].promotions[Number(t.getAttribute("data-promo"))].new_rank = t.value;
+    } else if (t.hasAttribute("data-promo-date")) {
+      state.paths[pathIdx].promotions[Number(t.getAttribute("data-promo"))].effective_date = t.value;
+    } else if (t.hasAttribute("data-dv-toggle")) {
+      state.paths[pathIdx].retirement_type = t.checked ? "deferred_vested" : "active";
+      if (!t.checked) { state.paths[pathIdx].separation_date = null; state.paths[pathIdx].pension_start_date = null; }
+    } else if (t.hasAttribute("data-dv-sep")) {
+      state.paths[pathIdx].separation_date = t.value;
+    } else if (t.hasAttribute("data-dv-start")) {
+      state.paths[pathIdx].pension_start_date = t.value;
+    } else {
+      return;
+    }
+    scheduleRender();
+  }
+
+  function handlePathClick(e) {
+    const t = e.target.closest("button");
+    if (!t) return;
+    if (t.hasAttribute("data-add-promo")) {
+      const i = Number(t.getAttribute("data-add-promo"));
+      state.paths[i].promotions.push({ new_rank: "Fire Engineer", effective_date: "" });
+      scheduleRender();
+    } else if (t.hasAttribute("data-remove-promo")) {
+      const i = Number(t.getAttribute("data-path"));
+      const j = Number(t.getAttribute("data-promo"));
+      state.paths[i].promotions.splice(j, 1);
+      scheduleRender();
+    } else if (t.hasAttribute("data-remove-path")) {
+      const i = Number(t.getAttribute("data-remove-path"));
+      if (state.paths.length > 1) state.paths.splice(i, 1);
+      scheduleRender();
+    }
+  }
+
+  function populateRankOptions() {
+    const sel = document.getElementById("current_rank");
+    const ranks = fc.RANK_ORDER.filter((r) => r !== "Firefighter Recruit");
+    sel.innerHTML = ranks.map((r) => `<option value="${r}">${r}</option>`).join("");
+  }
+
+  function syncStaticInputs() {
+    document.getElementById("birth_date").value = state.personal.birth_date;
+    document.getElementById("hire_date").value = state.personal.hire_date;
+    document.getElementById("current_rank").value = state.personal.current_rank;
+    document.getElementById("current_step").value = state.personal.current_step;
+    document.getElementById("current_step_arrival_date").value = state.personal.current_step_arrival_date;
+    document.getElementById("gwi_pct").value = (Number(state.rates.gwi_rate) * 100).toFixed(2);
+    document.getElementById("cola_pct").value = (Number(state.rates.cola_rate) * 100).toFixed(2);
+    document.getElementById("pay_grid_effective_date").value = state.pay_grid_effective_date;
+    document.getElementById("show_cola").checked = !!state.show_cola;
+  }
+
+  // Click on a grid row opens the drawer
+  document.addEventListener("click", (e) => {
+    const tr = e.target.closest("tr[data-result-idx]");
+    if (tr && !e.target.closest("aside")) {
+      openDrawer(Number(tr.getAttribute("data-result-idx")));
+    }
+  });
+
+  // ---- Render orchestration --------------------------------------------
+
+  let renderPending = false;
+  function scheduleRender() {
+    if (renderPending) return;
+    renderPending = true;
+    requestAnimationFrame(() => {
+      renderPending = false;
+      saveState();
+      renderAll();
+    });
+  }
+
+  function renderAll() {
+    syncStaticInputs();
+    renderSummary();
+    renderPayGrid();
+    renderAges();
+    renderPaths();
+    renderGrid();
+  }
+
+  // ---- Boot -------------------------------------------------------------
+
+  function escapeHtml(s) { return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+  function escapeAttr(s) { return escapeHtml(s); }
+
+  populateRankOptions();
+  bindStaticInputs();
+  renderAll();
+})();
+</script>
+</body>
+</html>
