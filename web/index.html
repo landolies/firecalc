@@ -589,7 +589,7 @@
   if (!fc) { alert("firecalc engine failed to load"); return; }
 
   const STORAGE_KEY = "sjfd_retirement_calculator_v1";
-  const SCHEMA_VERSION = 2;
+  const SCHEMA_VERSION = 3;
   const AGE_RANGE_FLOOR = 45;
   const AGE_RANGE_CEILING = 75;
 
@@ -613,7 +613,7 @@
       pay_grid_effective_date: "2026-07-01",
       retirement_age_range: { min: 50, max: 70 },
       paths: [
-        { name: "No promotions", retirement_type: "active", separation_date: null, pension_start_date: null, promotions: [] },
+        { name: "No promotions", retirement_type: "active", separation_date: null, promotions: [] },
       ],
       show_cola: false,
       show_final_method: false,
@@ -634,6 +634,12 @@
       parsed.retirement_age_range = { min, max: Math.max(min, max) };
       delete parsed.retirement_ages;
       parsed.schemaVersion = 2;
+    }
+    // v2 → v3: drop pension_start_date from paths. In deferred-vested mode
+    // the slider-age now drives pension start, so the field is redundant.
+    if (parsed.schemaVersion === 2 && Array.isArray(parsed.paths)) {
+      for (const p of parsed.paths) delete p.pension_start_date;
+      parsed.schemaVersion = 3;
     }
     return parsed;
   }
@@ -677,8 +683,15 @@
         rates.set(k, new Decimal(state.pay_grid[k]));
       }
     }
+    const birthDate = fc.parseIsoDate(state.personal.birth_date);
+    // For deferred-vested paths the slider age = age at pension start.
+    // Derive pension_start_date from birthday(age) so each row varies the
+    // early-reduction factor independently of separation.
+    const isDV = path.retirement_type === "deferred_vested";
+    const pensionStart = isDV ? fc.addYears(birthDate, age) : null;
+
     return {
-      birth_date: fc.parseIsoDate(state.personal.birth_date),
+      birth_date: birthDate,
       hire_date: fc.parseIsoDate(state.personal.hire_date),
       current_rank: state.personal.current_rank,
       current_step: Number(state.personal.current_step),
@@ -690,13 +703,15 @@
       gwi_effective_month_day: [7, 1],
       cola_effective_month_day: [2, 1],
       retirement_age: age,
-      promotions: (path.promotions || []).map((p) => ({
-        new_rank: p.new_rank,
-        effective_date: fc.parseIsoDate(p.effective_date),
-      })),
+      promotions: (path.promotions || [])
+        .filter((p) => p.effective_date)
+        .map((p) => ({
+          new_rank: p.new_rank,
+          effective_date: fc.parseIsoDate(p.effective_date),
+        })),
       retirement_type: path.retirement_type,
       separation_date: path.separation_date ? fc.parseIsoDate(path.separation_date) : null,
-      pension_start_date: path.pension_start_date ? fc.parseIsoDate(path.pension_start_date) : null,
+      pension_start_date: pensionStart,
       show_cola: !!state.show_cola,
       as_of_date: fc.parseIsoDate(new Date().toISOString().slice(0, 10)),
     };
@@ -802,6 +817,7 @@
   function renderPaths() {
     const el = document.getElementById("paths");
     el.innerHTML = state.paths.map((path, i) => renderPath(path, i)).join("");
+    revalidateAllPaths();
   }
 
   function renderPath(path, i) {
@@ -822,17 +838,10 @@
     const dv = path.retirement_type === "deferred_vested";
     const dvBlock = dv ? `
       <div class="dv-fields">
-        <div class="field">
-          <label>Separation date <span class="help" data-tip="Date you separate from service. YOS is counted up to this date and FC is frozen as of this date (GWI after separation does NOT grow FC per plan rules).">ⓘ</span></label>
+        <div class="field" style="grid-column: 1 / -1;">
+          <label>Separation date <span class="help" data-tip="Date you separate from service. YOS and FC are frozen as of this date. Pension itself starts at the age chosen in the retirement-age slider — one grid row per age, each with its own early-reduction factor.">ⓘ</span></label>
           <input type="text" data-dv-sep data-path="${i}"
                  value="${escapeAttr(path.separation_date || "")}"
-                 placeholder="YYYY-MM-DD"
-                 inputmode="numeric" maxlength="10" autocomplete="off">
-        </div>
-        <div class="field">
-          <label>Pension start <span class="help" data-tip="Date the pension begins (typically at age 50 or later). Must be on or after separation. Early-retirement reduction is computed from the age at this date, not at separation.">ⓘ</span></label>
-          <input type="text" data-dv-start data-path="${i}"
-                 value="${escapeAttr(path.pension_start_date || "")}"
                  placeholder="YYYY-MM-DD"
                  inputmode="numeric" maxlength="10" autocomplete="off">
         </div>
@@ -913,15 +922,50 @@
     html += `<tr>${primaryCols.join("")}${finalCols.join("")}</tr></thead><tbody>`;
 
     state.paths.forEach((path, pi) => {
+      const isDV = path.retirement_type === "deferred_vested";
+      const validation = revalidatePath(pi);
+      const pathLabel = escapeHtml(path.name) + (isDV ? ' <span class="pill cap" title="Deferred vested — YOS/FC frozen at separation; pension starts at the row\'s age.">DV</span>' : "");
+
       ages.forEach((age, ai) => {
-        const result = runScenario(path, age);
         const idx = lastResults.length;
-        lastResults.push({ path, age, result });
         rowCount++;
+
+        // Preflight: DV paths need a separation date; dates must not conflict.
+        let dvError = null;
+        if (isDV) {
+          if (!path.separation_date || !isValidIsoDate(path.separation_date)) {
+            dvError = "Set a valid separation date for this deferred-vested path.";
+          } else if (validation.anyError) {
+            dvError = "Fix the highlighted date(s) on this path (promotion after separation, or separation before hire).";
+          } else {
+            // Pension start (age's birthday) must be on or after separation.
+            const birth = state.personal.birth_date;
+            if (isValidIsoDate(birth)) {
+              const bd = fc.parseIsoDate(birth);
+              const ps = fc.addYears(bd, age);
+              if (fc.compareDates(ps, fc.parseIsoDate(path.separation_date)) < 0) {
+                dvError = `Pension start at age ${age} (${fc.isoDate(ps)}) would be before separation (${path.separation_date}).`;
+              }
+            }
+          }
+        }
+
+        if (dvError) {
+          lastResults.push({ path, age, result: { error: dvError } });
+          html += `<tr${ai === 0 ? ' class="path-start"' : ""} data-result-idx="${idx}">
+            <td class="path-cell">${ai === 0 ? pathLabel : ""}</td>
+            <td>${age}</td>
+            <td colspan="${totalCols - 2}"><span class="pill warn">${escapeHtml(dvError)}</span></td>
+          </tr>`;
+          return;
+        }
+
+        const result = runScenario(path, age);
+        lastResults.push({ path, age, result });
 
         if (result.error) {
           html += `<tr${ai === 0 ? ' class="path-start"' : ""} data-result-idx="${idx}">
-            <td class="path-cell">${ai === 0 ? escapeHtml(path.name) : ""}</td>
+            <td class="path-cell">${ai === 0 ? pathLabel : ""}</td>
             <td>${age}</td>
             <td colspan="${totalCols - 2}"><span class="pill danger">Error:</span> ${escapeHtml(result.error)}</td>
           </tr>`;
@@ -949,7 +993,7 @@
         }
 
         html += `<tr${ai === 0 ? ' class="path-start"' : ""} data-result-idx="${idx}">
-          <td class="path-cell">${ai === 0 ? escapeHtml(path.name) : ""}</td>
+          <td class="path-cell">${ai === 0 ? pathLabel : ""}</td>
           <td>${age}</td>
           <td>${fmtDate(result.retirement_date)}</td>
           <td>${escapeHtml(result.final_rank)} · ${result.final_step}</td>
@@ -1020,8 +1064,10 @@
         <div class="kv">
           <div class="k">Birth date</div><div class="v">${fmtDate(r.inputs.birth_date)}</div>
           <div class="k">Hire date</div><div class="v">${fmtDate(r.inputs.hire_date)}</div>
-          <div class="k">Retirement date</div><div class="v">${fmtDate(r.retirement_date)}</div>
-          ${r.separation_date ? `<div class="k">Separation date</div><div class="v">${fmtDate(r.separation_date)}</div>` : ""}
+          ${r.inputs.retirement_type === "deferred_vested"
+            ? `${r.separation_date ? `<div class="k">Separation date</div><div class="v">${fmtDate(r.separation_date)}</div>` : ""}
+               <div class="k">Pension start date</div><div class="v">${fmtDate(r.retirement_date)}</div>`
+            : `<div class="k">Retirement date</div><div class="v">${fmtDate(r.retirement_date)}</div>`}
           <div class="k">YOS at ${r.inputs.retirement_type === "deferred_vested" ? "separation" : "retirement"}</div>
           <div class="v">${r.yos_at_retirement._dp !== undefined ? r.yos_at_retirement.toFixed(4) : r.yos_at_retirement.toString()}</div>
           <div class="k">Final rank · step</div><div class="v">${escapeHtml(r.final_rank)} · ${r.final_step}</div>
@@ -1142,7 +1188,7 @@
   function bindStaticInputs() {
     // Personal / rates — use scheduleGridOnly so typing doesn't reset the input mid-keystroke.
     document.getElementById("birth_date").addEventListener("change", (e) => { state.personal.birth_date = e.target.value; scheduleGridOnly(); });
-    document.getElementById("hire_date").addEventListener("change", (e) => { state.personal.hire_date = e.target.value; scheduleGridOnly(); });
+    document.getElementById("hire_date").addEventListener("change", (e) => { state.personal.hire_date = e.target.value; revalidateAllPaths(); scheduleGridOnly(); });
     document.getElementById("current_rank").addEventListener("change", (e) => { state.personal.current_rank = e.target.value; scheduleGridOnly(); });
     document.getElementById("current_step").addEventListener("input", (e) => { state.personal.current_step = Math.max(1, Number(e.target.value) || 1); scheduleGridOnly(); });
     document.getElementById("current_step_arrival_date").addEventListener("change", (e) => { state.personal.current_step_arrival_date = e.target.value; scheduleGridOnly(); });
@@ -1218,6 +1264,71 @@
     return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
   }
 
+  // Return true if `a` and `b` are both ISO-date strings and a > b (strict).
+  function isoGt(a, b) { return isValidIsoDate(a) && isValidIsoDate(b) && a > b; }
+
+  // Evaluate cross-field date constraints for a path and toggle .invalid classes
+  // on the corresponding DOM inputs. Rules:
+  //   - Promo date must be > hire date.
+  //   - If DV and separation_date is set: promo date must be ≤ separation_date.
+  //   - Separation date must be > hire date.
+  //   - Separation date must be ≥ every promo date in the path.
+  // Returns {separationError: bool, promoErrors: bool[], anyError: bool}.
+  function revalidatePath(i) {
+    const path = state.paths[i];
+    const hire = state.personal.hire_date;
+    const isDV = path.retirement_type === "deferred_vested";
+    const sep = path.separation_date || "";
+
+    let separationError = false;
+    if (isDV && sep) {
+      if (!isValidIsoDate(sep)) separationError = true;
+      else if (isValidIsoDate(hire) && sep <= hire) separationError = true;
+      else {
+        for (const p of path.promotions) {
+          if (isoGt(p.effective_date || "", sep)) { separationError = true; break; }
+        }
+      }
+    }
+
+    const promoErrors = path.promotions.map((p) => {
+      const d = p.effective_date || "";
+      if (d === "") return false;
+      if (!isValidIsoDate(d)) return true;
+      if (isValidIsoDate(hire) && d <= hire) return true;
+      if (isDV && isValidIsoDate(sep) && d > sep) return true;
+      return false;
+    });
+
+    const sepEl = document.querySelector(`[data-dv-sep][data-path="${i}"]`);
+    if (sepEl) {
+      sepEl.classList.toggle("invalid", separationError);
+      sepEl.title = separationError
+        ? "Separation date must be after hire date and on/after every promotion on this path."
+        : "";
+    }
+    promoErrors.forEach((bad, j) => {
+      const el = document.querySelector(`[data-promo-date][data-path="${i}"][data-promo="${j}"]`);
+      if (!el) return;
+      el.classList.toggle("invalid", bad);
+      el.title = bad
+        ? (isDV
+            ? "Promotion date must be after hire date and on/before the separation date."
+            : "Promotion date must be after hire date.")
+        : "Type the promotion date as YYYY-MM-DD.";
+    });
+
+    return {
+      separationError,
+      promoErrors,
+      anyError: separationError || promoErrors.some(Boolean),
+    };
+  }
+
+  function revalidateAllPaths() {
+    state.paths.forEach((_, i) => revalidatePath(i));
+  }
+
   function handlePathInput(e) {
     const t = e.target;
     const pathIdx = Number(t.getAttribute("data-path") || t.getAttribute("data-path-name") || t.getAttribute("data-dv-toggle"));
@@ -1229,30 +1340,21 @@
       state.paths[pathIdx].promotions[Number(t.getAttribute("data-promo"))].new_rank = t.value;
     } else if (t.hasAttribute("data-promo-date")) {
       const v = t.value.trim();
-      const ok = v === "" || isValidIsoDate(v);
-      t.classList.toggle("invalid", !ok);
-      state.paths[pathIdx].promotions[Number(t.getAttribute("data-promo"))].effective_date = ok ? v : "";
-      if (!ok) { scheduleGridOnly(); return; }   // keep typing-in-progress, skip grid run until valid
+      state.paths[pathIdx].promotions[Number(t.getAttribute("data-promo"))].effective_date =
+        (v === "" || isValidIsoDate(v)) ? v : "";
     } else if (t.hasAttribute("data-dv-toggle")) {
       state.paths[pathIdx].retirement_type = t.checked ? "deferred_vested" : "active";
-      if (!t.checked) { state.paths[pathIdx].separation_date = null; state.paths[pathIdx].pension_start_date = null; }
+      if (!t.checked) state.paths[pathIdx].separation_date = null;
       isStructural = true;  // shows/hides dv-fields block
     } else if (t.hasAttribute("data-dv-sep")) {
       const v = t.value.trim();
       const ok = v === "" || isValidIsoDate(v);
-      t.classList.toggle("invalid", !ok);
       state.paths[pathIdx].separation_date = ok && v !== "" ? v : null;
-      if (!ok) { scheduleGridOnly(); return; }
-    } else if (t.hasAttribute("data-dv-start")) {
-      const v = t.value.trim();
-      const ok = v === "" || isValidIsoDate(v);
-      t.classList.toggle("invalid", !ok);
-      state.paths[pathIdx].pension_start_date = ok && v !== "" ? v : null;
-      if (!ok) { scheduleGridOnly(); return; }
     } else {
       return;
     }
 
+    revalidatePath(pathIdx);
     if (isStructural) scheduleRender();
     else scheduleGridOnly();
   }
