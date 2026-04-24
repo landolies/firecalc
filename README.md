@@ -5,12 +5,9 @@ A retirement planning tool for San José Fire Department Tier 2 employees (hired
 ## For Claude Code: start here
 
 1. **Read `SPEC.md` end-to-end first.** It is the single source of truth for this project and supersedes any other context.
-2. **Read the two reference documents** that SPEC.md points to:
-   - `Fire_Fact_Sheet_Tier_2.pdf` — official pension rules
-   - `PXL_20260204_201446011.jpg` — FY 2026/27 bi-weekly pay table
-3. **Ask clarifying questions** before writing any code if anything in the spec is ambiguous or seems to conflict with the reference documents.
+2. **Authoritative source documents** are not tracked in this repo. SPEC.md references two external documents that must be treated as ground truth: the SJFD Tier 2 Fact Sheet (official pension rules, available from SJ Office of Retirement Services) and the FY 2026/27 bi-weekly pay table (the numbers themselves are embedded in `engine_py/defaults.py`).
+3. **Ask clarifying questions** before writing any code if anything in the spec is ambiguous.
 4. **Build the Python reference implementation and tests first** (SPEC.md §13 has the implementation order). Do not touch the web UI until the Python engine passes every test case in §11.
-5. The `reference-do-not-use/` folder contains older spreadsheets with broken math. Do not copy their logic. They are preserved only to illustrate what the end product should roughly look like visually.
 
 ## Project goals
 

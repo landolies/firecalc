@@ -1,4 +1,4 @@
-"""FY 2026/27 pay grid (includes 3.50% GWI). Source: PXL_20260204_201446011.jpg."""
+"""FY 2026/27 pay grid (includes 3.50% GWI). Source: SJFD bi-weekly pay schedule."""
 from datetime import date
 from decimal import Decimal
 

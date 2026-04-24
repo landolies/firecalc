@@ -44,15 +44,15 @@ A small test harness (`/web/tests/`) should verify the JS calculation engine aga
 
 ## 3. Authoritative source documents
 
-Two reference files must be treated as the ground truth. If anything in this spec appears to contradict them, the source documents win and you should flag the discrepancy before proceeding.
+Two external references are ground truth. They are **not tracked in this repo**; consult them directly from the authoritative sources (SJ Office of Retirement Services for the Fact Sheet; the SJFD salary schedule for the pay table). If anything in this spec appears to contradict them, the source documents win.
 
-### 3.1 `Fire_Fact_Sheet_Tier_2.pdf`
+### 3.1 SJFD Tier 2 Fact Sheet
 The official SJFD Tier 2 pension rules as of 6/22/2025. Covers contribution rates, vesting, benefit formula, early retirement reductions, disability retirement, survivorship, reciprocity, COLA, and post-retirement marriage provisions.
 
 For v0 the calculator only models **service retirement** (both active and deferred vested). Disability retirement, survivorship benefits, and post-retirement marriage provisions are out of scope but should be noted in the UI as "not modeled."
 
-### 3.2 `PXL_20260204_201446011.jpg`
-A photograph of the official SJFD bi-weekly salary table for Fiscal Year 2026/27, including the 3.50% General Wage Increase (GWI). This is the starting pay grid.
+### 3.2 FY 2026/27 bi-weekly pay table
+The official SJFD bi-weekly salary table for Fiscal Year 2026/27, including the 3.50% General Wage Increase (GWI). This is the starting pay grid.
 
 **Extract these salaries exactly** (all figures in USD, bi-weekly):
 
@@ -408,8 +408,7 @@ The Python reference implementation must pass the following test cases before an
 /
 ├── SPEC.md                              ← this file
 ├── README.md                            ← quick-start for Claude Code
-├── Fire_Fact_Sheet_Tier_2.pdf           ← authoritative pension rules
-├── PXL_20260204_201446011.jpg           ← authoritative FY 2026/27 pay table
+├── index.html                           ← root redirect → web/index.html (for GitHub Pages)
 │
 ├── engine_py/                           ← Python reference implementation
 │   ├── __init__.py
@@ -432,14 +431,12 @@ The Python reference implementation must pass the following test cases before an
 ├── fixtures/                            ← JSON test fixtures generated from Python tests
 │   └── scenarios.json
 │
-├── web/
-│   ├── index.html                       ← the single deliverable file (CSS + JS inline)
-│   └── tests/
-│       └── run_tests.html               ← browser test page that loads fixtures and runs JS engine
-│
-└── reference-do-not-use/                ← old broken spreadsheets, kept for reference only
-    ├── SJFD_Retirement_Calculator_Final.xlsx
-    └── SJFD_Retirement_Projections.xlsx
+└── web/
+    ├── engine.js                        ← JS port of engine_py (used by index.html)
+    ├── vendor/decimal.min.js            ← Decimal arithmetic library
+    ├── index.html                       ← the user-facing calculator (CSS + JS inline in body)
+    └── tests/
+        └── run_tests.html               ← browser test page that loads fixtures and runs JS engine
 ```
 
 ---
