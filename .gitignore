@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+
+# Test / build caches
+.pytest_cache/
+.coverage
+htmlcov/
+
+# macOS
+.DS_Store
+
+# Editor / IDE
+.idea/
+.vscode/
+
+# Claude Code local overrides (user-specific)
+.claude/settings.local.json
