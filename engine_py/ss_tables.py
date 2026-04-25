@@ -63,6 +63,39 @@ AWI_BY_YEAR: dict[int, Decimal] = {
 
 AWI_1977 = AWI_BY_YEAR[1977]  # bend-point formula anchor
 
+# Forward-projection assumption for years beyond the published AWI series.
+# Matches SSA actuary's intermediate "wage growth" assumption and the
+# pension calculator's GWI default. Used by `awi_for_year()` below.
+DEFAULT_AWI_GROWTH_RATE = Decimal("0.035")
+
+
+def awi_for_year(
+    year: int,
+    awi_table: dict[int, Decimal] | None = None,
+    growth_rate: Decimal = DEFAULT_AWI_GROWTH_RATE,
+) -> Decimal:
+    """
+    Return AWI for the requested year. If the year is in the published series
+    (with optional user overrides), return that value directly. Otherwise
+    project forward from the latest available year by compounding at
+    `growth_rate` per year.
+
+    The calculator's whole purpose is projecting future retirement, so we
+    must extrapolate AWI past the SSA-published frontier — refusing would
+    leave every realistic scenario at $0.
+    """
+    series = awi_table if awi_table is not None else AWI_BY_YEAR
+    if year in series:
+        return series[year]
+    latest_year = max(series.keys())
+    if year < latest_year:
+        # Asking for a historical pre-1951 year we don't have — return latest
+        # as a defensive fallback (shouldn't happen for any realistic input).
+        return series[latest_year]
+    years_ahead = year - latest_year
+    factor = (Decimal(1) + growth_rate) ** years_ahead
+    return (series[latest_year] * factor).quantize(Decimal("0.01"))
+
 
 # ---------------------------------------------------------------------------
 # Maximum taxable earnings (annual). Earnings above this don't count toward
@@ -164,18 +197,12 @@ _BP2_BASE = Decimal("1085")
 def bend_points(eligibility_year: int, awi: dict[int, Decimal] | None = None) -> tuple[Decimal, Decimal]:
     """
     Returns (b1, b2) for the given eligibility year (year of attaining age 62).
-    Raises KeyError if AWI for (eligibility_year - 2) is not available — the
-    caller should warn the user to update the AWI table.
+    For eligibility years beyond the published AWI series, the underlying
+    AWI lookup projects forward via `awi_for_year` so future retirees still
+    get usable bend points.
     """
-    series = awi if awi is not None else AWI_BY_YEAR
-    awi_year = eligibility_year - 2
-    if awi_year not in series:
-        raise KeyError(
-            f"AWI({awi_year}) not in table — needed for {eligibility_year} bend points. "
-            "Update AWI_BY_YEAR with the SSA-published value (or use the UI's "
-            "'Edit SSA tables' modal at runtime)."
-        )
-    ratio = series[awi_year] / AWI_1977
+    awi_value = awi_for_year(eligibility_year - 2, awi)
+    ratio = awi_value / AWI_1977
     b1 = (_BP1_BASE * ratio).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
     b2 = (_BP2_BASE * ratio).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
     return b1, b2

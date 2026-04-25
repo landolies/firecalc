@@ -739,6 +739,23 @@
   const _SS_AWI_1977 = new D(_SS_AWI[1977]);
   const _BP1_BASE = new D("180");
   const _BP2_BASE = new D("1085");
+  const _SS_DEFAULT_AWI_GROWTH = new D("0.035");
+
+  // Returns AWI for `year`. If past the published frontier, projects forward
+  // by compounding the latest known value at the SSA actuary's intermediate
+  // wage-growth assumption. The calculator's job is to project future
+  // retirement, so refusing to extrapolate would leave every realistic
+  // scenario at $0.
+  function _ssAwiForYear(year, awiTable, growthRate) {
+    const series = awiTable || _SS_AWI;
+    if (series[year] != null) return new D(series[year]);
+    const years = Object.keys(series).map(Number);
+    const latest = Math.max(...years);
+    if (year < latest) return new D(series[latest]);
+    const rate = growthRate || _SS_DEFAULT_AWI_GROWTH;
+    const factor = new D(1).plus(rate).pow(year - latest);
+    return new D(series[latest]).times(factor);
+  }
 
   function _ssAwiTable(overrides) {
     if (!overrides) return _SS_AWI;
@@ -770,16 +787,8 @@
   }
 
   function ssBendPoints(eligibilityYear, awiTable) {
-    const series = awiTable || _SS_AWI;
-    const awiYear = eligibilityYear - 2;
-    const v = series[awiYear];
-    if (v == null) {
-      throw new Error(
-        `AWI(${awiYear}) not in table — needed for ${eligibilityYear} bend points. ` +
-        "Update the AWI table via 'Edit SSA tables'."
-      );
-    }
-    const ratio = new D(v).div(_SS_AWI_1977);
+    const awiValue = _ssAwiForYear(eligibilityYear - 2, awiTable);
+    const ratio = awiValue.div(_SS_AWI_1977);
     const b1 = _BP1_BASE.times(ratio).toDecimalPlaces(0, D.ROUND_HALF_UP);
     const b2 = _BP2_BASE.times(ratio).toDecimalPlaces(0, D.ROUND_HALF_UP);
     return [b1, b2];
@@ -805,10 +814,9 @@
 
   function ssIndexEarnings(earningsByYear, birthDate, awiTable, taxMaxTable) {
     const idxYear = _ssIndexYear(birthDate);
-    const knownYears = Object.keys(awiTable).map(Number);
-    const maxAwiYear = Math.max(...knownYears);
-    const idxYearForFactor = Math.min(idxYear, maxAwiYear);
-    const awiIdx = new D(awiTable[idxYearForFactor]);
+    // Project AWI forward if the index year is past the published frontier
+    // (true for any current employee — index year = birth + 60).
+    const awiIdx = _ssAwiForYear(idxYear, awiTable);
     const rows = [];
     const sortedYears = Object.keys(earningsByYear).map(Number).sort((a, b) => a - b);
     for (const year of sortedYears) {

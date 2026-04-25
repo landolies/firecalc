@@ -7,8 +7,6 @@ formula at https://www.ssa.gov/oact/cola/bendpoints.html.
 from datetime import date
 from decimal import Decimal
 
-import pytest
-
 from engine_py import ss_tables, social_security as ss
 
 
@@ -38,9 +36,25 @@ def test_bend_points_2026_match_published():
     assert b2 == Decimal("7749")
 
 
-def test_bend_points_unknown_year_raises():
-    with pytest.raises(KeyError, match="AWI"):
-        ss_tables.bend_points(2099)
+def test_bend_points_far_future_uses_projection():
+    """Stopgap projection: bend points for any far-future eligibility year
+    are computed from latest published AWI compounded at default growth rate.
+    Should never raise; should yield strictly larger bend points than 2026."""
+    b1_2026, b2_2026 = ss_tables.bend_points(2026)
+    b1_2050, b2_2050 = ss_tables.bend_points(2050)
+    assert b1_2050 > b1_2026
+    assert b2_2050 > b2_2026
+
+
+def test_awi_for_year_returns_published_when_present():
+    assert ss_tables.awi_for_year(2024) == ss_tables.AWI_BY_YEAR[2024]
+
+
+def test_awi_for_year_projects_forward():
+    """AWI(2030) should be AWI(2024) × 1.035^6 at default growth rate."""
+    expected = (ss_tables.AWI_BY_YEAR[2024]
+                * (Decimal("1.035") ** 6))
+    assert abs(ss_tables.awi_for_year(2030) - expected) < Decimal("1.00")
 
 
 def test_fra_modern_birth_year():
@@ -193,6 +207,23 @@ def test_end_to_end_with_prior_earnings():
     assert result.monthly_benefit_at_claiming == result.pia_at_fra.quantize(
         Decimal("1"), rounding=ROUND_DOWN,
     )
+
+
+def test_end_to_end_current_employee_uses_awi_projection():
+    """Birth 1986 → eligibility 2048 → needs AWI(2046), past published table.
+    With the projection stopgap, should produce a non-zero PIA."""
+    earnings = {y: Decimal("80000") for y in range(2010, 2046)}
+    inputs = ss.SsInputs(
+        birth_date=date(1986, 10, 1),
+        prior_covered_earnings=earnings,
+        claiming_age_years=67,
+    )
+    result = ss.compute_ss_scenario(inputs)
+    assert result.pia_at_fra > Decimal("0"), (
+        f"Expected non-zero PIA via AWI projection, got {result.pia_at_fra}"
+    )
+    assert result.bend_point_1 > Decimal("0")
+    assert result.monthly_benefit_at_claiming > Decimal("0")
 
 
 def test_credits_count_simple():

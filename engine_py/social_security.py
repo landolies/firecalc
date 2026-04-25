@@ -139,10 +139,9 @@ def index_earnings(
     use a factor of 1.0 (no indexing).
     """
     idx_year = _index_year(birth_date)
-    idx_year_for_factor = min(idx_year, max(awi.keys()))
-    if idx_year_for_factor not in awi:
-        raise KeyError(f"AWI({idx_year_for_factor}) missing — required to index earnings")
-    awi_idx = awi[idx_year_for_factor]
+    # Project AWI forward if the index year is past the published frontier
+    # (typical for any current employee — index year = birth + 60).
+    awi_idx = ss_tables.awi_for_year(idx_year, awi)
 
     rows: list[IndexedEarningRow] = []
     for year, raw in sorted(earnings_by_year.items()):
