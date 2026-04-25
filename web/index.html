@@ -62,6 +62,7 @@
   .btn.primary:hover { background: #164ccf; }
   .btn.danger { color: var(--danger); border-color: var(--danger); }
   .btn.small { padding: 2px 7px; font-size: 12px; }
+  .btn.small.tab-btn.active { background: var(--accent, #2c5282); color: white; }
 
   /* Layout: sticky header + sidebar + main */
   .app {
@@ -501,6 +502,41 @@
   </div>
 
   <div class="section">
+    <h2>Social Security <span class="help" data-tip="Project a Social Security retirement benefit alongside your SJFD pension. WEP and GPO were repealed by the Social Security Fairness Act effective Dec 2023+, so this calculator uses the regular PIA formula with no offset.">ⓘ</span></h2>
+    <div class="field inline">
+      <input type="checkbox" id="ssa_enabled">
+      <label for="ssa_enabled">Include SS in scenarios</label>
+    </div>
+    <div id="ssa_panel" style="display:none;">
+      <div class="two-col">
+        <div class="field">
+          <label>Claim age <span class="help" data-tip="Age at which you start collecting SS. Earliest 62 (with reduction); latest 70 (with delayed credits). FRA varies by birth year — 67 for anyone born 1960+.">ⓘ</span></label>
+          <input type="number" id="ssa_claim_age" min="62" max="70" step="1">
+        </div>
+        <div class="field">
+          <label>SS COLA (%/yr) <span class="help" data-tip="Forward-projection assumption for SS COLA. Distinct from SJFD COLA: SS tracks national CPI-W, SJFD tracks SF-Bay CPI-U. Historically diverge by ~0.3 pp/yr. Recent SS COLAs: 2.8% (2026), 2.5% (2025), 3.2% (2024).">ⓘ</span></label>
+          <input type="number" id="ssa_cola_pct" min="0" max="10" step="0.1">
+        </div>
+      </div>
+      <div class="field inline">
+        <input type="checkbox" id="ssa_match_sjfd_cola" checked>
+        <label for="ssa_match_sjfd_cola">Match SJFD COLA rate <span class="help" data-tip="When on, SS COLA mirrors the SJFD COLA input. Turn off to set them independently.">ⓘ</span></label>
+      </div>
+      <div class="field inline">
+        <input type="checkbox" id="ssa_sjfd_covered">
+        <label for="ssa_sjfd_covered">SJFD employment is SS-covered <span class="help" data-tip="SJFD Tier 2 is non-covered employment — leave off. Toggle on if you're modeling a different plan that participates in Social Security.">ⓘ</span></label>
+      </div>
+      <div style="margin-top: .6rem;">
+        <button class="btn small" id="ssa_open_earnings" style="width:100%;">Prior covered earnings…</button>
+      </div>
+      <div style="margin-top: .4rem;">
+        <button class="btn small" id="ssa_open_tables" style="width:100%;">Edit SSA tables…</button>
+      </div>
+      <div id="ssa_status" style="margin-top:.5rem; font-size:.8em; color:var(--muted, #888);"></div>
+    </div>
+  </div>
+
+  <div class="section">
     <h2>Pay grid <span class="help" data-tip="Bi-weekly pay by rank × step. Defaults are SJFD FY 2026/27 (includes the 3.5% GWI). Editable — a new contract's numbers can be typed in without changing code.">ⓘ</span></h2>
     <button class="btn small" id="open_paygrid" style="width:100%;">Edit pay grid…</button>
   </div>
@@ -537,7 +573,7 @@
   </div>
 
   <div class="version-footer" style="margin-top: auto; padding-top: 1rem; font-size: .75em; color: var(--muted, #888); opacity: .7;">
-    v0.3.1 · updated 2026-04-24
+    v0.5.0 · updated 2026-04-25
   </div>
 </aside>
 
@@ -545,6 +581,13 @@
   <div class="grid-header">
     <h2>Scenarios</h2>
     <div class="actions">
+      <label class="final-toggle no-print">
+        Show:
+        <select id="display_units" style="margin-left:.3rem;">
+          <option value="annual">Annual $</option>
+          <option value="monthly">Monthly $</option>
+        </select>
+      </label>
       <label class="final-toggle no-print">
         <input type="checkbox" id="toggle_final">
         Show final-year FC method
@@ -577,6 +620,49 @@
   </div>
 </div>
 
+<!-- Prior covered earnings modal -->
+<div class="modal-backdrop" id="ssa-earnings-backdrop">
+  <div class="modal" id="ssa-earnings-modal" role="dialog" aria-labelledby="ssa-earnings-title">
+    <header>
+      <h2 id="ssa-earnings-title">Prior covered earnings</h2>
+      <span class="subtitle" style="color: var(--text-muted); font-size: 12px;">From your `my Social Security` statement</span>
+      <button class="btn small" id="ssa_earnings_close" style="margin-left:auto;">Close</button>
+    </header>
+    <div class="body">
+      <p style="color: var(--text-muted); font-size: 12px; margin: 0 0 .8rem; max-width: 560px;">
+        Add one row per calendar year of non-SJFD employment that was covered by Social Security (i.e. you saw OASDI tax on your paystub). Skip if SJFD is your only employment.
+      </p>
+      <table class="paygrid" id="ssa-earnings-table" style="max-width:340px;"></table>
+      <div style="margin-top:.6rem; display:flex; gap:.4rem;">
+        <button class="btn small" id="ssa_earnings_add">+ Add row</button>
+      </div>
+      <div id="ssa-earnings-totals" style="margin-top:.8rem; font-size:.85em; color:var(--muted, #888);"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SSA tables modal -->
+<div class="modal-backdrop" id="ssa-tables-backdrop">
+  <div class="modal" id="ssa-tables-modal" role="dialog" aria-labelledby="ssa-tables-title">
+    <header>
+      <h2 id="ssa-tables-title">Edit SSA tables</h2>
+      <span class="subtitle" style="color: var(--text-muted); font-size: 12px;">Verified through 2026 fact sheet</span>
+      <button class="btn small" id="ssa_tables_close" style="margin-left:auto;">Close</button>
+    </header>
+    <div class="body">
+      <div class="tabs" id="ssa-tabs" style="display:flex; gap:.4rem; margin-bottom:.8rem; border-bottom:1px solid var(--border);">
+        <button class="btn small tab-btn" data-ssa-tab="awi">AWI</button>
+        <button class="btn small tab-btn" data-ssa-tab="taxmax">Taxable max</button>
+        <button class="btn small tab-btn" data-ssa-tab="cola">SS COLA history</button>
+      </div>
+      <div id="ssa-tab-body"></div>
+      <p style="color: var(--text-muted); font-size: 12px; margin: 1rem 0 0; max-width: 560px;">
+        Bend points are <em>computed</em> from AWI using the SSA formula <code>round($180 or $1,085 × AWI(year-2) / AWI(1977))</code>, so you don't edit them directly — update the AWI table and bend points re-derive. Source: <a href="https://www.ssa.gov/oact/cola/bendpoints.html" target="_blank" rel="noopener">ssa.gov/oact/cola/bendpoints.html</a>.
+      </p>
+    </div>
+  </div>
+</div>
+
 <div class="drawer-backdrop" id="drawer-backdrop"></div>
 <aside class="drawer" id="drawer" aria-hidden="true">
   <header>
@@ -598,7 +684,7 @@
   if (!fc) { alert("firecalc engine failed to load"); return; }
 
   const STORAGE_KEY = "sjfd_retirement_calculator_v1";
-  const SCHEMA_VERSION = 7;
+  const SCHEMA_VERSION = 8;
   const AGE_RANGE_FLOOR = 45;
   const AGE_RANGE_CEILING = 75;
 
@@ -626,6 +712,17 @@
       ],
       show_cola: false,
       show_final_method: false,
+      display_units: "annual",  // "annual" | "monthly"
+      ssa: {
+        enabled: false,
+        claim_age: 67,
+        cola_rate: "0.025",
+        match_sjfd_cola: true,
+        sjfd_covered: false,
+        prior_earnings: {},     // { "2010": "8500.00", ... }
+        awi_overrides: {},      // year-keyed string values
+        taxable_max_overrides: {},
+      },
     };
   }
 
@@ -696,6 +793,18 @@
         }
       }
       parsed.schemaVersion = 7;
+    }
+    // v7 → v8: introduce display_units toggle and ssa block.
+    if (parsed.schemaVersion === 7) {
+      if (!parsed.display_units) parsed.display_units = "annual";
+      if (!parsed.ssa) {
+        parsed.ssa = {
+          enabled: false, claim_age: 67, cola_rate: "0.025",
+          match_sjfd_cola: true, sjfd_covered: false,
+          prior_earnings: {}, awi_overrides: {}, taxable_max_overrides: {},
+        };
+      }
+      parsed.schemaVersion = 8;
     }
     return parsed;
   }
@@ -778,6 +887,66 @@
       return fc.computeRetirementScenario(buildScenarioInputs(path, age));
     } catch (e) {
       return { error: e.message };
+    }
+  }
+
+  // ---- Social Security helpers -----------------------------------------
+
+  function buildSsInputs() {
+    const ssa = state.ssa || {};
+    const colaRate = ssa.match_sjfd_cola
+      ? new Decimal(state.rates.cola_rate || "0.020")
+      : new Decimal(ssa.cola_rate || "0.025");
+    const priorEarnings = {};
+    for (const y of Object.keys(ssa.prior_earnings || {})) {
+      const v = ssa.prior_earnings[y];
+      if (v != null && v !== "") priorEarnings[y] = new Decimal(v);
+    }
+    const awiOverrides = {};
+    for (const y of Object.keys(ssa.awi_overrides || {})) {
+      const v = ssa.awi_overrides[y];
+      if (v != null && v !== "") awiOverrides[y] = v;
+    }
+    const tmaxOverrides = {};
+    for (const y of Object.keys(ssa.taxable_max_overrides || {})) {
+      const v = ssa.taxable_max_overrides[y];
+      if (v != null && v !== "") tmaxOverrides[y] = v;
+    }
+    return {
+      birth_date: fc.parseIsoDate(state.personal.birth_date),
+      claiming_age_years: Number(ssa.claim_age || 67),
+      claiming_age_months: 0,
+      sjfd_is_covered: !!ssa.sjfd_covered,
+      prior_covered_earnings: priorEarnings,
+      awi_overrides: Object.keys(awiOverrides).length ? awiOverrides : null,
+      taxable_max_overrides: Object.keys(tmaxOverrides).length ? tmaxOverrides : null,
+      ss_cola_rate: colaRate,
+    };
+  }
+
+  function computeSsForResult(scenarioResult) {
+    try {
+      // Build SJFD yearly earnings map only if covered
+      let sjfdEarnings = null;
+      if (state.ssa && state.ssa.sjfd_covered && scenarioResult.salary_timeline) {
+        sjfdEarnings = {};
+        for (const period of scenarioResult.salary_timeline) {
+          const year = period.start.year;
+          const annual = Number(period.annual.toString());
+          sjfdEarnings[year] = (sjfdEarnings[year] || 0) + annual * 0.5; // rough — overlapping periods would need exact daycount
+        }
+      }
+      return fc.ssComputeScenario(buildSsInputs(), sjfdEarnings);
+    } catch (e) {
+      return {
+        annual_benefit_at_claiming: new Decimal(0),
+        monthly_benefit_at_claiming: new Decimal(0),
+        warnings: [`SS calc failed: ${e.message}`],
+        aime: new Decimal(0), pia_at_fra: new Decimal(0),
+        bend_point_1: new Decimal(0), bend_point_2: new Decimal(0),
+        indexed_earnings: [], credits_total: 0, is_vested: false,
+        fra_years: 67, fra_months: 0, eligibility_year: 0,
+      };
     }
   }
 
@@ -941,6 +1110,12 @@
 
   let lastResults = [];
 
+  function unitsLabel() { return state.display_units === "monthly" ? "Monthly" : "Annual"; }
+  function asUnits(annualDecimal) {
+    if (annualDecimal == null) return null;
+    return state.display_units === "monthly" ? annualDecimal.div(12) : annualDecimal;
+  }
+
   function renderGrid() {
     const host = document.getElementById("grid-container");
     const meta = document.getElementById("grid-meta");
@@ -957,6 +1132,8 @@
 
     let rowCount = 0;
     const showFinal = !!state.show_final_method;
+    const showSsa = !!(state.ssa && state.ssa.enabled);
+    const u = unitsLabel();
     const H = (label, tip, cls) => `<th${cls ? ` class="${cls}"` : ""}>${label}${tip ? ` <span class="help" data-tip="${escapeAttr(tip)}">ⓘ</span>` : ""}</th>`;
 
     // Primary columns — always rendered.
@@ -970,29 +1147,32 @@
       H("Benefit %", "Percent of FC you receive as pension. Tiered: 2.4%/yr for years 1–20, 3.0%/yr for 21–25, 3.4%/yr for 26+. Hard-capped at 80%."),
       H("Cap?", "Yes if you've hit the 80% benefit cap (reached at exactly 30 YOS)."),
       H("Penalty", "Early-retirement reduction. 7% per year for every year you retire before 57. Zero at age 57+."),
-      H("Annual (3yr)", "Annual pension using FC 3-year-average method × benefit % × early-reduction factor. This is the plan's figure."),
-      H("Monthly (3yr)", "Annual (3yr) ÷ 12."),
+      H(`${u} (3yr)`, `${u} pension using FC 3-year-average method × benefit % × early-reduction factor. This is the plan's figure.`),
     ];
+
+    const ssaCols = showSsa ? [
+      H(`SS (${u.toLowerCase()})`, `Projected Social Security retirement benefit at the claim age set in the sidebar (${state.ssa.claim_age || 67}). PIA is computed from indexed earnings; WEP/GPO not applied (repealed by the Fairness Act). $0 if no covered earnings entered.`),
+      H(`Net (${u.toLowerCase()})`, "SJFD pension + Social Security. Note: pension is shown as-of retirement age, SS as-of claim age — these may differ in years. The audit drawer's snapshot view brings them to a common year using each program's COLA."),
+    ] : [];
 
     // Final-method (reference-only) columns — rendered when toggle is on.
     const finalCols = showFinal ? [
       H("FC (final)", "Reference only. Final Compensation using the single final-year pay rate (annualized). The plan does NOT use this.", "final-col final-col-first"),
-      H("Annual (final)", "Reference only. Annual pension using final-year FC method.", "final-col"),
-      H("Monthly (final)", "Reference only. Annual (final) ÷ 12.", "final-col"),
+      H(`${u} (final)`, `Reference only. ${u} pension using final-year FC method.`, "final-col"),
     ] : [];
 
-    const totalCols = primaryCols.length + finalCols.length;
+    const totalCols = primaryCols.length + ssaCols.length + finalCols.length;
 
     let html = `<table class="scenarios"><thead>`;
 
     if (showFinal) {
       // Grouped header row above the column labels.
       html += `<tr class="group-header">
-        <th class="empty" colspan="${primaryCols.length}"></th>
+        <th class="empty" colspan="${primaryCols.length + ssaCols.length}"></th>
         <th colspan="${finalCols.length}" class="final-col final-col-first">Final-year FC method · reference only, not used for pension calculation</th>
       </tr>`;
     }
-    html += `<tr>${primaryCols.join("")}${finalCols.join("")}</tr></thead><tbody>`;
+    html += `<tr>${primaryCols.join("")}${ssaCols.join("")}${finalCols.join("")}</tr></thead><tbody>`;
 
     state.paths.forEach((path, pi) => {
       const isDV = path.retirement_type === "deferred_vested";
@@ -1050,19 +1230,30 @@
           ? `<span class="pill warn" title="${escapeAttr(result.warnings.join(' · '))}">${escapeHtml(result.warnings.length + ' warning' + (result.warnings.length > 1 ? 's' : ''))}</span>`
           : "";
 
-        // Primary pension cells (always rendered).
+        // Primary pension cell (single column, units-aware).
         const primaryPension = hasWarn
-          ? `<td colspan="2">${warnPill}</td>`
-          : `<td>${money(result.annual_pension_3yr)}</td><td>${money(result.monthly_pension_3yr)}</td>`;
+          ? `<td>${warnPill}</td>`
+          : `<td>${money(asUnits(result.annual_pension_3yr))}</td>`;
 
-        // Final-method cells (only when toggle on). FC (final) is always valid;
-        // pension (final) pair collapses to the warning pill when warnings exist.
+        // SSA cells (only when SSA enabled). Stash result on entry for audit.
+        let ssaCells = "";
+        let ssResult = null;
+        if (showSsa) {
+          ssResult = computeSsForResult(result);
+          lastResults[lastResults.length - 1].ssResult = ssResult;
+          const ssAnnual = ssResult.annual_benefit_at_claiming;
+          const netAnnual = hasWarn ? null : (result.annual_pension_3yr || new Decimal(0)).plus(ssAnnual);
+          ssaCells = `<td>${money(asUnits(ssAnnual))}</td>`;
+          ssaCells += netAnnual ? `<td>${money(asUnits(netAnnual))}</td>` : `<td>${warnPill}</td>`;
+        }
+
+        // Final-method cells (only when toggle on).
         let finalCells = "";
         if (showFinal) {
           finalCells = `<td class="final-col final-col-first">${money(result.fc_final.annual_fc)}</td>`;
           finalCells += hasWarn
-            ? `<td class="final-col" colspan="2">${warnPill}</td>`
-            : `<td class="final-col">${money(result.annual_pension_final)}</td><td class="final-col">${money(result.monthly_pension_final)}</td>`;
+            ? `<td class="final-col">${warnPill}</td>`
+            : `<td class="final-col">${money(asUnits(result.annual_pension_final))}</td>`;
         }
 
         html += `<tr${ai === 0 ? ' class="path-start"' : ""} data-result-idx="${idx}">
@@ -1076,6 +1267,7 @@
           <td>${result.cap_reached ? '<span class="pill cap">cap</span>' : '<span class="muted">—</span>'}</td>
           <td>${result.early_reduction.years_before_57 > 0 ? pct(result.early_reduction.reduction_pct) : '<span class="muted">—</span>'}</td>
           ${primaryPension}
+          ${ssaCells}
           ${finalCells}
         </tr>`;
       });
@@ -1198,6 +1390,73 @@
       ${colaRows ? `<div class="group"><h3>COLA projection (3yr FC)</h3>
         <table><thead><tr><th class="num">Age</th><th class="num">Year</th><th class="num">Annual</th><th class="num">Monthly</th></tr></thead>
         <tbody>${colaRows}</tbody></table></div>` : ""}
+
+      ${state.ssa && state.ssa.enabled ? renderSsaAudit(r) : ""}
+    `;
+  }
+
+  function renderSsaAudit(r) {
+    const ss = computeSsForResult(r);
+    const ssWarnings = (ss.warnings || []).map((w) =>
+      `<div class="warning">${escapeHtml(w)}</div>`
+    ).join("");
+    const earnings = ss.indexed_earnings || [];
+    const earningsRows = earnings.map((e) =>
+      `<tr><td class="num">${e.year}</td><td class="num">${money(e.raw_earnings)}</td><td class="num">${money(e.capped_earnings)}</td><td class="num">${e.index_factor.toFixed(4)}</td><td class="num">${money(e.indexed_earnings)}</td><td>${e.used_in_aime ? "✓" : ""}</td></tr>`
+    ).join("");
+
+    // Snapshot view: inflate both pension and SS to a target age via COLA
+    const sjfdCola = new Decimal(state.rates.cola_rate || "0.020");
+    const ssCola = state.ssa.match_sjfd_cola
+      ? sjfdCola
+      : new Decimal(state.ssa.cola_rate || "0.025");
+    const retirementAge = r.inputs.retirement_type === "deferred_vested"
+      ? (r.retirement_date.year - r.inputs.birth_date.year)
+      : r.inputs.retirement_age;
+    const claimAge = state.ssa.claim_age || 67;
+    const snapshotAge = 70;  // default; could be made user-editable
+    const pensionYearsToInflate = Math.max(0, snapshotAge - retirementAge);
+    const ssYearsToInflate = Math.max(0, snapshotAge - claimAge);
+    const pensionAt70 = r.annual_pension_3yr.times(
+      new Decimal(1).plus(sjfdCola).pow(pensionYearsToInflate)
+    );
+    const ssAt70 = ss.annual_benefit_at_claiming.times(
+      new Decimal(1).plus(ssCola).pow(ssYearsToInflate)
+    );
+    const netAt70 = pensionAt70.plus(ssAt70);
+
+    return `
+      <div class="group">
+        <h3>Social Security</h3>
+        ${ssWarnings}
+        <div class="kv">
+          <div class="k">Eligibility year (age 62)</div><div class="v">${ss.eligibility_year || "—"}</div>
+          <div class="k">FRA</div><div class="v">${ss.fra_years}y ${ss.fra_months}m</div>
+          <div class="k">Bend points</div><div class="v">${money(ss.bend_point_1)} / ${money(ss.bend_point_2)}</div>
+          <div class="k">AIME</div><div class="v">${money(ss.aime)}</div>
+          <div class="k">PIA at FRA</div><div class="v">${money(ss.pia_at_fra)}</div>
+          <div class="k">Claim age</div><div class="v">${claimAge}</div>
+          <div class="k">Monthly benefit at claim</div><div class="v"><strong>${money(ss.monthly_benefit_at_claiming)}</strong></div>
+          <div class="k">Annual benefit at claim</div><div class="v"><strong>${money(ss.annual_benefit_at_claiming)}</strong></div>
+          <div class="k">Credits earned</div><div class="v">${ss.credits_total} / 40 ${ss.is_vested ? "(vested)" : "(NOT vested)"}</div>
+        </div>
+      </div>
+
+      <div class="group">
+        <h3>Snapshot at age ${snapshotAge}</h3>
+        <p style="color:var(--text-muted); font-size:12px; margin:0 0 .5rem;">
+          Brings pension and SS to a common year by inflating each forward via its respective COLA. SJFD COLA: ${(Number(sjfdCola)*100).toFixed(2)}%/yr. SS COLA: ${(Number(ssCola)*100).toFixed(2)}%/yr.
+        </p>
+        <div class="kv">
+          <div class="k">Pension at ${snapshotAge}</div><div class="v">${money(pensionAt70)} (${pensionYearsToInflate}y of COLA from retirement)</div>
+          <div class="k">SS at ${snapshotAge}</div><div class="v">${money(ssAt70)} (${ssYearsToInflate}y of COLA from claim)</div>
+          <div class="k">Net at ${snapshotAge}</div><div class="v"><strong>${money(netAt70)}</strong></div>
+        </div>
+      </div>
+
+      ${earningsRows ? `<div class="group"><h3>Indexed earnings</h3>
+        <table><thead><tr><th class="num">Year</th><th class="num">Raw</th><th class="num">Capped</th><th class="num">Index factor</th><th class="num">Indexed</th><th>Top 35</th></tr></thead>
+        <tbody>${earningsRows}</tbody></table></div>` : ""}
     `;
   }
 
@@ -1206,10 +1465,12 @@
   function exportCsv() {
     if (lastResults.length === 0) { alert("No scenarios to export."); return; }
     const showFinal = !!state.show_final_method;
+    const showSsa = !!(state.ssa && state.ssa.enabled);
     const headers = [
       "Path", "Retirement Age", "Retirement Date", "Final Rank", "Final Step",
       "YOS", "FC 3yr", "Benefit %", "Cap Reached", "Early Penalty %",
       "Annual Pension (3yr)", "Monthly Pension (3yr)",
+      ...(showSsa ? ["SS Annual", "SS Monthly", "Net Annual", "Net Monthly"] : []),
       ...(showFinal ? ["FC Final (ref)", "Annual Pension final (ref)", "Monthly Pension final (ref)"] : []),
       "Warnings",
     ];
@@ -1231,12 +1492,21 @@
         r.annual_pension_3yr.toFixed(2),
         r.monthly_pension_3yr.toFixed(2),
       ];
+      const ssaCols = [];
+      if (showSsa) {
+        const ss = computeSsForResult(r);
+        const ssAnn = ss.annual_benefit_at_claiming;
+        const ssMon = ss.monthly_benefit_at_claiming;
+        const netAnn = r.annual_pension_3yr.plus(ssAnn);
+        const netMon = r.monthly_pension_3yr.plus(ssMon);
+        ssaCols.push(ssAnn.toFixed(2), ssMon.toFixed(2), netAnn.toFixed(2), netMon.toFixed(2));
+      }
       const final = showFinal ? [
         r.fc_final.annual_fc.toFixed(2),
         r.annual_pension_final.toFixed(2),
         r.monthly_pension_final.toFixed(2),
       ] : [];
-      return [...primary, ...final, warn];
+      return [...primary, ...ssaCols, ...final, warn];
     });
     const csv = [headers, ...rows].map((row) =>
       row.map((cell) => {
@@ -1272,6 +1542,10 @@
         state.show_cola = true;
         document.getElementById("show_cola").checked = true;
       }
+      // Mirror to SSA COLA input when "match SJFD" is on
+      if (state.ssa && state.ssa.match_sjfd_cola) {
+        document.getElementById("ssa_cola_pct").value = (Number(state.rates.cola_rate) * 100).toFixed(2);
+      }
       scheduleGridOnly();
     });
     document.getElementById("pay_grid_effective_date").addEventListener("change", (e) => { state.pay_grid_effective_date = e.target.value; scheduleGridOnly(); });
@@ -1291,6 +1565,108 @@
     document.getElementById("open_paygrid").addEventListener("click", () => paygridBackdrop.classList.add("open"));
     document.getElementById("close_paygrid").addEventListener("click", () => paygridBackdrop.classList.remove("open"));
     paygridBackdrop.addEventListener("click", (e) => { if (e.target === paygridBackdrop) paygridBackdrop.classList.remove("open"); });
+
+    // Display-units toggle
+    document.getElementById("display_units").addEventListener("change", (e) => {
+      state.display_units = e.target.value;
+      scheduleGridOnly();
+    });
+
+    // ---- SSA section wiring -------------------------------------------
+    document.getElementById("ssa_enabled").addEventListener("change", (e) => {
+      state.ssa.enabled = e.target.checked;
+      document.getElementById("ssa_panel").style.display = e.target.checked ? "block" : "none";
+      updateSsaStatus();
+      scheduleGridOnly();
+    });
+    document.getElementById("ssa_claim_age").addEventListener("input", (e) => {
+      const v = Math.max(62, Math.min(70, Number(e.target.value) || 67));
+      state.ssa.claim_age = v;
+      scheduleGridOnly();
+    });
+    document.getElementById("ssa_cola_pct").addEventListener("input", (e) => {
+      state.ssa.cola_rate = (Number(e.target.value || 0) / 100).toFixed(4);
+      scheduleGridOnly();
+    });
+    document.getElementById("ssa_match_sjfd_cola").addEventListener("change", (e) => {
+      state.ssa.match_sjfd_cola = e.target.checked;
+      // When matching, pre-fill the SS COLA input visually so user sees the synced value
+      if (e.target.checked) {
+        document.getElementById("ssa_cola_pct").value = (Number(state.rates.cola_rate) * 100).toFixed(2);
+        document.getElementById("ssa_cola_pct").disabled = true;
+      } else {
+        document.getElementById("ssa_cola_pct").disabled = false;
+      }
+      scheduleGridOnly();
+    });
+    document.getElementById("ssa_sjfd_covered").addEventListener("change", (e) => {
+      state.ssa.sjfd_covered = e.target.checked;
+      scheduleGridOnly();
+    });
+
+    // SSA modals
+    const ssaEarningsBackdrop = document.getElementById("ssa-earnings-backdrop");
+    document.getElementById("ssa_open_earnings").addEventListener("click", () => {
+      renderSsaEarningsTable();
+      ssaEarningsBackdrop.classList.add("open");
+    });
+    document.getElementById("ssa_earnings_close").addEventListener("click", () => ssaEarningsBackdrop.classList.remove("open"));
+    ssaEarningsBackdrop.addEventListener("click", (e) => { if (e.target === ssaEarningsBackdrop) ssaEarningsBackdrop.classList.remove("open"); });
+    document.getElementById("ssa_earnings_add").addEventListener("click", () => {
+      // Add an empty row at the next year after the highest entered year, else 2010
+      const years = Object.keys(state.ssa.prior_earnings || {}).map(Number).sort((a, b) => a - b);
+      const next = years.length ? years[years.length - 1] + 1 : 2010;
+      state.ssa.prior_earnings[String(next)] = "";
+      renderSsaEarningsTable();
+      scheduleGridOnly();
+    });
+    document.getElementById("ssa-earnings-table").addEventListener("input", (e) => {
+      const yearKey = e.target.getAttribute("data-ssa-year");
+      const yearEdit = e.target.getAttribute("data-ssa-year-edit");
+      if (yearEdit != null) {
+        // Year changed: remove old key, add new
+        const oldYear = yearEdit;
+        const newYear = String(Number(e.target.value) || oldYear);
+        if (oldYear !== newYear && !(newYear in state.ssa.prior_earnings)) {
+          state.ssa.prior_earnings[newYear] = state.ssa.prior_earnings[oldYear];
+          delete state.ssa.prior_earnings[oldYear];
+          renderSsaEarningsTable();  // re-render so subsequent edits target new key
+        }
+      } else if (yearKey != null) {
+        state.ssa.prior_earnings[yearKey] = e.target.value;
+        updateSsaEarningsTotals();
+      }
+      scheduleGridOnly();
+    });
+    document.getElementById("ssa-earnings-table").addEventListener("click", (e) => {
+      const removeYear = e.target.getAttribute("data-ssa-remove");
+      if (removeYear != null) {
+        delete state.ssa.prior_earnings[removeYear];
+        renderSsaEarningsTable();
+        scheduleGridOnly();
+      }
+    });
+
+    const ssaTablesBackdrop = document.getElementById("ssa-tables-backdrop");
+    document.getElementById("ssa_open_tables").addEventListener("click", () => {
+      renderSsaTables("awi");
+      ssaTablesBackdrop.classList.add("open");
+    });
+    document.getElementById("ssa_tables_close").addEventListener("click", () => ssaTablesBackdrop.classList.remove("open"));
+    ssaTablesBackdrop.addEventListener("click", (e) => { if (e.target === ssaTablesBackdrop) ssaTablesBackdrop.classList.remove("open"); });
+    document.getElementById("ssa-tabs").addEventListener("click", (e) => {
+      const tab = e.target.getAttribute("data-ssa-tab");
+      if (tab) renderSsaTables(tab);
+    });
+    document.getElementById("ssa-tab-body").addEventListener("input", (e) => {
+      const yearKey = e.target.getAttribute("data-ssa-table-year");
+      const tableKey = e.target.getAttribute("data-ssa-table");
+      if (yearKey != null && tableKey != null) {
+        const target = tableKey === "awi" ? state.ssa.awi_overrides : state.ssa.taxable_max_overrides;
+        target[yearKey] = e.target.value;
+        scheduleGridOnly();
+      }
+    });
 
     // Retirement age range slider — keep handles from crossing; update live.
     const minEl = document.getElementById("age_min");
@@ -1475,7 +1851,114 @@
     document.getElementById("pay_grid_effective_date").value = state.pay_grid_effective_date;
     document.getElementById("show_cola").checked = !!state.show_cola;
     document.getElementById("toggle_final").checked = !!state.show_final_method;
+    document.getElementById("display_units").value = state.display_units || "annual";
+    // SSA inputs
+    const s = state.ssa || {};
+    document.getElementById("ssa_enabled").checked = !!s.enabled;
+    document.getElementById("ssa_panel").style.display = s.enabled ? "block" : "none";
+    document.getElementById("ssa_claim_age").value = s.claim_age || 67;
+    document.getElementById("ssa_match_sjfd_cola").checked = !!s.match_sjfd_cola;
+    document.getElementById("ssa_sjfd_covered").checked = !!s.sjfd_covered;
+    const ssaColaInput = document.getElementById("ssa_cola_pct");
+    if (s.match_sjfd_cola) {
+      ssaColaInput.value = (Number(state.rates.cola_rate) * 100).toFixed(2);
+      ssaColaInput.disabled = true;
+    } else {
+      ssaColaInput.value = (Number(s.cola_rate || "0.025") * 100).toFixed(2);
+      ssaColaInput.disabled = false;
+    }
+    updateSsaStatus();
     updateRecruitHint();
+  }
+
+  function updateSsaStatus() {
+    const el = document.getElementById("ssa_status");
+    if (!el) return;
+    if (!state.ssa || !state.ssa.enabled) { el.textContent = ""; return; }
+    const earningsCount = Object.keys(state.ssa.prior_earnings || {}).filter(
+      (y) => state.ssa.prior_earnings[y] && state.ssa.prior_earnings[y] !== ""
+    ).length;
+    const tablesEdited =
+      Object.keys(state.ssa.awi_overrides || {}).length +
+      Object.keys(state.ssa.taxable_max_overrides || {}).length;
+    const bits = [];
+    bits.push(`${earningsCount} prior covered year${earningsCount === 1 ? "" : "s"}`);
+    if (tablesEdited > 0) bits.push(`${tablesEdited} table override${tablesEdited === 1 ? "" : "s"}`);
+    bits.push("WEP/GPO not modeled (repealed 2024)");
+    el.textContent = bits.join(" · ");
+  }
+
+  function renderSsaEarningsTable() {
+    const el = document.getElementById("ssa-earnings-table");
+    const earnings = state.ssa.prior_earnings || {};
+    const years = Object.keys(earnings).map(Number).sort((a, b) => a - b);
+    let html = `<thead><tr><th>Year</th><th>Earnings ($)</th><th></th></tr></thead><tbody>`;
+    if (years.length === 0) {
+      html += `<tr><td colspan="3" style="color:var(--muted, #888); font-size:.85em; padding:.6em 0;">No rows yet — click "Add row" to start.</td></tr>`;
+    }
+    for (const y of years) {
+      const v = earnings[String(y)];
+      html += `<tr>
+        <td><input type="number" step="1" min="1937" max="2099" data-ssa-year-edit="${y}" value="${y}" style="width:5.5em;"></td>
+        <td><input type="number" step="0.01" data-ssa-year="${y}" value="${escapeAttr(v)}" placeholder="0.00" style="width:9em;"></td>
+        <td><button class="btn small" data-ssa-remove="${y}">×</button></td>
+      </tr>`;
+    }
+    html += `</tbody>`;
+    el.innerHTML = html;
+    updateSsaEarningsTotals();
+  }
+
+  function updateSsaEarningsTotals() {
+    const el = document.getElementById("ssa-earnings-totals");
+    if (!el) return;
+    const earnings = state.ssa.prior_earnings || {};
+    const filledYears = Object.keys(earnings).filter((y) => earnings[y] && earnings[y] !== "");
+    // 4 credits per filled year (approximation — any real annual earnings hits 4 QCs)
+    const credits = Math.min(filledYears.length * 4, 40);
+    el.innerHTML = `<strong>${filledYears.length}</strong> covered year${filledYears.length === 1 ? "" : "s"} · <strong>${credits}</strong> of 40 credits needed for SS vesting.`;
+  }
+
+  function renderSsaTables(tab) {
+    // Highlight active tab
+    document.querySelectorAll("#ssa-tabs .tab-btn").forEach((b) => {
+      b.classList.toggle("active", b.getAttribute("data-ssa-tab") === tab);
+    });
+    const body = document.getElementById("ssa-tab-body");
+    if (tab === "cola") {
+      body.innerHTML = renderSsaColaTable();
+      return;
+    }
+    const isAwi = tab === "awi";
+    const defaults = isAwi ? fc.SS_AWI : fc.SS_TAXABLE_MAX;
+    const overrides = isAwi ? state.ssa.awi_overrides : state.ssa.taxable_max_overrides;
+    const tableKey = isAwi ? "awi" : "taxmax";
+    const heading = isAwi
+      ? "AWI (Average Wage Index, $/yr) — used for indexing past earnings and computing bend points."
+      : "Maximum taxable earnings ($/yr) — earnings above this don't count toward AIME.";
+    const years = Object.keys(defaults).map(Number).sort((a, b) => a - b);
+    let html = `<p style="color:var(--text-muted); font-size:12px; margin:0 0 .6rem;">${heading}</p>`;
+    html += `<div style="max-height:340px; overflow-y:auto; border:1px solid var(--border); padding:.4rem;">`;
+    html += `<table class="paygrid" style="max-width:340px;"><thead><tr><th>Year</th><th>Default</th><th>Override</th></tr></thead><tbody>`;
+    for (const y of years) {
+      const def = defaults[y];
+      const ov = overrides[String(y)] || "";
+      html += `<tr><td>${y}</td><td style="color:var(--text-muted);">${def}</td><td><input type="number" step="0.01" data-ssa-table="${tableKey}" data-ssa-table-year="${y}" value="${escapeAttr(ov)}" placeholder="${def}" style="width:9em;"></td></tr>`;
+    }
+    html += `</tbody></table></div>`;
+    body.innerHTML = html;
+  }
+
+  function renderSsaColaTable() {
+    const colas = fc.SS_COLA;
+    const years = Object.keys(colas).map(Number).sort((a, b) => a - b);
+    let html = `<p style="color:var(--text-muted); font-size:12px; margin:0 0 .6rem;">Historical SS COLA values (informational). The forward-projection rate used in computations is set in the sidebar's "SS COLA (%/yr)" field.</p>`;
+    html += `<table class="paygrid" style="max-width:240px;"><thead><tr><th>Year</th><th>COLA</th></tr></thead><tbody>`;
+    for (const y of years) {
+      html += `<tr><td>${y}</td><td>${(Number(colas[y]) * 100).toFixed(1)}%</td></tr>`;
+    }
+    html += `</tbody></table>`;
+    return html;
   }
 
   function updateRecruitHint() {

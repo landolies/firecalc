@@ -165,6 +165,23 @@ Age 70 is the mandatory retirement age. Scenario tables should extend through ag
 
 Minimum 5 YOS required to receive any pension benefit. Scenarios with less than 5 YOS at retirement should not produce a pension figure and should show a "not vested" warning.
 
+### 4.12 Social Security projection (optional)
+
+Projects a federal Social Security retirement benefit alongside the SJFD pension. **WEP and GPO are NOT modeled** — both were repealed by the Social Security Fairness Act effective for benefits payable for months after December 2023. The engine uses the regular PIA formula with no offset.
+
+**Pipeline:**
+1. Combine prior covered earnings (user-entered) with SJFD earnings (only when `sjfd_is_covered` is on; default off because Tier 2 is non-covered).
+2. Cap each year's earnings at that year's `TAXABLE_MAX`.
+3. Index each year's capped earnings by `AWI(birth_year + 60) / AWI(year)`. No indexing for years at or after the index year.
+4. AIME = sum of top 35 indexed years ÷ 420 months (zero-pad if fewer than 35 years).
+5. PIA at FRA = `90% × min(AIME, b1) + 32% × min(AIME-b1, b2-b1) + 15% × max(0, AIME-b2)`. Bend points `b1, b2` are *computed* from `AWI(eligibility_year - 2) / AWI(1977)` rather than tabulated, so the table self-extends as users add future AWI values.
+6. Apply early-claim reduction (5/9 % per month for first 36 months, 5/12 % per month beyond) or delayed-retirement credits (8%/yr for birth years 1943+) based on claim age vs FRA.
+7. Vesting check: 4 quarter-of-coverage credits per covered year; need 40 lifetime to qualify.
+
+**Tables shipped (verified through 2026 SSA fact sheet):** `AWI` 1951–2024, `TAXABLE_MAX` 1937–2026, `SS_COLA` 2018–2026, FRA per 42 USC §416(l), QC threshold $1,890 for 2026. All editable from the UI's "Edit SSA tables" modal.
+
+**Out of scope for v0:** spousal/survivor benefits, AERO post-claiming recomputation, Special Minimum PIA, Earnings Test for under-FRA workers still earning, Medicare premium offsets, federal/state tax modeling, retroactive WEP/GPO catch-up payments.
+
 ---
 
 ## 5. User inputs and defaults
@@ -197,6 +214,18 @@ The "no promotion" baseline scenario is always present and shows the path if the
 ### 5.5 Display toggles
 - COLA: "Today's dollars" / "With COLA" (see §4.5)
 - Current timestamp for YOS calculation (defaults to today, overridable for testing)
+- **Annual ⇄ Monthly units toggle** in the scenario-grid header. Switches every dollar column (pension, SS, net) between annual and monthly. Replaces the previous duplicated annual/monthly column pairs.
+
+### 5.6 Social Security section (optional)
+
+A collapsible sidebar section (default off — keeps the page calm for users who only care about pension). When **Include SS in scenarios** is on:
+- **Claim age** input (62–70, default 67/FRA).
+- **SS COLA** input with a **Match SJFD COLA rate** checkbox (default on). Tooltip explains: SS COLA tracks national CPI-W; SJFD COLA tracks SF-Bay CPI-U; historically diverge by ~0.3 pp/yr.
+- **SJFD employment is SS-covered** toggle (default off; Tier 2 is non-covered).
+- **Prior covered earnings…** button → modal with year/$ rows. Headline shows credits earned vs 40 needed for SS vesting.
+- **Edit SSA tables…** button → tabbed modal (AWI / Taxable max / SS COLA history). Bend points are computed from AWI, not edited directly.
+- **WEP/GPO repealed** notice in section status line.
+- Two new columns appear in the scenario grid: `SS` and `Net retirement` (= pension + SS). Net is shown as raw addition; the audit drawer's snapshot view inflates both to a common age via each program's COLA so values are time-comparable.
 
 ---
 
