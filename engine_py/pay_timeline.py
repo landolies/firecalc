@@ -83,10 +83,13 @@ def _landing_step(
     gwi_rate: Decimal,
     gwi_month: int,
     gwi_day: int,
-) -> int:
+) -> tuple[int, bool]:
     """
     Lowest step in new_rank whose GWI-adjusted bi-weekly on promotion_date
     is at least 5% above pre_promotion_biweekly.
+
+    Returns (step, ok). When no step in the new rank meets the 5% threshold,
+    falls back to max_step and ok=False so the caller can warn.
     """
     threshold = pre_promotion_biweekly * Decimal("1.05")
     max_step = pay_grid.max_step(new_rank)
@@ -96,14 +99,22 @@ def _landing_step(
             continue
         adjusted = _adjusted_biweekly(base, grid_effective, promotion_date, gwi_rate, gwi_month, gwi_day)
         if adjusted >= threshold:
-            return step
-    return max_step  # fallback: should not happen with valid data
+            return step, True
+    return max_step, False
 
 
-def build_salary_timeline(inputs: ScenarioInputs, end_date: date) -> list[PayPeriod]:
+def build_salary_timeline(
+    inputs: ScenarioInputs,
+    end_date: date,
+    warnings: Optional[list[str]] = None,
+) -> list[PayPeriod]:
     """
     Return non-overlapping PayPeriod list covering [hire_date, end_date).
     end_date is exclusive.
+
+    If `warnings` is provided, any promotion that violates the 5%-landing rule
+    appends a human-readable message to it. The promotion still proceeds at
+    the new rank's max step so the timeline stays well-formed.
     """
     if end_date <= inputs.hire_date:
         return []
@@ -125,13 +136,22 @@ def build_salary_timeline(inputs: ScenarioInputs, end_date: date) -> list[PayPer
     # with no promotions it's simply inputs.current_rank.
     initial_rank = inputs.current_rank
     if promotions:
-        _RANK_ORDER = ["Firefighter Recruit", "Firefighter", "Fire Engineer", "Fire Captain"]
+        # Linear ladder for rank-at-hire inference. Specialty ranks (Inspector,
+        # Investigator) sit off-ladder and resolve to Firefighter as the prior
+        # rank — promotion eligibility itself is not enforced (per SPEC §3.2).
+        _LINEAR_LADDER = [
+            "Firefighter Recruit", "Firefighter", "Fire Engineer",
+            "Fire Captain", "Battalion Chief",
+        ]
+        _SPECIALTY = {"Fire Prevention Inspector", "Arson Investigator"}
 
         def _rank_before_promotion(promo_new_rank: str) -> str:
-            idx = _RANK_ORDER.index(promo_new_rank)
+            if promo_new_rank in _SPECIALTY:
+                return "Firefighter"
+            idx = _LINEAR_LADDER.index(promo_new_rank)
             if idx <= 1:
                 return "Firefighter"
-            return _RANK_ORDER[idx - 1]
+            return _LINEAR_LADDER[idx - 1]
 
         initial_rank = _rank_before_promotion(promotions[0].new_rank)
 
@@ -226,8 +246,16 @@ def build_salary_timeline(inputs: ScenarioInputs, end_date: date) -> list[PayPer
             )
             p = promo_queue.pop(0)
             rank = p.new_rank
-            step = _landing_step(rank, pre_bw, inputs.pay_grid, grid_eff,
-                                  next_event_date, inputs.gwi_rate, gm, gd)
+            step, ok = _landing_step(rank, pre_bw, inputs.pay_grid, grid_eff,
+                                      next_event_date, inputs.gwi_rate, gm, gd)
+            if not ok and warnings is not None:
+                warnings.append(
+                    f"Promotion to {rank} on {next_event_date.isoformat()} violates the "
+                    f"5%-landing rule: no step in {rank} pays at least 5% above the "
+                    f"pre-promotion bi-weekly of ${pre_bw:.2f}. The timeline lands at "
+                    f"the top step of {rank}, but the promotion is not allowed under "
+                    f"plan rules."
+                )
             step_clock = _add_years(next_event_date, -(step - 1))
             event_label = "promotion"
         else:

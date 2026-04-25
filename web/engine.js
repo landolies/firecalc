@@ -158,9 +158,9 @@
       const base = payGridGet(payGrid, newRank, step);
       if (base === null) continue;
       const adj = adjustedBiweekly(base, gridEff, promoDate, gwiRate, gwiMonth, gwiDay);
-      if (adj.gte(threshold)) return step;
+      if (adj.gte(threshold)) return { step, ok: true };
     }
-    return max;
+    return { step: max, ok: false };
   }
 
   function yearsBetween(earlier, later) {
@@ -169,15 +169,25 @@
     return Math.max(0, years);
   }
 
-  const RANK_ORDER = ["Firefighter Recruit", "Firefighter", "Fire Engineer", "Fire Captain"];
+  const RANK_ORDER = [
+    "Firefighter Recruit", "Firefighter", "Fire Engineer",
+    "Fire Prevention Inspector", "Arson Investigator",
+    "Fire Captain", "Battalion Chief",
+  ];
+  const LINEAR_LADDER = [
+    "Firefighter Recruit", "Firefighter", "Fire Engineer",
+    "Fire Captain", "Battalion Chief",
+  ];
+  const SPECIALTY_RANKS = new Set(["Fire Prevention Inspector", "Arson Investigator"]);
 
   function rankBeforePromotion(newRank) {
-    const idx = RANK_ORDER.indexOf(newRank);
+    if (SPECIALTY_RANKS.has(newRank)) return "Firefighter";
+    const idx = LINEAR_LADDER.indexOf(newRank);
     if (idx <= 1) return "Firefighter";
-    return RANK_ORDER[idx - 1];
+    return LINEAR_LADDER[idx - 1];
   }
 
-  function buildSalaryTimeline(inputs, endDate) {
+  function buildSalaryTimeline(inputs, endDate, warnings) {
     if (compareDates(endDate, inputs.hire_date) <= 0) return [];
 
     const [gm, gd] = inputs.gwi_effective_month_day;
@@ -270,7 +280,15 @@
         const preBw = adjustedBiweekly(payGridGet(inputs.pay_grid, rank, step), gridEff, nextEventDate, inputs.gwi_rate, gm, gd);
         const p = promoQueue.shift();
         rank = p.new_rank;
-        step = landingStep(rank, preBw, inputs.pay_grid, gridEff, nextEventDate, inputs.gwi_rate, gm, gd);
+        const landed = landingStep(rank, preBw, inputs.pay_grid, gridEff, nextEventDate, inputs.gwi_rate, gm, gd);
+        step = landed.step;
+        if (!landed.ok && warnings) {
+          warnings.push(
+            `Promotion to ${rank} on ${isoDate(nextEventDate)} violates the 5%-landing rule: ` +
+            `no step in ${rank} pays at least 5% above the pre-promotion bi-weekly of $${preBw.toFixed(2)}. ` +
+            `The timeline lands at the top step of ${rank}, but the promotion is not allowed under plan rules.`
+          );
+        }
         stepClock = addYears(nextEventDate, -(step - 1));
         eventLabel = "promotion";
       } else {
@@ -503,7 +521,7 @@
       warnings.push(`Retirement age ${effectiveRetirementAge} is below the minimum age of ${MIN_RETIREMENT_AGE}.`);
     }
 
-    const timeline = buildSalaryTimeline(inputs, serviceEnd);
+    const timeline = buildSalaryTimeline(inputs, serviceEnd, warnings);
     const finalPeriod = timeline.length > 0 ? timeline[timeline.length - 1] : null;
     const finalRank = finalPeriod ? finalPeriod.rank : inputs.current_rank;
     const finalStep = finalPeriod ? finalPeriod.step : inputs.current_step;

@@ -74,7 +74,7 @@ def compute_retirement_scenario(inputs: ScenarioInputs) -> ScenarioResult:
     # ------------------------------------------------------------------
     # Salary timeline
     # ------------------------------------------------------------------
-    timeline = build_salary_timeline(inputs, service_end)
+    timeline = build_salary_timeline(inputs, service_end, warnings=warnings)
 
     final_period = timeline[-1] if timeline else None
     final_rank = final_period.rank if final_period else inputs.current_rank

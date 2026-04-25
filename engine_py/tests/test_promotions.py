@@ -25,7 +25,7 @@ def test_ff_step7_to_engineer():
         FY2627_EFFECTIVE_DATE, FY2627_EFFECTIVE_DATE,
         Decimal("0.035"), 7, 1,
     )
-    assert landing == 4, f"Expected Engineer Step 4, got {landing}"
+    assert landing == (4, True), f"Expected (4, True), got {landing}"
     # Confirm the value
     assert FY2627_PAY_GRID.get("Fire Engineer", 4) == Decimal("6707.11")
 
@@ -41,7 +41,7 @@ def test_ff_step7_to_captain():
         FY2627_EFFECTIVE_DATE, FY2627_EFFECTIVE_DATE,
         Decimal("0.035"), 7, 1,
     )
-    assert landing == 1, f"Expected Captain Step 1, got {landing}"
+    assert landing == (1, True), f"Expected (1, True), got {landing}"
     assert FY2627_PAY_GRID.get("Fire Captain", 1) == Decimal("6669.01")
 
 
@@ -65,4 +65,99 @@ def test_landing_step_uses_gwi_adjusted_rate():
         FY2627_EFFECTIVE_DATE, promotion_date,
         Decimal("0.035"), 7, 1,
     )
-    assert landing in (3, 4), f"Expected Engineer Step 3 or 4, got {landing}"
+    step, ok = landing
+    assert ok, f"Expected ok=True, got {landing}"
+    assert step in (3, 4), f"Expected Engineer Step 3 or 4, got {step}"
+
+
+def test_engineer_step5_to_inspector_violates_5pct():
+    """
+    Engineer Step 5 = 7041.59. 5% threshold = 7393.67.
+    Fire Prevention Inspector top step = 7384.54 — fails by ~$9.
+    Engine should fall back to Inspector top step and return ok=False.
+    """
+    pre_bw = Decimal("7041.59")
+    landing = _landing_step(
+        "Fire Prevention Inspector", pre_bw, FY2627_PAY_GRID,
+        FY2627_EFFECTIVE_DATE, FY2627_EFFECTIVE_DATE,
+        Decimal("0.035"), 7, 1,
+    )
+    assert landing == (5, False), f"Expected (5, False), got {landing}"
+
+
+def test_arson_investigator_step5_to_captain_violates_5pct():
+    """
+    Arson Investigator Step 5 = 7702.60. 5% threshold = 8087.73.
+    Fire Captain top step = 8079.66 — fails by ~$8.
+    """
+    pre_bw = Decimal("7702.60")
+    landing = _landing_step(
+        "Fire Captain", pre_bw, FY2627_PAY_GRID,
+        FY2627_EFFECTIVE_DATE, FY2627_EFFECTIVE_DATE,
+        Decimal("0.035"), 7, 1,
+    )
+    assert landing == (5, False), f"Expected (5, False), got {landing}"
+
+
+def test_ff_step7_to_battalion_chief():
+    """
+    FF Step 7 = 6343.70. Threshold = 6660.89.
+    Battalion Chief Step 1 = 8304.27 ≥ threshold → Step 1.
+    """
+    pre_bw = Decimal("6343.70")
+    landing = _landing_step(
+        "Battalion Chief", pre_bw, FY2627_PAY_GRID,
+        FY2627_EFFECTIVE_DATE, FY2627_EFFECTIVE_DATE,
+        Decimal("0.035"), 7, 1,
+    )
+    assert landing == (1, True), f"Expected (1, True), got {landing}"
+
+
+def test_ff_step7_to_arson_investigator():
+    """
+    FF Step 7 = 6343.70. Threshold = 6660.89.
+    Investigator Step 1: 6360.32  — no
+    Investigator Step 2: 6669.01  — YES
+    """
+    pre_bw = Decimal("6343.70")
+    landing = _landing_step(
+        "Arson Investigator", pre_bw, FY2627_PAY_GRID,
+        FY2627_EFFECTIVE_DATE, FY2627_EFFECTIVE_DATE,
+        Decimal("0.035"), 7, 1,
+    )
+    assert landing == (2, True), f"Expected (2, True), got {landing}"
+
+
+def test_5pct_violation_emits_warning_through_engine():
+    """End-to-end: an Engineer→Inspector promotion at top step surfaces a
+    warning in the ScenarioResult."""
+    from datetime import date as _date
+    from engine_py.engine import compute_retirement_scenario
+    from engine_py.models import PromotionEvent, ScenarioInputs
+
+    # The engine replays promotions from hire forward (current_rank is ignored
+    # when promotions exist). Hire as FF, promote to Engineer early enough to
+    # reach top step 6, then promote to Inspector — that hop violates the rule.
+    inputs = ScenarioInputs(
+        birth_date=_date(1986, 10, 1),
+        hire_date=_date(2010, 1, 1),
+        current_rank="Fire Prevention Inspector",
+        current_step=1,
+        current_step_arrival_date=_date(2010, 1, 1),
+        retirement_age=57,
+        retirement_type="active",
+        promotions=[
+            PromotionEvent(new_rank="Fire Engineer", effective_date=_date(2015, 1, 1)),
+            PromotionEvent(new_rank="Fire Prevention Inspector", effective_date=_date(2030, 1, 1)),
+        ],
+        pay_grid=FY2627_PAY_GRID,
+        pay_grid_effective_date=FY2627_EFFECTIVE_DATE,
+        gwi_rate=Decimal("0"),  # disable GWI scaling for a clean compare
+        gwi_effective_month_day=(7, 1),
+        cola_rate=Decimal("0.02"),
+        cola_effective_month_day=(2, 1),
+    )
+    result = compute_retirement_scenario(inputs)
+    assert any("5%-landing rule" in w for w in result.warnings), (
+        f"Expected a 5%-rule warning, got: {result.warnings}"
+    )

@@ -100,6 +100,8 @@
     border-right: 1px solid var(--border);
     overflow-y: auto;
     padding: 1rem 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
   }
   aside .section { margin-bottom: 1.25rem; }
   aside .section h2 {
@@ -461,6 +463,9 @@
       <div class="field">
         <label>Current rank <span class="help" data-tip="Your rank as of today. Promotions are modeled per-path in the Promotion paths section below.">ⓘ</span></label>
         <select id="current_rank"></select>
+        <div id="recruit_hint" class="hint" style="display:none; font-size:.85em; color:var(--warn); margin-top:.3rem;">
+          Recruits typically promote to Firefighter after the academy. Add a promotion event in the Promotion paths section below to model this — otherwise the scenario will hold you at Recruit pay all the way to retirement.
+        </div>
       </div>
       <div class="field">
         <label>Current step <span class="help" data-tip="Your current step within the rank. Steps advance one year apart from the step-arrival date up to the rank's top step.">ⓘ</span></label>
@@ -481,7 +486,7 @@
         <input type="number" id="gwi_pct" min="0" max="20" step="0.01">
       </div>
       <div class="field">
-        <label>COLA (%/yr) <span class="help" data-tip="Cost-of-Living Adjustment applied to pension in retirement, starting next Feb 1 (prorated by full months retired). Capped at 2.0% per SJFD plan rules.">ⓘ</span></label>
+        <label>COLA (%/yr) <span class="help" data-tip="Cost-of-Living Adjustment applied to pension in retirement, starting next Feb 1 (prorated by full months retired). Capped at 2.0% per SJFD plan rules. Note: this rate only affects the year-by-year projection table in the audit drawer, and only when 'Show COLA projection in audit' is enabled. It does not change the headline pension figure.">ⓘ</span></label>
         <input type="number" id="cola_pct" min="0" max="2" step="0.01">
       </div>
     </div>
@@ -529,6 +534,10 @@
       <button class="btn" id="export_csv">Export CSV</button>
       <button class="btn danger" id="reset">Reset to defaults</button>
     </div>
+  </div>
+
+  <div class="version-footer" style="margin-top: auto; padding-top: 1rem; font-size: .75em; color: var(--muted, #888); opacity: .7;">
+    v0.3.0 · updated 2026-04-24
   </div>
 </aside>
 
@@ -589,7 +598,7 @@
   if (!fc) { alert("firecalc engine failed to load"); return; }
 
   const STORAGE_KEY = "sjfd_retirement_calculator_v1";
-  const SCHEMA_VERSION = 3;
+  const SCHEMA_VERSION = 5;
   const AGE_RANGE_FLOOR = 45;
   const AGE_RANGE_CEILING = 75;
 
@@ -640,6 +649,24 @@
     if (parsed.schemaVersion === 2 && Array.isArray(parsed.paths)) {
       for (const p of parsed.paths) delete p.pension_start_date;
       parsed.schemaVersion = 3;
+    }
+    // v3 → v4: merge in default rows for newly-added ranks (Fire Prevention
+    // Inspector, Arson Investigator, Battalion Chief). User-edited values for
+    // pre-existing ranks are preserved; only missing keys are filled in.
+    if (parsed.schemaVersion === 3 && parsed.pay_grid) {
+      const defaults = {};
+      for (const [k, v] of fc.FY2627_PAY_GRID.rates) defaults[k] = v.toString();
+      for (const k of Object.keys(defaults)) {
+        if (!(k in parsed.pay_grid)) parsed.pay_grid[k] = defaults[k];
+      }
+      parsed.schemaVersion = 4;
+    }
+    // v4 → v5: purge Fire Engineer Step 6 — removed in the latest contract.
+    // The user can re-add it via the pay-grid editor if a future contract
+    // reinstates it.
+    if (parsed.schemaVersion === 4 && parsed.pay_grid) {
+      delete parsed.pay_grid["Fire Engineer|6"];
+      parsed.schemaVersion = 5;
     }
     return parsed;
   }
@@ -776,14 +803,29 @@
     for (let s = 1; s <= 7; s++) html += `<th>${s}</th>`;
     html += "</tr></thead><tbody>";
     for (const rank of ranks) {
-      html += `<tr><td>${escapeHtml(rank.replace("Firefighter Recruit", "FF Recruit").replace("Firefighter", "FF").replace("Fire Engineer", "Engineer").replace("Fire Captain", "Captain"))}</td>`;
+      const shortLabel = rank
+        .replace("Firefighter Recruit", "FF Recruit")
+        .replace("Firefighter", "FF")
+        .replace("Fire Engineer", "Engineer")
+        .replace("Fire Prevention Inspector", "Prev. Inspector")
+        .replace("Arson Investigator", "Arson Inv.")
+        .replace("Fire Captain", "Captain")
+        .replace("Battalion Chief", "Batt. Chief");
+      html += `<tr><td>${escapeHtml(shortLabel)}</td>`;
+      // Recruit is fixed at Step 1 only — no editable Step 2-7 cells.
+      // For every other rank, render an empty fillable input for any step
+      // without a default so the user can add Step 6/7 values if a future
+      // contract introduces them.
+      const recruitOnlyStep1 = rank === "Firefighter Recruit";
       for (let s = 1; s <= 7; s++) {
         const key = `${rank}|${s}`;
         const val = state.pay_grid[key];
-        if (val == null) {
+        if (val != null && val !== "") {
+          html += `<td><input type="number" step="0.01" data-paygrid-key="${escapeAttr(key)}" value="${escapeAttr(val)}"></td>`;
+        } else if (recruitOnlyStep1 && s > 1) {
           html += `<td class="empty-cell">—</td>`;
         } else {
-          html += `<td><input type="number" step="0.01" data-paygrid-key="${escapeAttr(key)}" value="${escapeAttr(val)}"></td>`;
+          html += `<td><input type="number" step="0.01" data-paygrid-key="${escapeAttr(key)}" value="" placeholder="—" title="Empty — fill in if this step exists for ${escapeAttr(rank)}"></td>`;
         }
       }
       html += "</tr>";
@@ -818,11 +860,13 @@
     const el = document.getElementById("paths");
     el.innerHTML = state.paths.map((path, i) => renderPath(path, i)).join("");
     revalidateAllPaths();
+    updateRecruitHint();
   }
 
   function renderPath(path, i) {
     const promotions = (path.promotions || []).map((p, j) => {
-      const ranks = ["Fire Engineer", "Fire Captain"]
+      const ranks = fc.RANK_ORDER
+        .filter((r) => r !== "Firefighter Recruit")
         .map((r) => `<option value="${r}"${p.new_rank === r ? " selected" : ""}>${r}</option>`).join("");
       return `<div class="promo">
         <select data-promo-rank data-path="${i}" data-promo="${j}">${ranks}</select>
@@ -1189,11 +1233,18 @@
     // Personal / rates — use scheduleGridOnly so typing doesn't reset the input mid-keystroke.
     document.getElementById("birth_date").addEventListener("change", (e) => { state.personal.birth_date = e.target.value; scheduleGridOnly(); });
     document.getElementById("hire_date").addEventListener("change", (e) => { state.personal.hire_date = e.target.value; revalidateAllPaths(); scheduleGridOnly(); });
-    document.getElementById("current_rank").addEventListener("change", (e) => { state.personal.current_rank = e.target.value; scheduleGridOnly(); });
+    document.getElementById("current_rank").addEventListener("change", (e) => { state.personal.current_rank = e.target.value; updateRecruitHint(); scheduleGridOnly(); });
     document.getElementById("current_step").addEventListener("input", (e) => { state.personal.current_step = Math.max(1, Number(e.target.value) || 1); scheduleGridOnly(); });
     document.getElementById("current_step_arrival_date").addEventListener("change", (e) => { state.personal.current_step_arrival_date = e.target.value; scheduleGridOnly(); });
     document.getElementById("gwi_pct").addEventListener("input", (e) => { state.rates.gwi_rate = (Number(e.target.value || 0) / 100).toFixed(4); scheduleGridOnly(); });
-    document.getElementById("cola_pct").addEventListener("input", (e) => { state.rates.cola_rate = (Number(e.target.value || 0) / 100).toFixed(4); scheduleGridOnly(); });
+    document.getElementById("cola_pct").addEventListener("input", (e) => {
+      state.rates.cola_rate = (Number(e.target.value || 0) / 100).toFixed(4);
+      if (!state.show_cola) {
+        state.show_cola = true;
+        document.getElementById("show_cola").checked = true;
+      }
+      scheduleGridOnly();
+    });
     document.getElementById("pay_grid_effective_date").addEventListener("change", (e) => { state.pay_grid_effective_date = e.target.value; scheduleGridOnly(); });
     document.getElementById("show_cola").addEventListener("change", (e) => { state.show_cola = e.target.checked; scheduleGridOnly(); });
     document.getElementById("toggle_final").addEventListener("change", (e) => { state.show_final_method = e.target.checked; scheduleGridOnly(); });
@@ -1380,7 +1431,7 @@
 
   function populateRankOptions() {
     const sel = document.getElementById("current_rank");
-    const ranks = fc.RANK_ORDER.filter((r) => r !== "Firefighter Recruit");
+    const ranks = fc.RANK_ORDER;
     sel.innerHTML = ranks.map((r) => `<option value="${r}">${r}</option>`).join("");
   }
 
@@ -1395,6 +1446,16 @@
     document.getElementById("pay_grid_effective_date").value = state.pay_grid_effective_date;
     document.getElementById("show_cola").checked = !!state.show_cola;
     document.getElementById("toggle_final").checked = !!state.show_final_method;
+    updateRecruitHint();
+  }
+
+  function updateRecruitHint() {
+    const isRecruit = state.personal.current_rank === "Firefighter Recruit";
+    const hasFfPromo = (state.paths || []).some((p) =>
+      (p.promotions || []).some((pr) => pr.new_rank === "Firefighter")
+    );
+    const el = document.getElementById("recruit_hint");
+    if (el) el.style.display = (isRecruit && !hasFfPromo) ? "block" : "none";
   }
 
   // Click on a grid row opens the drawer

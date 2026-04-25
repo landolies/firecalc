@@ -60,10 +60,13 @@ The official SJFD bi-weekly salary table for Fiscal Year 2026/27, including the 
 |---|---|---|---|---|---|---|---|
 | Firefighter Recruit (2310) | 4148.72 | — | — | — | — | — | — |
 | Firefighter (2311) | 4769.02 | 4998.58 | 5239.87 | 5494.83 | 5760.53 | 6036.98 | 6343.70 |
-| Fire Engineer (2312) | 5816.21 | 6097.55 | 6391.58 | 6707.11 | 7041.59 | 7384.54 | — |
+| Fire Engineer (2312) | 5816.21 | 6097.55 | 6391.58 | 6707.11 | 7041.59 | — | — |
+| Fire Prevention Inspector (2326) | 6097.55 | 6391.58 | 6707.11 | 7033.38 | 7384.54 | — | — |
+| Arson Investigator (2328) | 6360.32 | 6669.01 | 6995.28 | 7335.23 | 7702.60 | — | — |
 | Fire Captain (2313) | 6669.01 | 6995.28 | 7335.23 | 7693.73 | 8079.66 | — | — |
+| Battalion Chief (2314) | 8304.27 | 8713.57 | 9138.51 | 9590.79 | 10071.00 | — | — |
 
-Other classifications visible in the photo (Fire Prevention Inspector, Arson Investigator, Battalion Chief) are **out of scope for v0**.
+Promotion eligibility (e.g. which ranks may follow which) is **not enforced** by the engine; the user picks any pathway and is responsible for its real-world validity. The only structural rule is that each promotion must satisfy the **5%-landing rule** (§4.8). If a chosen pathway violates it, the UI must surface a warning.
 
 These values are the **defaults** shown in the UI and must be editable by the user (so a new contract's numbers can be typed in without changing code).
 
@@ -146,8 +149,9 @@ The user also wants a "guaranteed vs. projected" comparison: the ability to see 
 When the user specifies a promotion at a given date:
 - **Landing step auto-computed**: the lowest step in the new rank whose bi-weekly pay is at least **5% higher** than the pre-promotion bi-weekly pay. Per SJFD promotion rules, promotions must result in at least a 5% pay increase.
 - After promotion, annual step increases resume on the **anniversary of the promotion date** until the top step of the new rank.
-- Promotion from Firefighter directly to Captain (skipping Engineer) is allowed. The landing-step rule applies identically.
+- Promotion eligibility is **not enforced**: any chosen sequence of ranks is allowed (e.g. Firefighter directly to Captain, Engineer to Inspector, etc.). The landing-step rule applies identically. The user owns the realism of the chosen path.
 - No minimum time-in-rank prerequisite is enforced in v0.
+- **5%-rule violation**: if no step in the target rank pays at least 5% above the pre-promotion bi-weekly, the engine emits a warning naming the offending promotion and zeroes the pension for that scenario. The salary timeline still renders so the user can see exactly which hop is the problem. This is a real constraint at SJFD top-of-rank pay bands — e.g. Engineer Step 5 → Fire Prevention Inspector fails by ~$9 because Inspector's top step is below Engineer Step 5 × 1.05.
 
 ### 4.9 Annualization
 
@@ -170,7 +174,7 @@ All inputs are editable and persisted to localStorage. The UI is organized into 
 ### 5.1 Personal information
 - Birth date (date input)
 - Hire date (date input)
-- Current rank (dropdown: Firefighter / Fire Engineer / Fire Captain)
+- Current rank (dropdown: Firefighter Recruit / Firefighter / Fire Engineer / Fire Prevention Inspector / Arson Investigator / Fire Captain / Battalion Chief). When **Firefighter Recruit** is selected with no promotion events queued, the UI shows an inline hint reminding the user that recruits normally promote to Firefighter after the academy and to add a promotion event to model that step.
 - Current step (integer input, 1 to rank's max step)
 - Date arrived at current step (date input; defaults to current-step arrival computed from hire date + normal progression, but user-editable)
 
@@ -184,7 +188,7 @@ A table showing current bi-weekly pay for every rank × step combination. Pre-po
 ### 5.4 Scenario configuration
 The user defines one or more "what if" scenarios. Each scenario specifies:
 - Retirement age (integer, 50–70)
-- Optional promotion events: a list of `{rank: "Engineer"|"Captain", date: YYYY-MM-DD}` entries
+- Optional promotion events: a list of `{rank, date: YYYY-MM-DD}` entries. Allowed `rank` values are any of Firefighter, Fire Engineer, Fire Prevention Inspector, Arson Investigator, Fire Captain, Battalion Chief. Promotion eligibility (which ranks may follow which) is not enforced — the user owns the realism of the chosen path. The only structural constraint is the 5%-landing rule (§4.8); a violation surfaces as a warning and zeroes the pension figure for that scenario.
 - Retirement type (Active service / Deferred vested)
 - If deferred vested: separation date + pension start date
 
@@ -207,7 +211,7 @@ class PayGrid:
 
 @dataclass
 class PromotionEvent:
-    new_rank: str               # "Fire Engineer" or "Fire Captain"
+    new_rank: str               # any rank in §3.2 except "Firefighter Recruit"
     effective_date: date
 
 @dataclass
@@ -318,7 +322,6 @@ Explicitly out of scope for this initial build. Note each in the UI as "coming s
 - Disability retirement
 - Survivorship benefits
 - Post-retirement marriage provisions
-- Battalion Chief, Fire Prevention Inspector, Arson Investigator ranks
 - VEBA account tracking
 - CalPERS reciprocity
 - Per-year GWI overrides (single flat rate only in v0)

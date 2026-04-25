@@ -1,0 +1,6 @@
+#!/bin/sh
+# Auto-bump the calculator version line in web/index.html.
+# Enable once per clone: git config core.hooksPath .githooks
+set -e
+ROOT=$(git rev-parse --show-toplevel)
+BUMP_RESTAGE=1 python3 "$ROOT/scripts/bump_version.py"
