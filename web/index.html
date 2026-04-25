@@ -537,7 +537,7 @@
   </div>
 
   <div class="version-footer" style="margin-top: auto; padding-top: 1rem; font-size: .75em; color: var(--muted, #888); opacity: .7;">
-    v0.3.0 · updated 2026-04-24
+    v0.3.1 · updated 2026-04-24
   </div>
 </aside>
 
@@ -598,7 +598,7 @@
   if (!fc) { alert("firecalc engine failed to load"); return; }
 
   const STORAGE_KEY = "sjfd_retirement_calculator_v1";
-  const SCHEMA_VERSION = 5;
+  const SCHEMA_VERSION = 6;
   const AGE_RANGE_FLOOR = 45;
   const AGE_RANGE_CEILING = 75;
 
@@ -667,6 +667,18 @@
     if (parsed.schemaVersion === 4 && parsed.pay_grid) {
       delete parsed.pay_grid["Fire Engineer|6"];
       parsed.schemaVersion = 5;
+    }
+    // v5 → v6: re-merge defaults. The v3→v4 migration shipped before the JS
+    // engine had Inspector / Investigator / Battalion Chief in its default
+    // grid, so v5 storage is missing those keys for any user who upgraded
+    // through the broken intermediate. Idempotent for fresh installs.
+    if (parsed.schemaVersion === 5 && parsed.pay_grid) {
+      const defaults = {};
+      for (const [k, v] of fc.FY2627_PAY_GRID.rates) defaults[k] = v.toString();
+      for (const k of Object.keys(defaults)) {
+        if (!(k in parsed.pay_grid)) parsed.pay_grid[k] = defaults[k];
+      }
+      parsed.schemaVersion = 6;
     }
     return parsed;
   }
