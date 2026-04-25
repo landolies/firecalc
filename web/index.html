@@ -598,7 +598,7 @@
   if (!fc) { alert("firecalc engine failed to load"); return; }
 
   const STORAGE_KEY = "sjfd_retirement_calculator_v1";
-  const SCHEMA_VERSION = 6;
+  const SCHEMA_VERSION = 7;
   const AGE_RANGE_FLOOR = 45;
   const AGE_RANGE_CEILING = 75;
 
@@ -679,6 +679,23 @@
         if (!(k in parsed.pay_grid)) parsed.pay_grid[k] = defaults[k];
       }
       parsed.schemaVersion = 6;
+    }
+    // v6 → v7: re-merge defaults again. The v5→v6 migration ran on browsers
+    // that still had the broken JS bundle (no new ranks in FY2627_PAY_GRID),
+    // so it was a no-op for the new ranks. Now that engine.js carries the
+    // correct defaults, fill any still-missing keys AND replace any keys
+    // whose stored value is an empty string (defensive — covers users who
+    // accidentally cleared a default cell while exploring the new editable
+    // empty cells). User-typed numbers are never overwritten.
+    if (parsed.schemaVersion === 6 && parsed.pay_grid) {
+      const defaults = {};
+      for (const [k, v] of fc.FY2627_PAY_GRID.rates) defaults[k] = v.toString();
+      for (const k of Object.keys(defaults)) {
+        if (!(k in parsed.pay_grid) || parsed.pay_grid[k] === "") {
+          parsed.pay_grid[k] = defaults[k];
+        }
+      }
+      parsed.schemaVersion = 7;
     }
     return parsed;
   }
