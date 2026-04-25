@@ -689,6 +689,275 @@
     };
   }
 
+  // ---------- I. Social Security (engine_py/social_security.py) -------
+  // WEP and GPO are NOT modeled — both repealed by the Social Security
+  // Fairness Act effective for benefits payable for months after Dec 2023.
+
+  const _SS_AWI = {
+    1951:"2799.16",1952:"2973.32",1953:"3139.44",1954:"3155.64",1955:"3301.44",
+    1956:"3532.36",1957:"3641.72",1958:"3673.80",1959:"3855.80",1960:"4007.12",
+    1961:"4086.76",1962:"4291.40",1963:"4396.64",1964:"4576.32",1965:"4658.72",
+    1966:"4938.36",1967:"5213.44",1968:"5571.76",1969:"5893.76",1970:"6186.24",
+    1971:"6497.08",1972:"7133.80",1973:"7580.16",1974:"8030.76",1975:"8630.92",
+    1976:"9226.48",1977:"9779.44",1978:"10556.03",1979:"11479.46",1980:"12513.46",
+    1981:"13773.10",1982:"14531.34",1983:"15239.24",1984:"16135.07",1985:"16822.51",
+    1986:"17321.82",1987:"18426.51",1988:"19334.04",1989:"20099.55",1990:"21027.98",
+    1991:"21811.60",1992:"22935.42",1993:"23132.67",1994:"23753.53",1995:"24705.66",
+    1996:"25913.90",1997:"27426.00",1998:"28861.44",1999:"30469.84",2000:"32154.82",
+    2001:"32921.92",2002:"33252.09",2003:"34064.95",2004:"35648.55",2005:"36952.94",
+    2006:"38651.41",2007:"40405.48",2008:"41334.97",2009:"40711.61",2010:"41673.83",
+    2011:"42979.61",2012:"44321.67",2013:"44888.16",2014:"46481.52",2015:"48098.63",
+    2016:"48642.15",2017:"50321.89",2018:"52145.80",2019:"54099.99",2020:"55628.60",
+    2021:"60575.07",2022:"63795.13",2023:"66621.80",2024:"69846.57",
+  };
+
+  const _SS_TAXABLE_MAX = {
+    1937:"3000",1938:"3000",1939:"3000",1940:"3000",1941:"3000",1942:"3000",
+    1943:"3000",1944:"3000",1945:"3000",1946:"3000",1947:"3000",1948:"3000",
+    1949:"3000",1950:"3000",1951:"3600",1952:"3600",1953:"3600",1954:"3600",
+    1955:"4200",1956:"4200",1957:"4200",1958:"4200",1959:"4800",1960:"4800",
+    1961:"4800",1962:"4800",1963:"4800",1964:"4800",1965:"4800",1966:"6600",
+    1967:"6600",1968:"7800",1969:"7800",1970:"7800",1971:"7800",1972:"9000",
+    1973:"10800",1974:"13200",1975:"14100",1976:"15300",1977:"16500",1978:"17700",
+    1979:"22900",1980:"25900",1981:"29700",1982:"32400",1983:"35700",1984:"37800",
+    1985:"39600",1986:"42000",1987:"43800",1988:"45000",1989:"48000",1990:"51300",
+    1991:"53400",1992:"55500",1993:"57600",1994:"60600",1995:"61200",1996:"62700",
+    1997:"65400",1998:"68400",1999:"72600",2000:"76200",2001:"80400",2002:"84900",
+    2003:"87000",2004:"87900",2005:"90000",2006:"94200",2007:"97500",2008:"102000",
+    2009:"106800",2010:"106800",2011:"106800",2012:"110100",2013:"113700",
+    2014:"117000",2015:"118500",2016:"118500",2017:"127200",2018:"128400",
+    2019:"132900",2020:"137700",2021:"142800",2022:"147000",2023:"160200",
+    2024:"168600",2025:"176100",2026:"184500",
+  };
+
+  const _SS_COLA = {
+    2018:"0.020",2019:"0.028",2020:"0.016",2021:"0.013",2022:"0.059",
+    2023:"0.087",2024:"0.032",2025:"0.025",2026:"0.028",
+  };
+
+  const _SS_DEFAULT_COLA_RATE = new D("0.025");
+  const _SS_AWI_1977 = new D(_SS_AWI[1977]);
+  const _BP1_BASE = new D("180");
+  const _BP2_BASE = new D("1085");
+
+  function _ssAwiTable(overrides) {
+    if (!overrides) return _SS_AWI;
+    const merged = Object.assign({}, _SS_AWI);
+    for (const k of Object.keys(overrides)) merged[k] = overrides[k];
+    return merged;
+  }
+  function _ssTaxMaxTable(overrides) {
+    if (!overrides) return _SS_TAXABLE_MAX;
+    const merged = Object.assign({}, _SS_TAXABLE_MAX);
+    for (const k of Object.keys(overrides)) merged[k] = overrides[k];
+    return merged;
+  }
+
+  function ssFullRetirementAge(birthYear) {
+    if (birthYear <= 1937) return { years: 65, months: 0 };
+    if (birthYear === 1938) return { years: 65, months: 2 };
+    if (birthYear === 1939) return { years: 65, months: 4 };
+    if (birthYear === 1940) return { years: 65, months: 6 };
+    if (birthYear === 1941) return { years: 65, months: 8 };
+    if (birthYear === 1942) return { years: 65, months: 10 };
+    if (birthYear >= 1943 && birthYear <= 1954) return { years: 66, months: 0 };
+    if (birthYear === 1955) return { years: 66, months: 2 };
+    if (birthYear === 1956) return { years: 66, months: 4 };
+    if (birthYear === 1957) return { years: 66, months: 6 };
+    if (birthYear === 1958) return { years: 66, months: 8 };
+    if (birthYear === 1959) return { years: 66, months: 10 };
+    return { years: 67, months: 0 };
+  }
+
+  function ssBendPoints(eligibilityYear, awiTable) {
+    const series = awiTable || _SS_AWI;
+    const awiYear = eligibilityYear - 2;
+    const v = series[awiYear];
+    if (v == null) {
+      throw new Error(
+        `AWI(${awiYear}) not in table — needed for ${eligibilityYear} bend points. ` +
+        "Update the AWI table via 'Edit SSA tables'."
+      );
+    }
+    const ratio = new D(v).div(_SS_AWI_1977);
+    const b1 = _BP1_BASE.times(ratio).toDecimalPlaces(0, D.ROUND_HALF_UP);
+    const b2 = _BP2_BASE.times(ratio).toDecimalPlaces(0, D.ROUND_HALF_UP);
+    return [b1, b2];
+  }
+
+  function _ssEligibilityYear(birthDate) {
+    let year = birthDate.year + 62;
+    if (birthDate.month === 1 && birthDate.day === 1) year -= 1;
+    return year;
+  }
+
+  function _ssIndexYear(birthDate) { return birthDate.year + 60; }
+
+  function _ssCreditsForYear(earnings, year, awiTable) {
+    if (earnings.lte(0)) return 0;
+    const qc2026 = new D("1890");
+    const awi2024 = new D(awiTable[2024] || _SS_AWI[2024]);
+    const awiY = new D(awiTable[Math.min(year, 2024)] || awiTable[2024] || _SS_AWI[2024]);
+    let qcYear = qc2026.times(awiY).div(awi2024).toDecimalPlaces(0, D.ROUND_HALF_UP);
+    if (qcYear.lte(0)) qcYear = qc2026;
+    return Math.min(4, Math.floor(Number(earnings.div(qcYear).toString())));
+  }
+
+  function ssIndexEarnings(earningsByYear, birthDate, awiTable, taxMaxTable) {
+    const idxYear = _ssIndexYear(birthDate);
+    const knownYears = Object.keys(awiTable).map(Number);
+    const maxAwiYear = Math.max(...knownYears);
+    const idxYearForFactor = Math.min(idxYear, maxAwiYear);
+    const awiIdx = new D(awiTable[idxYearForFactor]);
+    const rows = [];
+    const sortedYears = Object.keys(earningsByYear).map(Number).sort((a, b) => a - b);
+    for (const year of sortedYears) {
+      const raw = earningsByYear[year];
+      const cap = taxMaxTable[year] != null ? new D(taxMaxTable[year]) : null;
+      const capped = cap !== null && raw.gt(cap) ? cap : raw;
+      let factor;
+      if (year >= idxYear) {
+        factor = new D("1");
+      } else if (awiTable[year] == null) {
+        factor = new D("1");
+      } else {
+        factor = awiIdx.div(new D(awiTable[year]));
+      }
+      const indexed = round2(capped.times(factor));
+      rows.push({
+        year, raw_earnings: raw, capped_earnings: capped,
+        index_factor: factor, indexed_earnings: indexed, used_in_aime: false,
+      });
+    }
+    return rows;
+  }
+
+  function ssComputeAime(rows) {
+    const sorted = rows.slice().sort((a, b) => b.indexed_earnings.cmp(a.indexed_earnings));
+    const top35 = sorted.slice(0, 35);
+    for (const r of top35) if (r.indexed_earnings.gt(0)) r.used_in_aime = true;
+    let sum = new D("0");
+    for (const r of top35) sum = sum.plus(r.indexed_earnings);
+    return sum.div(new D("420")).toDecimalPlaces(0, D.ROUND_DOWN);
+  }
+
+  function ssComputePiaAtFra(aime, b1, b2) {
+    const tier1 = D.min(aime, b1).times(new D("0.90"));
+    const tier2 = D.max(new D("0"), D.min(aime, b2).minus(b1)).times(new D("0.32"));
+    const tier3 = D.max(new D("0"), aime.minus(b2)).times(new D("0.15"));
+    return tier1.plus(tier2).plus(tier3).toDecimalPlaces(1, D.ROUND_DOWN);
+  }
+
+  function _ssDrcPerMonth(birthYear) {
+    if (birthYear <= 1924) return new D("3").div(12).div(100);
+    if (birthYear <= 1926) return new D("3.5").div(12).div(100);
+    if (birthYear <= 1928) return new D("4").div(12).div(100);
+    if (birthYear <= 1930) return new D("4.5").div(12).div(100);
+    if (birthYear <= 1932) return new D("5").div(12).div(100);
+    if (birthYear <= 1934) return new D("5.5").div(12).div(100);
+    if (birthYear <= 1936) return new D("6").div(12).div(100);
+    if (birthYear <= 1938) return new D("6.5").div(12).div(100);
+    if (birthYear <= 1940) return new D("7").div(12).div(100);
+    if (birthYear <= 1942) return new D("7.5").div(12).div(100);
+    return new D("8").div(12).div(100);
+  }
+
+  function ssApplyClaimingAge(pia, claimAgeMonths, fraYears, fraMonths, birthYear) {
+    const fraTotal = fraYears * 12 + fraMonths;
+    const delta = claimAgeMonths - fraTotal;
+    let adjusted;
+    if (delta === 0) {
+      adjusted = pia;
+    } else if (delta < 0) {
+      const monthsEarly = -delta;
+      const first36 = Math.min(36, monthsEarly);
+      const beyond = Math.max(0, monthsEarly - 36);
+      const reduction = new D(first36).times("5").div("9").div("100")
+        .plus(new D(beyond).times("5").div("12").div("100"));
+      adjusted = pia.times(new D("1").minus(reduction));
+    } else {
+      const dr = _ssDrcPerMonth(birthYear);
+      adjusted = pia.times(new D("1").plus(new D(delta).times(dr)));
+    }
+    return adjusted.toDecimalPlaces(0, D.ROUND_DOWN);
+  }
+
+  function ssComputeScenario(inputs, sjfdEarningsByYear) {
+    const warnings = [];
+    const awi = _ssAwiTable(inputs.awi_overrides);
+    const tmax = _ssTaxMaxTable(inputs.taxable_max_overrides);
+
+    const earnings = Object.assign({}, inputs.prior_covered_earnings || {});
+    if (inputs.sjfd_is_covered && sjfdEarningsByYear) {
+      for (const y of Object.keys(sjfdEarningsByYear)) {
+        const prev = earnings[y] ? new D(earnings[y]) : new D("0");
+        earnings[y] = prev.plus(new D(sjfdEarningsByYear[y]));
+      }
+    }
+    // Coerce all values to Decimal
+    for (const y of Object.keys(earnings)) {
+      if (!(earnings[y] instanceof D)) earnings[y] = new D(earnings[y]);
+    }
+
+    const fra = ssFullRetirementAge(inputs.birth_date.year);
+    const eligYear = _ssEligibilityYear(inputs.birth_date);
+
+    let b1 = new D("0"), b2 = new D("0");
+    try {
+      [b1, b2] = ssBendPoints(eligYear, awi);
+    } catch (e) {
+      warnings.push(e.message);
+    }
+
+    if (Object.keys(earnings).length === 0) {
+      warnings.push(
+        "No covered earnings entered. If SJFD is your only employment and " +
+        "the plan is non-covered (Tier 2 default), your projected Social " +
+        "Security benefit is $0. Add prior covered earnings if you worked " +
+        "elsewhere under Social Security."
+      );
+      return {
+        fra_years: fra.years, fra_months: fra.months, eligibility_year: eligYear,
+        bend_point_1: b1, bend_point_2: b2,
+        aime: new D("0"), pia_at_fra: new D("0"),
+        monthly_benefit_at_claiming: new D("0"),
+        annual_benefit_at_claiming: new D("0"),
+        indexed_earnings: [], credits_total: 0, is_vested: false, warnings,
+      };
+    }
+
+    const rows = ssIndexEarnings(earnings, inputs.birth_date, awi, tmax);
+    const aime = ssComputeAime(rows);
+    const pia = b1.gt(0) ? ssComputePiaAtFra(aime, b1, b2) : new D("0");
+
+    const claimMonths = inputs.claiming_age_years * 12 + (inputs.claiming_age_months || 0);
+    if (claimMonths < 62 * 12 || claimMonths > 70 * 12) {
+      warnings.push(`Claiming age ${inputs.claiming_age_years}y is outside SSA's 62–70 range.`);
+    }
+
+    const monthly = ssApplyClaimingAge(pia, claimMonths, fra.years, fra.months, inputs.birth_date.year);
+    let credits = 0;
+    for (const y of Object.keys(earnings)) {
+      credits += _ssCreditsForYear(earnings[y], Number(y), awi);
+    }
+    const isVested = credits >= 40;
+    if (!isVested) {
+      warnings.push(
+        `Not vested for SS retirement: ${credits} of 40 credits earned. ` +
+        "Projected benefit assumes you reach 40 credits before claiming."
+      );
+    }
+
+    return {
+      fra_years: fra.years, fra_months: fra.months, eligibility_year: eligYear,
+      bend_point_1: b1, bend_point_2: b2,
+      aime, pia_at_fra: pia,
+      monthly_benefit_at_claiming: monthly,
+      annual_benefit_at_claiming: monthly.times(12),
+      indexed_earnings: rows, credits_total: credits, is_vested: isVested, warnings,
+    };
+  }
+
   // ---------- H. Namespace export --------------------------------------
 
   global.firecalc = {
@@ -709,5 +978,10 @@
     toJsonable, hydrateInputs,
     // Constants for UI
     RANK_ORDER,
+    // Social Security
+    ssComputeScenario, ssBendPoints, ssFullRetirementAge,
+    ssIndexEarnings, ssComputeAime, ssComputePiaAtFra, ssApplyClaimingAge,
+    SS_AWI: _SS_AWI, SS_TAXABLE_MAX: _SS_TAXABLE_MAX, SS_COLA: _SS_COLA,
+    SS_DEFAULT_COLA_RATE: _SS_DEFAULT_COLA_RATE,
   };
 })(typeof window !== "undefined" ? window : globalThis);
