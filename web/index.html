@@ -595,7 +595,7 @@
   </div>
 
   <div class="version-footer" style="margin-top: auto; padding-top: 1rem; font-size: .75em; color: var(--muted, #888); opacity: .7;">
-    v0.8.0 · updated 2026-06-30
+    v0.9.0 · updated 2026-06-30
   </div>
 </aside>
 
@@ -1534,7 +1534,8 @@
       const sd = r.separation_date;
       const sepAge = sd.year - bd.year - ((sd.month < bd.month || (sd.month === bd.month && sd.day < bd.day)) ? 1 : 0);
       const penaltyFreeDate = fc.addYears(bd, 57);
-      const yearsToWait = Math.max(0, 57 - er.retirement_age);
+      const retirementAge = r.retirement_date.year - bd.year - (fc.compareDates(r.retirement_date, fc.addYears(bd, r.retirement_date.year - bd.year)) < 0 ? 1 : 0);
+      const yearsToWait = Math.max(0, 57 - retirementAge);
       const psAgeLabel = ` · ${ageYM(r.retirement_date, bd)}`;
       dvSummaryHtml = `
         <div class="dv-audit-summary">

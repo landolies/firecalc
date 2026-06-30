@@ -147,6 +147,30 @@ def _deferred_vested_fc_does_not_grow_with_gwi() -> ScenarioInputs:
     )
 
 
+def _multi_grid_rate_change() -> ScenarioInputs:
+    """Two pay grids: 3.5% contract raise effective 2023-01-01 mid-career.
+
+    Uses the same hire/retire dates as vesting.minimum_5yos so the FC
+    difference from the grid switch is easy to reason about.  Grid-2 applies
+    for the last ~2 years of the 3-year FC window, raising the final pension.
+    """
+    grid1 = FY2627_PAY_GRID
+    grid2 = PayGrid(rates={
+        k: (v * Decimal("1.035")).quantize(Decimal("0.01"))
+        for k, v in grid1.rates.items()
+    })
+    return _make_inputs(
+        birth_date=date(1968, 1, 1), hire_date=date(2020, 1, 1),
+        retirement_age=57, current_step=1,
+        current_step_arrival_date=date(2020, 1, 1),
+        gwi_rate=Decimal("0"), show_cola=False,
+        pay_grids=[
+            (date(2020, 1, 1), grid1),
+            (date(2023, 1, 1), grid2),
+        ],
+    )
+
+
 SCENARIOS: list[tuple[str, Callable[[], ScenarioInputs]]] = [
     ("vesting.minimum_5yos", _vesting_minimum_5yos),
     ("vesting.80pct_cap_30yos", _vesting_80pct_cap_30yos),
@@ -157,6 +181,7 @@ SCENARIOS: list[tuple[str, Callable[[], ScenarioInputs]]] = [
     ("reference_case.spec_author_gwi35", _reference_case_spec_author_gwi35),
     ("deferred_vested.fc_frozen", _deferred_vested_fc_frozen),
     ("deferred_vested.fc_does_not_grow_with_gwi", _deferred_vested_fc_does_not_grow_with_gwi),
+    ("multi_grid.rate_change_mid_career", _multi_grid_rate_change),
 ]
 
 

@@ -499,8 +499,6 @@
         months_before_57: 0,
         reduction_pct: ZERO,
         factor: new D("1"),
-        retirement_age: intAge,
-        years_before_57: 0,
       };
     }
     let months = (age57.year - pensionStart.year) * 12 + (age57.month - pensionStart.month);
@@ -513,8 +511,6 @@
       months_before_57: months,
       reduction_pct: reductionPct,
       factor,
-      retirement_age: intAge,
-      years_before_57: months,
     };
   }
 
@@ -736,6 +732,12 @@
     for (const k of Object.keys(raw.pay_grid.rates)) {
       pgRates.set(k, decFromStr(raw.pay_grid.rates[k]));
     }
+    // pay_grids is serialized by Python as [[date_str, {rates:{...}}], ...].
+    const payGrids = (raw.pay_grids || []).map(([effDateStr, gridObj]) => {
+      const rates = new Map();
+      for (const k of Object.keys(gridObj.rates)) rates.set(k, decFromStr(gridObj.rates[k]));
+      return { effective_date: parseIsoDate(effDateStr), rates };
+    });
     return {
       birth_date: parseIsoDate(raw.birth_date),
       hire_date: parseIsoDate(raw.hire_date),
@@ -745,6 +747,7 @@
       pay_grid: { rates: pgRates },
       pay_grid_effective_date: parseIsoDate(raw.pay_grid_effective_date),
       gwi_rate: decFromStr(raw.gwi_rate),
+      pay_grids: payGrids,
       cola_rate: decFromStr(raw.cola_rate),
       gwi_effective_month_day: raw.gwi_effective_month_day,
       cola_effective_month_day: raw.cola_effective_month_day,

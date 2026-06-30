@@ -3902,5 +3902,405 @@
       "warnings": [],
       "yos_at_retirement": "13.0000"
     }
+  },
+  {
+    "inputs": {
+      "as_of_date": "2026-04-24",
+      "birth_date": "1968-01-01",
+      "cola_effective_month_day": [
+        2,
+        1
+      ],
+      "cola_rate": "0.020",
+      "current_rank": "Firefighter",
+      "current_step": 1,
+      "current_step_arrival_date": "2020-01-01",
+      "gwi_effective_month_day": [
+        7,
+        1
+      ],
+      "gwi_rate": "0",
+      "hire_date": "2020-01-01",
+      "pay_grid": {
+        "rates": {
+          "Arson Investigator|1": "6360.32",
+          "Arson Investigator|2": "6669.01",
+          "Arson Investigator|3": "6995.28",
+          "Arson Investigator|4": "7335.23",
+          "Arson Investigator|5": "7702.60",
+          "Battalion Chief|1": "8304.27",
+          "Battalion Chief|2": "8713.57",
+          "Battalion Chief|3": "9138.51",
+          "Battalion Chief|4": "9590.79",
+          "Battalion Chief|5": "10071.00",
+          "Fire Captain|1": "6669.01",
+          "Fire Captain|2": "6995.28",
+          "Fire Captain|3": "7335.23",
+          "Fire Captain|4": "7693.73",
+          "Fire Captain|5": "8079.66",
+          "Fire Engineer|1": "5816.21",
+          "Fire Engineer|2": "6097.55",
+          "Fire Engineer|3": "6391.58",
+          "Fire Engineer|4": "6707.11",
+          "Fire Engineer|5": "7041.59",
+          "Fire Prevention Inspector|1": "6097.55",
+          "Fire Prevention Inspector|2": "6391.58",
+          "Fire Prevention Inspector|3": "6707.11",
+          "Fire Prevention Inspector|4": "7033.38",
+          "Fire Prevention Inspector|5": "7384.54",
+          "Firefighter Recruit|1": "4148.72",
+          "Firefighter|1": "4769.02",
+          "Firefighter|2": "4998.58",
+          "Firefighter|3": "5239.87",
+          "Firefighter|4": "5494.83",
+          "Firefighter|5": "5760.53",
+          "Firefighter|6": "6036.98",
+          "Firefighter|7": "6343.70"
+        }
+      },
+      "pay_grid_effective_date": "2026-07-01",
+      "pay_grids": [
+        [
+          "2020-01-01",
+          {
+            "rates": {
+              "Arson Investigator|1": "6360.32",
+              "Arson Investigator|2": "6669.01",
+              "Arson Investigator|3": "6995.28",
+              "Arson Investigator|4": "7335.23",
+              "Arson Investigator|5": "7702.60",
+              "Battalion Chief|1": "8304.27",
+              "Battalion Chief|2": "8713.57",
+              "Battalion Chief|3": "9138.51",
+              "Battalion Chief|4": "9590.79",
+              "Battalion Chief|5": "10071.00",
+              "Fire Captain|1": "6669.01",
+              "Fire Captain|2": "6995.28",
+              "Fire Captain|3": "7335.23",
+              "Fire Captain|4": "7693.73",
+              "Fire Captain|5": "8079.66",
+              "Fire Engineer|1": "5816.21",
+              "Fire Engineer|2": "6097.55",
+              "Fire Engineer|3": "6391.58",
+              "Fire Engineer|4": "6707.11",
+              "Fire Engineer|5": "7041.59",
+              "Fire Prevention Inspector|1": "6097.55",
+              "Fire Prevention Inspector|2": "6391.58",
+              "Fire Prevention Inspector|3": "6707.11",
+              "Fire Prevention Inspector|4": "7033.38",
+              "Fire Prevention Inspector|5": "7384.54",
+              "Firefighter Recruit|1": "4148.72",
+              "Firefighter|1": "4769.02",
+              "Firefighter|2": "4998.58",
+              "Firefighter|3": "5239.87",
+              "Firefighter|4": "5494.83",
+              "Firefighter|5": "5760.53",
+              "Firefighter|6": "6036.98",
+              "Firefighter|7": "6343.70"
+            }
+          }
+        ],
+        [
+          "2023-01-01",
+          {
+            "rates": {
+              "Arson Investigator|1": "6582.93",
+              "Arson Investigator|2": "6902.43",
+              "Arson Investigator|3": "7240.11",
+              "Arson Investigator|4": "7591.96",
+              "Arson Investigator|5": "7972.19",
+              "Battalion Chief|1": "8594.92",
+              "Battalion Chief|2": "9018.54",
+              "Battalion Chief|3": "9458.36",
+              "Battalion Chief|4": "9926.47",
+              "Battalion Chief|5": "10423.48",
+              "Fire Captain|1": "6902.43",
+              "Fire Captain|2": "7240.11",
+              "Fire Captain|3": "7591.96",
+              "Fire Captain|4": "7963.01",
+              "Fire Captain|5": "8362.45",
+              "Fire Engineer|1": "6019.78",
+              "Fire Engineer|2": "6310.96",
+              "Fire Engineer|3": "6615.29",
+              "Fire Engineer|4": "6941.86",
+              "Fire Engineer|5": "7288.05",
+              "Fire Prevention Inspector|1": "6310.96",
+              "Fire Prevention Inspector|2": "6615.29",
+              "Fire Prevention Inspector|3": "6941.86",
+              "Fire Prevention Inspector|4": "7279.55",
+              "Fire Prevention Inspector|5": "7643.00",
+              "Firefighter Recruit|1": "4293.93",
+              "Firefighter|1": "4935.94",
+              "Firefighter|2": "5173.53",
+              "Firefighter|3": "5423.27",
+              "Firefighter|4": "5687.15",
+              "Firefighter|5": "5962.15",
+              "Firefighter|6": "6248.27",
+              "Firefighter|7": "6565.73"
+            }
+          }
+        ]
+      ],
+      "pension_start_date": null,
+      "promotions": [],
+      "retirement_age": 57,
+      "retirement_type": "active",
+      "separation_date": null,
+      "show_cola": false
+    },
+    "name": "multi_grid.rate_change_mid_career",
+    "result": {
+      "annual_pension_3yr": "17564.74",
+      "annual_pension_final": "18601.91",
+      "benefit_pct_detail": {
+        "capped": false,
+        "final_pct": "0.1200",
+        "raw_pct": "0.1200",
+        "tier1_pct": "0.1200",
+        "tier1_years": "5.0000",
+        "tier2_pct": "0.0000",
+        "tier2_years": "0.0000",
+        "tier3_pct": "0.0000",
+        "tier3_years": "0.0000",
+        "yos": "5.0000"
+      },
+      "cap_date": null,
+      "cap_reached": false,
+      "cola_rows_3yr": [],
+      "cola_rows_final": [],
+      "early_reduction": {
+        "factor": "1.0000",
+        "months_before_57": 0,
+        "reduction_pct": "0",
+        "retirement_date": "2025-01-01"
+      },
+      "fc_3yr": {
+        "annual_fc": "146372.81",
+        "method": "3yr_avg",
+        "note": "Average of highest 3 consecutive YOS windows",
+        "yearly_earnings": [
+          {
+            "annual_base": "136236.62",
+            "year_end": "2023-01-01",
+            "year_start": "2022-01-01"
+          },
+          {
+            "annual_base": "147865.90",
+            "year_end": "2024-01-01",
+            "year_start": "2023-01-01"
+          },
+          {
+            "annual_base": "155015.90",
+            "year_end": "2025-01-01",
+            "year_start": "2024-01-01"
+          }
+        ]
+      },
+      "fc_final": {
+        "annual_fc": "155015.90",
+        "method": "final",
+        "note": "Annualized final pay: 5962.15 \u00d7 26 = 155015.90",
+        "yearly_earnings": []
+      },
+      "final_rank": "Firefighter",
+      "final_step": 5,
+      "inputs": {
+        "as_of_date": "2026-04-24",
+        "birth_date": "1968-01-01",
+        "cola_effective_month_day": [
+          2,
+          1
+        ],
+        "cola_rate": "0.020",
+        "current_rank": "Firefighter",
+        "current_step": 1,
+        "current_step_arrival_date": "2020-01-01",
+        "gwi_effective_month_day": [
+          7,
+          1
+        ],
+        "gwi_rate": "0",
+        "hire_date": "2020-01-01",
+        "pay_grid": {
+          "rates": {
+            "Arson Investigator|1": "6360.32",
+            "Arson Investigator|2": "6669.01",
+            "Arson Investigator|3": "6995.28",
+            "Arson Investigator|4": "7335.23",
+            "Arson Investigator|5": "7702.60",
+            "Battalion Chief|1": "8304.27",
+            "Battalion Chief|2": "8713.57",
+            "Battalion Chief|3": "9138.51",
+            "Battalion Chief|4": "9590.79",
+            "Battalion Chief|5": "10071.00",
+            "Fire Captain|1": "6669.01",
+            "Fire Captain|2": "6995.28",
+            "Fire Captain|3": "7335.23",
+            "Fire Captain|4": "7693.73",
+            "Fire Captain|5": "8079.66",
+            "Fire Engineer|1": "5816.21",
+            "Fire Engineer|2": "6097.55",
+            "Fire Engineer|3": "6391.58",
+            "Fire Engineer|4": "6707.11",
+            "Fire Engineer|5": "7041.59",
+            "Fire Prevention Inspector|1": "6097.55",
+            "Fire Prevention Inspector|2": "6391.58",
+            "Fire Prevention Inspector|3": "6707.11",
+            "Fire Prevention Inspector|4": "7033.38",
+            "Fire Prevention Inspector|5": "7384.54",
+            "Firefighter Recruit|1": "4148.72",
+            "Firefighter|1": "4769.02",
+            "Firefighter|2": "4998.58",
+            "Firefighter|3": "5239.87",
+            "Firefighter|4": "5494.83",
+            "Firefighter|5": "5760.53",
+            "Firefighter|6": "6036.98",
+            "Firefighter|7": "6343.70"
+          }
+        },
+        "pay_grid_effective_date": "2026-07-01",
+        "pay_grids": [
+          [
+            "2020-01-01",
+            {
+              "rates": {
+                "Arson Investigator|1": "6360.32",
+                "Arson Investigator|2": "6669.01",
+                "Arson Investigator|3": "6995.28",
+                "Arson Investigator|4": "7335.23",
+                "Arson Investigator|5": "7702.60",
+                "Battalion Chief|1": "8304.27",
+                "Battalion Chief|2": "8713.57",
+                "Battalion Chief|3": "9138.51",
+                "Battalion Chief|4": "9590.79",
+                "Battalion Chief|5": "10071.00",
+                "Fire Captain|1": "6669.01",
+                "Fire Captain|2": "6995.28",
+                "Fire Captain|3": "7335.23",
+                "Fire Captain|4": "7693.73",
+                "Fire Captain|5": "8079.66",
+                "Fire Engineer|1": "5816.21",
+                "Fire Engineer|2": "6097.55",
+                "Fire Engineer|3": "6391.58",
+                "Fire Engineer|4": "6707.11",
+                "Fire Engineer|5": "7041.59",
+                "Fire Prevention Inspector|1": "6097.55",
+                "Fire Prevention Inspector|2": "6391.58",
+                "Fire Prevention Inspector|3": "6707.11",
+                "Fire Prevention Inspector|4": "7033.38",
+                "Fire Prevention Inspector|5": "7384.54",
+                "Firefighter Recruit|1": "4148.72",
+                "Firefighter|1": "4769.02",
+                "Firefighter|2": "4998.58",
+                "Firefighter|3": "5239.87",
+                "Firefighter|4": "5494.83",
+                "Firefighter|5": "5760.53",
+                "Firefighter|6": "6036.98",
+                "Firefighter|7": "6343.70"
+              }
+            }
+          ],
+          [
+            "2023-01-01",
+            {
+              "rates": {
+                "Arson Investigator|1": "6582.93",
+                "Arson Investigator|2": "6902.43",
+                "Arson Investigator|3": "7240.11",
+                "Arson Investigator|4": "7591.96",
+                "Arson Investigator|5": "7972.19",
+                "Battalion Chief|1": "8594.92",
+                "Battalion Chief|2": "9018.54",
+                "Battalion Chief|3": "9458.36",
+                "Battalion Chief|4": "9926.47",
+                "Battalion Chief|5": "10423.48",
+                "Fire Captain|1": "6902.43",
+                "Fire Captain|2": "7240.11",
+                "Fire Captain|3": "7591.96",
+                "Fire Captain|4": "7963.01",
+                "Fire Captain|5": "8362.45",
+                "Fire Engineer|1": "6019.78",
+                "Fire Engineer|2": "6310.96",
+                "Fire Engineer|3": "6615.29",
+                "Fire Engineer|4": "6941.86",
+                "Fire Engineer|5": "7288.05",
+                "Fire Prevention Inspector|1": "6310.96",
+                "Fire Prevention Inspector|2": "6615.29",
+                "Fire Prevention Inspector|3": "6941.86",
+                "Fire Prevention Inspector|4": "7279.55",
+                "Fire Prevention Inspector|5": "7643.00",
+                "Firefighter Recruit|1": "4293.93",
+                "Firefighter|1": "4935.94",
+                "Firefighter|2": "5173.53",
+                "Firefighter|3": "5423.27",
+                "Firefighter|4": "5687.15",
+                "Firefighter|5": "5962.15",
+                "Firefighter|6": "6248.27",
+                "Firefighter|7": "6565.73"
+              }
+            }
+          ]
+        ],
+        "pension_start_date": null,
+        "promotions": [],
+        "retirement_age": 57,
+        "retirement_type": "active",
+        "separation_date": null,
+        "show_cola": false
+      },
+      "monthly_pension_3yr": "1463.73",
+      "monthly_pension_final": "1550.16",
+      "retirement_date": "2025-01-01",
+      "salary_timeline": [
+        {
+          "annual": "123994.52",
+          "biweekly": "4769.02",
+          "end": "2021-01-01",
+          "event": "hired",
+          "rank": "Firefighter",
+          "start": "2020-01-01",
+          "step": 1
+        },
+        {
+          "annual": "129963.08",
+          "biweekly": "4998.58",
+          "end": "2022-01-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2021-01-01",
+          "step": 2
+        },
+        {
+          "annual": "136236.62",
+          "biweekly": "5239.87",
+          "end": "2023-01-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2022-01-01",
+          "step": 3
+        },
+        {
+          "annual": "147865.90",
+          "biweekly": "5687.15",
+          "end": "2024-01-01",
+          "event": "pay_grid_change+step",
+          "rank": "Firefighter",
+          "start": "2023-01-01",
+          "step": 4
+        },
+        {
+          "annual": "155015.90",
+          "biweekly": "5962.15",
+          "end": "2025-01-01",
+          "event": "step_increase",
+          "rank": "Firefighter",
+          "start": "2024-01-01",
+          "step": 5
+        }
+      ],
+      "separation_date": null,
+      "warnings": [],
+      "yos_at_retirement": "5.0000"
+    }
   }
 ]
