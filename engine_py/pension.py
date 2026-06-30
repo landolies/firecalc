@@ -211,17 +211,28 @@ def yos_at_cap() -> Decimal:
     return Decimal("30")
 
 
-def compute_early_reduction(retirement_age: int) -> EarlyReductionDetail:
+def compute_early_reduction(pension_start: date, birth_date: date) -> EarlyReductionDetail:
     """
-    7% per year for each whole year between retirement_age and 57.
-    v0: whole-year ages only, so no monthly proration needed.
+    7%/yr prorated monthly: (full months before 57th birthday / 12) × 7%.
+    A "full month" means pension_start day ≤ age-57-day in that month.
     """
-    years_before_57 = max(0, 57 - retirement_age)
-    reduction_pct = _round4(Decimal(years_before_57) * Decimal("0.07"))
+    age_57 = _add_years(birth_date, 57)
+    if pension_start >= age_57:
+        return EarlyReductionDetail(
+            retirement_date=pension_start,
+            months_before_57=0,
+            reduction_pct=_ZERO,
+            factor=_round4(Decimal("1")),
+        )
+    months = (age_57.year - pension_start.year) * 12 + (age_57.month - pension_start.month)
+    if age_57.day < pension_start.day:
+        months -= 1
+    months = max(0, months)
+    reduction_pct = _round4(Decimal(months) * Decimal("0.07") / Decimal("12"))
     factor = _round4(Decimal("1") - reduction_pct)
     return EarlyReductionDetail(
-        retirement_age=retirement_age,
-        years_before_57=years_before_57,
+        retirement_date=pension_start,
+        months_before_57=months,
         reduction_pct=reduction_pct,
         factor=max(_ZERO, factor),
     )

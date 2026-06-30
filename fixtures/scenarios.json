@@ -55,6 +55,7 @@
         }
       },
       "pay_grid_effective_date": "2026-07-01",
+      "pay_grids": [],
       "pension_start_date": null,
       "promotions": [],
       "retirement_age": 57,
@@ -84,9 +85,9 @@
       "cola_rows_final": [],
       "early_reduction": {
         "factor": "1.0000",
-        "reduction_pct": "0.0000",
-        "retirement_age": 57,
-        "years_before_57": 0
+        "months_before_57": 0,
+        "reduction_pct": "0",
+        "retirement_date": "2025-01-01"
       },
       "fc_3yr": {
         "annual_fc": "142958.66",
@@ -173,6 +174,7 @@
           }
         },
         "pay_grid_effective_date": "2026-07-01",
+        "pay_grids": [],
         "pension_start_date": null,
         "promotions": [],
         "retirement_age": 57,
@@ -336,6 +338,7 @@
         }
       },
       "pay_grid_effective_date": "2026-07-01",
+      "pay_grids": [],
       "pension_start_date": null,
       "promotions": [],
       "retirement_age": 57,
@@ -365,9 +368,9 @@
       "cola_rows_final": [],
       "early_reduction": {
         "factor": "1.0000",
-        "reduction_pct": "0.0000",
-        "retirement_age": 57,
-        "years_before_57": 0
+        "months_before_57": 0,
+        "reduction_pct": "0",
+        "retirement_date": "2023-01-01"
       },
       "fc_3yr": {
         "annual_fc": "164936.20",
@@ -454,6 +457,7 @@
           }
         },
         "pay_grid_effective_date": "2026-07-01",
+        "pay_grids": [],
         "pension_start_date": null,
         "promotions": [],
         "retirement_age": 57,
@@ -860,6 +864,7 @@
         }
       },
       "pay_grid_effective_date": "2026-07-01",
+      "pay_grids": [],
       "pension_start_date": null,
       "promotions": [],
       "retirement_age": 49,
@@ -889,9 +894,9 @@
       "cola_rows_final": [],
       "early_reduction": {
         "factor": "0.4400",
+        "months_before_57": 96,
         "reduction_pct": "0.5600",
-        "retirement_age": 49,
-        "years_before_57": 8
+        "retirement_date": "2039-01-01"
       },
       "fc_3yr": {
         "annual_fc": "164936.20",
@@ -978,6 +983,7 @@
           }
         },
         "pay_grid_effective_date": "2026-07-01",
+        "pay_grids": [],
         "pension_start_date": null,
         "promotions": [],
         "retirement_age": 49,
@@ -1377,6 +1383,7 @@
         }
       },
       "pay_grid_effective_date": "2026-07-01",
+      "pay_grids": [],
       "pension_start_date": null,
       "promotions": [],
       "retirement_age": 57,
@@ -1406,9 +1413,9 @@
       "cola_rows_final": [],
       "early_reduction": {
         "factor": "1.0000",
-        "reduction_pct": "0.0000",
-        "retirement_age": 57,
-        "years_before_57": 0
+        "months_before_57": 0,
+        "reduction_pct": "0",
+        "retirement_date": "2023-01-01"
       },
       "fc_3yr": {
         "annual_fc": "136355.09",
@@ -1495,6 +1502,7 @@
           }
         },
         "pay_grid_effective_date": "2026-07-01",
+        "pay_grids": [],
         "pension_start_date": null,
         "promotions": [],
         "retirement_age": 57,
@@ -1642,6 +1650,7 @@
         }
       },
       "pay_grid_effective_date": "2026-07-01",
+      "pay_grids": [],
       "pension_start_date": null,
       "promotions": [
         {
@@ -1676,9 +1685,9 @@
       "cola_rows_final": [],
       "early_reduction": {
         "factor": "1.0000",
-        "reduction_pct": "0.0000",
-        "retirement_age": 57,
-        "years_before_57": 0
+        "months_before_57": 0,
+        "reduction_pct": "0",
+        "retirement_date": "2037-01-01"
       },
       "fc_3yr": {
         "annual_fc": "180182.51",
@@ -1765,6 +1774,7 @@
           }
         },
         "pay_grid_effective_date": "2026-07-01",
+        "pay_grids": [],
         "pension_start_date": null,
         "promotions": [
           {
@@ -2212,6 +2222,7 @@
         }
       },
       "pay_grid_effective_date": "2026-07-01",
+      "pay_grids": [],
       "pension_start_date": null,
       "promotions": [],
       "retirement_age": 57,
@@ -2241,9 +2252,9 @@
       "cola_rows_final": [],
       "early_reduction": {
         "factor": "1.0000",
-        "reduction_pct": "0.0000",
-        "retirement_age": 57,
-        "years_before_57": 0
+        "months_before_57": 0,
+        "reduction_pct": "0",
+        "retirement_date": "2037-01-01"
       },
       "fc_3yr": {
         "annual_fc": "164936.20",
@@ -2330,6 +2341,7 @@
           }
         },
         "pay_grid_effective_date": "2026-07-01",
+        "pay_grids": [],
         "pension_start_date": null,
         "promotions": [],
         "retirement_age": 57,
@@ -2754,6 +2766,7 @@
         }
       },
       "pay_grid_effective_date": "2026-07-01",
+      "pay_grids": [],
       "pension_start_date": null,
       "promotions": [],
       "retirement_age": 57,
@@ -2783,9 +2796,9 @@
       "cola_rows_final": [],
       "early_reduction": {
         "factor": "1.0000",
-        "reduction_pct": "0.0000",
-        "retirement_age": 57,
-        "years_before_57": 0
+        "months_before_57": 0,
+        "reduction_pct": "0",
+        "retirement_date": "2043-10-01"
       },
       "fc_3yr": {
         "annual_fc": "282661.22",
@@ -2872,6 +2885,7 @@
           }
         },
         "pay_grid_effective_date": "2026-07-01",
+        "pay_grids": [],
         "pension_start_date": null,
         "promotions": [],
         "retirement_age": 57,
@@ -3207,6 +3221,7 @@
         }
       },
       "pay_grid_effective_date": "2023-01-01",
+      "pay_grids": [],
       "pension_start_date": "2032-01-01",
       "promotions": [],
       "retirement_age": 57,
@@ -3236,9 +3251,9 @@
       "cola_rows_final": [],
       "early_reduction": {
         "factor": "1.0000",
-        "reduction_pct": "0.0000",
-        "retirement_age": 57,
-        "years_before_57": 0
+        "months_before_57": 0,
+        "reduction_pct": "0",
+        "retirement_date": "2032-01-01"
       },
       "fc_3yr": {
         "annual_fc": "142551.28",
@@ -3299,6 +3314,7 @@
           }
         },
         "pay_grid_effective_date": "2023-01-01",
+        "pay_grids": [],
         "pension_start_date": "2032-01-01",
         "promotions": [],
         "retirement_age": 57,
@@ -3570,6 +3586,7 @@
         }
       },
       "pay_grid_effective_date": "2026-07-01",
+      "pay_grids": [],
       "pension_start_date": "2032-01-01",
       "promotions": [],
       "retirement_age": 57,
@@ -3599,9 +3616,9 @@
       "cola_rows_final": [],
       "early_reduction": {
         "factor": "1.0000",
-        "reduction_pct": "0.0000",
-        "retirement_age": 57,
-        "years_before_57": 0
+        "months_before_57": 0,
+        "reduction_pct": "0",
+        "retirement_date": "2032-01-01"
       },
       "fc_3yr": {
         "annual_fc": "136594.88",
@@ -3688,6 +3705,7 @@
           }
         },
         "pay_grid_effective_date": "2026-07-01",
+        "pay_grids": [],
         "pension_start_date": "2032-01-01",
         "promotions": [],
         "retirement_age": 57,

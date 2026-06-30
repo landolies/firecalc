@@ -163,6 +163,32 @@
     return { step: max, ok: false };
   }
 
+  function landingStepDirect(newRank, preBw, payGrid) {
+    const threshold = preBw.times(new D("1.05"));
+    const max = payGridMaxStep(payGrid, newRank);
+    for (let step = 1; step <= max; step++) {
+      const base = payGridGet(payGrid, newRank, step);
+      if (base === null) continue;
+      if (round2(base).gte(threshold)) return { step, ok: true };
+    }
+    return { step: max, ok: false };
+  }
+
+  function activePayGrid(sortedGrids, target) {
+    let active = sortedGrids[0];
+    for (const g of sortedGrids) {
+      if (compareDates(g.effective_date, target) <= 0) active = g;
+    }
+    return active;
+  }
+
+  function nextGridChangeAfter(sortedGrids, cursor) {
+    for (const g of sortedGrids) {
+      if (compareDates(g.effective_date, cursor) > 0) return g.effective_date;
+    }
+    return null;
+  }
+
   function yearsBetween(earlier, later) {
     let years = later.year - earlier.year;
     if (mdLess(later, earlier)) years -= 1;
@@ -190,8 +216,33 @@
   function buildSalaryTimeline(inputs, endDate, warnings) {
     if (compareDates(endDate, inputs.hire_date) <= 0) return [];
 
+    const usePayGrids = Array.isArray(inputs.pay_grids) && inputs.pay_grids.length > 0;
+
+    // Build path-specific helpers.
+    let _getBw, _getLanding, _getMaxStep, _sortedGrids;
     const [gm, gd] = inputs.gwi_effective_month_day;
-    const gridEff = inputs.pay_grid_effective_date;
+
+    if (usePayGrids) {
+      _sortedGrids = inputs.pay_grids.slice().sort((a, b) => compareDates(a.effective_date, b.effective_date));
+
+      _getBw = (rank, step, at) => {
+        const ag = activePayGrid(_sortedGrids, at);
+        const base = payGridGet(ag, rank, step);
+        if (base === null) throw new Error(`No pay defined for (${rank}, step ${step})`);
+        return round2(base);
+      };
+      _getLanding = (newRank, preBw, at) => landingStepDirect(newRank, preBw, activePayGrid(_sortedGrids, at));
+      _getMaxStep = (rank, at) => payGridMaxStep(activePayGrid(_sortedGrids, at), rank);
+    } else {
+      const gridEff = inputs.pay_grid_effective_date;
+      _getBw = (rank, step, at) => {
+        const base = payGridGet(inputs.pay_grid, rank, step);
+        if (base === null) throw new Error(`No pay defined for (${rank}, step ${step})`);
+        return adjustedBiweekly(base, gridEff, at, inputs.gwi_rate, gm, gd);
+      };
+      _getLanding = (newRank, preBw, at) => landingStep(newRank, preBw, inputs.pay_grid, gridEff, at, inputs.gwi_rate, gm, gd);
+      _getMaxStep = (rank) => payGridMaxStep(inputs.pay_grid, rank);
+    }
 
     const promotions = inputs.promotions
       .filter((p) => compareDates(p.effective_date, endDate) < 0)
@@ -213,7 +264,7 @@
     if (promotions.length === 0 || initialRank === inputs.current_rank) {
       stepClock0 = addYears(inputs.current_step_arrival_date, -(inputs.current_step - 1));
       initialStep = 1 + yearsBetween(stepClock0, inputs.hire_date);
-      initialStep = Math.max(1, Math.min(initialStep, payGridMaxStep(inputs.pay_grid, initialRank)));
+      initialStep = Math.max(1, Math.min(initialStep, _getMaxStep(initialRank, inputs.hire_date)));
     } else {
       initialStep = 1;
       stepClock0 = inputs.hire_date;
@@ -238,10 +289,15 @@
 
       const candidates = [];
 
-      const nextGwi = nextGwiAfter(cursor, gm, gd);
-      if (compareDates(nextGwi, endDate) < 0) candidates.push([nextGwi, "gwi"]);
+      if (usePayGrids) {
+        const nextGc = nextGridChangeAfter(_sortedGrids, cursor);
+        if (nextGc !== null && compareDates(nextGc, endDate) < 0) candidates.push([nextGc, "pay_grid_change"]);
+      } else {
+        const nextGwi = nextGwiAfter(cursor, gm, gd);
+        if (compareDates(nextGwi, endDate) < 0) candidates.push([nextGwi, "gwi"]);
+      }
 
-      const maxSt = payGridMaxStep(inputs.pay_grid, rank);
+      const maxSt = _getMaxStep(rank, cursor);
       if (step < maxSt) {
         const nextStepDate = addYears(stepClock, step);
         if (compareDates(nextStepDate, endDate) < 0) candidates.push([nextStepDate, "step_increase"]);
@@ -253,7 +309,6 @@
 
       if (candidates.length === 0) break;
 
-      // min by date
       let nextEventDate = candidates[0][0];
       for (const [d] of candidates) if (compareDates(d, nextEventDate) < 0) nextEventDate = d;
 
@@ -261,9 +316,7 @@
         throw new Error(`timeline not advancing: cursor=${isoDate(cursor)}, next=${isoDate(nextEventDate)}`);
       }
 
-      const baseRate = payGridGet(inputs.pay_grid, rank, step);
-      if (baseRate === null) throw new Error(`No pay defined for (${rank}, step ${step})`);
-      const bw = adjustedBiweekly(baseRate, gridEff, cursor, inputs.gwi_rate, gm, gd);
+      const bw = _getBw(rank, step, cursor);
       periods.push({
         start: cursor,
         end: nextEventDate,
@@ -277,10 +330,10 @@
       const firing = new Set(candidates.filter(([d]) => compareDates(d, nextEventDate) === 0).map(([, l]) => l));
 
       if (firing.has("promotion")) {
-        const preBw = adjustedBiweekly(payGridGet(inputs.pay_grid, rank, step), gridEff, nextEventDate, inputs.gwi_rate, gm, gd);
+        const preBw = _getBw(rank, step, nextEventDate);
         const p = promoQueue.shift();
         rank = p.new_rank;
-        const landed = landingStep(rank, preBw, inputs.pay_grid, gridEff, nextEventDate, inputs.gwi_rate, gm, gd);
+        const landed = _getLanding(rank, preBw, nextEventDate);
         step = landed.step;
         if (!landed.ok && warnings) {
           warnings.push(
@@ -291,6 +344,10 @@
         }
         stepClock = addYears(nextEventDate, -(step - 1));
         eventLabel = "promotion";
+      } else if (usePayGrids) {
+        if (firing.has("pay_grid_change") && firing.has("step_increase")) { step++; eventLabel = "pay_grid_change+step"; }
+        else if (firing.has("pay_grid_change")) { eventLabel = "pay_grid_change"; }
+        else { step++; eventLabel = "step_increase"; }
       } else {
         const hasStep = firing.has("step_increase");
         const hasGwi = firing.has("gwi");
@@ -303,9 +360,7 @@
     }
 
     if (compareDates(cursor, endDate) < 0) {
-      const baseRate = payGridGet(inputs.pay_grid, rank, step);
-      if (baseRate === null) throw new Error(`No pay defined for (${rank}, step ${step})`);
-      const bw = adjustedBiweekly(baseRate, gridEff, cursor, inputs.gwi_rate, gm, gd);
+      const bw = _getBw(rank, step, cursor);
       periods.push({
         start: cursor,
         end: endDate,
@@ -434,15 +489,32 @@
 
   function yosAtCap() { return new D("30"); }
 
-  function computeEarlyReduction(retirementAge) {
-    const years = Math.max(0, 57 - retirementAge);
-    const reductionPct = round4(new D(years).times(new D("0.07")));
-    const factor = round4(new D("1").minus(reductionPct));
+  function computeEarlyReduction(pensionStart, birthDate) {
+    const age57 = addYears(birthDate, 57);
+    let intAge = pensionStart.year - birthDate.year;
+    if (mdLess(pensionStart, birthDate)) intAge -= 1;
+    if (compareDates(pensionStart, age57) >= 0) {
+      return {
+        retirement_date: pensionStart,
+        months_before_57: 0,
+        reduction_pct: ZERO,
+        factor: new D("1"),
+        retirement_age: intAge,
+        years_before_57: 0,
+      };
+    }
+    let months = (age57.year - pensionStart.year) * 12 + (age57.month - pensionStart.month);
+    if (age57.day < pensionStart.day) months -= 1;
+    months = Math.max(0, months);
+    const reductionPct = round4(new D(months).times(new D("0.07")).div(TWELVE));
+    const factor = round4(D.max(ZERO, new D("1").minus(reductionPct)));
     return {
-      retirement_age: retirementAge,
-      years_before_57: years,
+      retirement_date: pensionStart,
+      months_before_57: months,
       reduction_pct: reductionPct,
-      factor: round4(D.max(ZERO, factor)),
+      factor,
+      retirement_age: intAge,
+      years_before_57: months,
     };
   }
 
@@ -499,7 +571,7 @@
   function computeRetirementScenario(inputs) {
     const warnings = [];
 
-    const retirementDate = birthday(inputs.birth_date, inputs.retirement_age);
+    const retirementDate = inputs.retirement_date_override || birthday(inputs.birth_date, inputs.retirement_age);
 
     let serviceEnd, pensionStart, effectiveRetirementAge;
     if (inputs.retirement_type === "deferred_vested") {
@@ -542,7 +614,7 @@
     const capReached = yos.gte(capYos);
     const capDate = capReached ? addYears(inputs.hire_date, 30) : null;
 
-    const earlyReduction = computeEarlyReduction(effectiveRetirementAge);
+    const earlyReduction = computeEarlyReduction(pensionStart, inputs.birth_date);
 
     function pension(fc) {
       if (warnings.length > 0) return ZERO;

@@ -120,7 +120,7 @@ def main() -> int:
                     help="Override the auto-decided severity.")
     args = ap.parse_args()
 
-    text = INDEX.read_text()
+    text = INDEX.read_text(encoding="utf-8")
     m = VERSION_RE.search(text)
     if not m:
         print("bump_version: version pattern not found in web/index.html",
@@ -150,7 +150,7 @@ def main() -> int:
     if args.dry_run or new_text == text:
         return 0
 
-    INDEX.write_text(new_text)
+    INDEX.write_text(new_text, encoding="utf-8")
 
     # When invoked from the pre-commit hook, re-stage so the bump rides along
     # with the user's commit. BUMP_RESTAGE is set by .githooks/pre-commit.

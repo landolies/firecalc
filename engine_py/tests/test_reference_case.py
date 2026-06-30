@@ -45,7 +45,8 @@ def test_benefit_pct():
 
 def test_no_early_reduction_at_57():
     from engine_py.pension import compute_early_reduction
-    r = compute_early_reduction(57)
+    r = compute_early_reduction(RETIRE_DATE, BIRTH)
+    assert r.months_before_57 == 0
     assert r.factor == Decimal("1.0000")
 
 
@@ -72,7 +73,7 @@ def test_full_scenario_no_promotions_gwi35():
     assert abs(result.benefit_pct_detail.final_pct - Decimal("0.6156")) <= Decimal("0.001")
 
     # No early reduction
-    assert result.early_reduction.years_before_57 == 0
+    assert result.early_reduction.months_before_57 == 0
 
     # FC_final should be positive (exact value depends on GWI compounding to 2043)
     assert result.fc_final.annual_fc > Decimal("200000"), (

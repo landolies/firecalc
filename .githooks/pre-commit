@@ -3,4 +3,4 @@
 # Enable once per clone: git config core.hooksPath .githooks
 set -e
 ROOT=$(git rev-parse --show-toplevel)
-BUMP_RESTAGE=1 python3 "$ROOT/scripts/bump_version.py"
+BUMP_RESTAGE=1 python "$ROOT/scripts/bump_version.py"

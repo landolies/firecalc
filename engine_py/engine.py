@@ -118,7 +118,7 @@ def compute_retirement_scenario(inputs: ScenarioInputs) -> ScenarioResult:
     # ------------------------------------------------------------------
     # Early retirement reduction
     # ------------------------------------------------------------------
-    early_reduction = compute_early_reduction(effective_retirement_age)
+    early_reduction = compute_early_reduction(pension_start, inputs.birth_date)
 
     # ------------------------------------------------------------------
     # Pension figures

@@ -261,6 +261,39 @@
   }
   .path .promo select, .path .promo input { font-size: 12px; padding: 3px 5px; }
   .path .dv-fields { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; margin-top: .3rem; }
+  .path-zone-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin: .5rem 0 .25rem; padding-bottom: .2rem; border-bottom: 1px dashed var(--border); }
+  .path-zone-label:first-of-type { margin-top: .35rem; }
+  .path.dv-mode { border-left: 3px solid #d97706; }
+  .path .dv-sep-section { background: #fffbeb; border-radius: 4px; padding: .35rem .5rem; margin: .3rem 0 .4rem; border: 1px solid #fde68a; }
+  table.scenarios tr.dv-context-bar { cursor: default !important; }
+  table.scenarios tr.dv-context-bar td { background: #e0f2fe; color: var(--cap); font-size: 11.5px; padding: 5px 10px; border-bottom: none; }
+  table.scenarios tr.dv-context-bar:hover td { background: #bae6fd; }
+  table.scenarios tr.dv-penalty-free td { background: #f0fdf4; }
+  table.scenarios tr.dv-penalty-free:hover td { background: #dcfce7; }
+  .penalty-free-cell { color: var(--ok); font-weight: 700; }
+  .pension-start-note { display: block; font-size: 10px; color: var(--text-muted); font-weight: 400; margin-top: 1px; }
+  .dv-timeline-sep td { text-align: center !important; color: var(--warn); font-style: italic; background: var(--warn-soft) !important; font-size: 12px; padding: 6px !important; cursor: default; border-bottom: 1px solid var(--border) !important; }
+  .dv-audit-summary { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 6px; padding: .75rem 1rem; margin-bottom: 1.25rem; }
+  .dv-audit-summary h3 { color: var(--cap) !important; border-color: #7dd3fc !important; }
+  /* Pay grid cards (sidebar) */
+  .pg-card { border: 1px solid var(--border); border-radius: 5px; padding: .45rem .55rem; margin-bottom: .35rem; }
+  .pg-card-row { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+  .pg-coverage { font-size: 12px; color: var(--text-muted); flex: 1; font-family: monospace; }
+  .pg-card-actions { display: flex; gap: .3rem; margin-left: auto; flex-shrink: 0; }
+  .pg-add-btn { width: 100%; margin-bottom: .4rem; font-size: 12px; }
+  .pg-add-panel { border: 1px dashed var(--border); border-radius: 5px; padding: .55rem; margin-bottom: .4rem; background: #f9fafb; }
+  .pg-add-options { display: flex; flex-direction: column; gap: .3rem; font-size: 13px; }
+  .pg-add-options label { display: flex; align-items: center; gap: .35rem; cursor: pointer; }
+  .pg-add-btns { display: flex; gap: .4rem; margin-top: .5rem; }
+  .exact-date-chip { display: flex; align-items: center; gap: .4rem; background: #f0f4ff; border: 1px solid #c7d2fe; border-radius: 4px; padding: .2rem .45rem; font-size: 12px; margin: .2rem 0; }
+  .exact-date-chip button { background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 14px; line-height: 1; padding: 0; }
+  .exact-date-add-row { display: flex; gap: .35rem; margin-top: .4rem; align-items: center; }
+  .exact-date-add-row input[type="date"] { flex: 1; font-size: 12px; padding: .25rem .35rem; border: 1px solid var(--border); border-radius: 4px; }
+  .dv-exact-note { font-size: 11px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 3px; padding: .3rem .4rem; margin-bottom: .35rem; }
+  table.scenarios tr.exact-date-row > td { background: #f5f3ff; }
+  table.scenarios tr.exact-date-row > td:first-child { border-left: 3px solid #818cf8; }
+  table.scenarios tr.exact-date-row:hover > td { background: #ede9fe; }
+  .age-ym-label { display: block; font-size: 10px; color: var(--text-muted); font-weight: 400; margin-top: 1px; }
 
   main {
     grid-area: main;
@@ -465,7 +498,7 @@
         <label>Current rank <span class="help" data-tip="Your rank as of today. Promotions are modeled per-path in the Promotion paths section below.">ⓘ</span></label>
         <select id="current_rank"></select>
         <div id="recruit_hint" class="hint" style="display:none; font-size:.85em; color:var(--warn); margin-top:.3rem;">
-          Recruits typically promote to Firefighter after the academy. Add a promotion event in the Promotion paths section below to model this — otherwise the scenario will hold you at Recruit pay all the way to retirement.
+          Recruits typically promote to Firefighter after the academy. Add a promotion event in the Promotions zone of your career path to model this — otherwise the scenario will hold you at Recruit pay all the way to retirement.
         </div>
       </div>
       <div class="field">
@@ -481,19 +514,9 @@
 
   <div class="section">
     <h2>Rate assumptions</h2>
-    <div class="two-col">
-      <div class="field">
-        <label>GWI (%/yr) <span class="help" data-tip="General Wage Increase: annual raise applied to the entire pay grid on July 1. Also used to scale the grid backward to compute historical pay before the grid's effective date.">ⓘ</span></label>
-        <input type="number" id="gwi_pct" min="0" max="20" step="0.01">
-      </div>
-      <div class="field">
-        <label>COLA (%/yr) <span class="help" data-tip="Cost-of-Living Adjustment applied to pension in retirement, starting next Feb 1 (prorated by full months retired). Capped at 2.0% per SJFD plan rules. Note: this rate only affects the year-by-year projection table in the audit drawer, and only when 'Show COLA projection in audit' is enabled. It does not change the headline pension figure.">ⓘ</span></label>
-        <input type="number" id="cola_pct" min="0" max="2" step="0.01">
-      </div>
-    </div>
     <div class="field">
-      <label>Pay grid effective date <span class="help" data-tip="The date the pay grid values above are current as-of. GWI compounds forward from here; the grid scales backward for historical years.">ⓘ</span></label>
-      <input type="date" id="pay_grid_effective_date">
+      <label>COLA (%/yr) <span class="help" data-tip="Cost-of-Living Adjustment applied to pension in retirement, starting next Feb 1 (prorated by full months retired). Capped at 2.0% per SJFD plan rules. Note: this rate only affects the year-by-year projection table in the audit drawer, and only when 'Show COLA projection in audit' is enabled. It does not change the headline pension figure.">ⓘ</span></label>
+      <input type="number" id="cola_pct" min="0" max="2" step="0.01">
     </div>
     <div class="field inline">
       <input type="checkbox" id="show_cola">
@@ -537,12 +560,12 @@
   </div>
 
   <div class="section">
-    <h2>Pay grid <span class="help" data-tip="Bi-weekly pay by rank × step. Defaults are SJFD FY 2026/27 (includes the 3.5% GWI). Editable — a new contract's numbers can be typed in without changing code.">ⓘ</span></h2>
-    <button class="btn small" id="open_paygrid" style="width:100%;">Edit pay grid…</button>
+    <h2>Pay grids <span class="help" data-tip="Bi-weekly pay by rank × step. Add multiple grids with different effective dates to model future contract changes — each grid covers from its effective date until the next grid's date. Defaults are SJFD FY 2026/27.">ⓘ</span></h2>
+    <div id="paygrid-section"></div>
   </div>
 
   <div class="section">
-    <h2>Retirement ages <span class="help" data-tip="The grid shows one row per integer age in this range, for every promotion path. Drag either handle to expand/narrow the span. Minimum age below which the plan won't pay (50) is shown with a warning pill.">ⓘ</span></h2>
+    <h2>Retirement ages <span class="help" data-tip="The grid shows one row per integer age in this range, for every career path. Drag either handle to expand/narrow the span. For deferred-vested paths the age represents pension start, not separation. Minimum collection age (50) is shown with a warning pill.">ⓘ</span></h2>
     <div class="age-range">
       <div class="labels">
         <span id="age-min-label">50</span>
@@ -559,9 +582,8 @@
   </div>
 
   <div class="section">
-    <h2>Promotion paths <span class="help" data-tip="A 'path' is one career scenario: a named list of planned promotions (or none). The scenario grid runs every path across every retirement age, so you can compare e.g. 'stay Firefighter' vs 'promote to Engineer at age 42'. Each path can also be toggled to Deferred Vested (separate early, collect pension later).">ⓘ</span></h2>
+    <h2>Career paths <span class="help" data-tip="A 'path' is one career scenario. Each path has two independent settings: (1) Retirement type — active service or deferred vested (separate early, collect pension later); (2) Promotions — optional rank changes. The scenario grid runs every path across every age in the retirement-age slider.">ⓘ</span></h2>
     <div id="paths"></div>
-    <button class="btn small" id="add_path">+ Add promotion path</button>
   </div>
 
   <div class="section">
@@ -573,7 +595,7 @@
   </div>
 
   <div class="version-footer" style="margin-top: auto; padding-top: 1rem; font-size: .75em; color: var(--muted, #888); opacity: .7;">
-    v0.6.0 · updated 2026-04-25
+    v0.8.0 · updated 2026-06-30
   </div>
 </aside>
 
@@ -614,7 +636,7 @@
     <div class="body">
       <table class="paygrid" id="paygrid"></table>
       <p style="color: var(--text-muted); font-size: 12px; margin: 1rem 0 0; max-width: 560px;">
-        These rates are applied as-of the "Pay grid effective date" in the sidebar. GWI scales them forward (and backward for years prior). Empty steps don't exist for that rank (e.g. Captain step 6 is empty).
+        These rates are effective from this grid's start date until the next grid's start date. Empty steps don't exist for that rank (e.g. Captain step 6 is empty).
       </p>
     </div>
   </div>
@@ -684,7 +706,7 @@
   if (!fc) { alert("firecalc engine failed to load"); return; }
 
   const STORAGE_KEY = "sjfd_retirement_calculator_v1";
-  const SCHEMA_VERSION = 8;
+  const SCHEMA_VERSION = 11;
   const AGE_RANGE_FLOOR = 45;
   const AGE_RANGE_CEILING = 75;
 
@@ -703,12 +725,11 @@
         current_step: 7,
         current_step_arrival_date: "2025-03-24",
       },
-      rates: { gwi_rate: "0.035", cola_rate: "0.020" },
-      pay_grid: grid,
-      pay_grid_effective_date: "2026-07-01",
+      rates: { cola_rate: "0.020" },
+      pay_grids: [{ effective_date: "2026-07-01", rates: grid }],
       retirement_age_range: { min: 50, max: 70 },
       paths: [
-        { name: "No promotions", retirement_type: "active", separation_date: null, promotions: [] },
+        { retirement_type: "active", separation_date: null, promotions: [], exact_retirement_dates: [] },
       ],
       show_cola: false,
       show_final_method: false,
@@ -806,6 +827,36 @@
       }
       parsed.schemaVersion = 8;
     }
+    // v8 → v9: collapse multi-path to single path; path name removed from UI.
+    if (parsed.schemaVersion === 8) {
+      if (Array.isArray(parsed.paths) && parsed.paths.length > 1) {
+        parsed.paths = [parsed.paths[0]];
+      }
+      parsed.schemaVersion = 9;
+    }
+    // v9 → v10: add exact_retirement_dates array to each path.
+    if (parsed.schemaVersion === 9) {
+      (parsed.paths || []).forEach(p => {
+        if (!Array.isArray(p.exact_retirement_dates)) p.exact_retirement_dates = [];
+      });
+      parsed.schemaVersion = 10;
+    }
+    // v10 → v11: replace pay_grid + pay_grid_effective_date + gwi_rate with pay_grids array.
+    if (parsed.schemaVersion === 10) {
+      if (!parsed.pay_grids) {
+        const effDate = parsed.pay_grid_effective_date || "2026-07-01";
+        const rates = parsed.pay_grid || (() => {
+          const g = {};
+          for (const [k, v] of fc.FY2627_PAY_GRID.rates) g[k] = v.toString();
+          return g;
+        })();
+        parsed.pay_grids = [{ effective_date: effDate, rates }];
+      }
+      delete parsed.pay_grid;
+      delete parsed.pay_grid_effective_date;
+      if (parsed.rates) delete parsed.rates.gwi_rate;
+      parsed.schemaVersion = 11;
+    }
     return parsed;
   }
 
@@ -841,19 +892,32 @@
 
   // ---- Engine bridge ---------------------------------------------------
 
-  function buildScenarioInputs(path, age) {
-    const rates = new Map();
-    for (const k of Object.keys(state.pay_grid)) {
-      if (state.pay_grid[k] !== "" && state.pay_grid[k] != null) {
-        rates.set(k, new Decimal(state.pay_grid[k]));
-      }
-    }
+  function buildScenarioInputs(path, age, exactDate = null) {
+    const payGrids = (state.pay_grids || [])
+      .slice()
+      .sort((a, b) => a.effective_date.localeCompare(b.effective_date))
+      .map((g) => {
+        const rates = new Map();
+        for (const k of Object.keys(g.rates || {})) {
+          const v = g.rates[k];
+          if (v !== "" && v != null) rates.set(k, new Decimal(v));
+        }
+        return { effective_date: fc.parseIsoDate(g.effective_date), rates };
+      });
+
     const birthDate = fc.parseIsoDate(state.personal.birth_date);
-    // For deferred-vested paths the slider age = age at pension start.
-    // Derive pension_start_date from birthday(age) so each row varies the
-    // early-reduction factor independently of separation.
     const isDV = path.retirement_type === "deferred_vested";
-    const pensionStart = isDV ? fc.addYears(birthDate, age) : null;
+
+    // When an exact date is supplied, derive integer age from it (floor).
+    let effectiveAge = age;
+    if (exactDate) {
+      let a = exactDate.year - birthDate.year;
+      if (fc.compareDates(exactDate, fc.addYears(birthDate, a)) < 0) a -= 1;
+      effectiveAge = Math.max(0, a);
+    }
+
+    // DV: pension start = exact date (if given) or Nth birthday.
+    const pensionStart = isDV ? (exactDate || fc.addYears(birthDate, effectiveAge)) : null;
 
     return {
       birth_date: birthDate,
@@ -861,13 +925,16 @@
       current_rank: state.personal.current_rank,
       current_step: Number(state.personal.current_step),
       current_step_arrival_date: fc.parseIsoDate(state.personal.current_step_arrival_date),
-      pay_grid: { rates },
-      pay_grid_effective_date: fc.parseIsoDate(state.pay_grid_effective_date),
-      gwi_rate: new Decimal(state.rates.gwi_rate),
+      pay_grids: payGrids,
+      // Legacy fields (unused when pay_grids is non-empty; kept for engine fallback path).
+      pay_grid: payGrids.length > 0 ? payGrids[0] : { rates: new Map() },
+      pay_grid_effective_date: payGrids.length > 0 ? payGrids[0].effective_date : fc.parseIsoDate("2026-07-01"),
+      gwi_rate: new Decimal("0"),
       cola_rate: new Decimal(state.rates.cola_rate),
       gwi_effective_month_day: [7, 1],
       cola_effective_month_day: [2, 1],
-      retirement_age: age,
+      retirement_age: effectiveAge,
+      retirement_date_override: exactDate || null,
       promotions: (path.promotions || [])
         .filter((p) => p.effective_date)
         .map((p) => ({
@@ -970,9 +1037,12 @@
   function renderSummary() {
     const el = document.getElementById("summary-pill");
     const p = state.personal;
+    // Use the most-recent pay grid (last by effective date) for current-pay display.
+    const sorted = (state.pay_grids || []).slice().sort((a, b) => a.effective_date.localeCompare(b.effective_date));
+    const currentGridRates = sorted.length > 0 ? sorted[sorted.length - 1].rates : {};
     const rates = new Map();
-    for (const k of Object.keys(state.pay_grid)) {
-      if (state.pay_grid[k] !== "") rates.set(k, new Decimal(state.pay_grid[k]));
+    for (const k of Object.keys(currentGridRates)) {
+      if (currentGridRates[k] !== "") rates.set(k, new Decimal(currentGridRates[k]));
     }
     const bw = rates.get(`${p.current_rank}|${p.current_step}`);
     const annual = bw ? Number(bw.times(26).toString()) : null;
@@ -996,6 +1066,12 @@
 
   function renderPayGrid() {
     const el = document.getElementById("paygrid");
+    const grids = (state.pay_grids || []).slice().sort((a, b) => a.effective_date.localeCompare(b.effective_date));
+    const g = grids[editingPayGridIdx] || grids[0];
+    const gridRates = g ? g.rates : {};
+    // Update modal title to show which grid is being edited.
+    const titleEl = document.getElementById("paygrid-title");
+    if (titleEl && g) titleEl.textContent = `Pay grid (bi-weekly) · effective ${g.effective_date}`;
     const ranks = fc.RANK_ORDER;
     let html = "<thead><tr><th></th>";
     for (let s = 1; s <= 7; s++) html += `<th>${s}</th>`;
@@ -1010,14 +1086,10 @@
         .replace("Fire Captain", "Captain")
         .replace("Battalion Chief", "Batt. Chief");
       html += `<tr><td>${escapeHtml(shortLabel)}</td>`;
-      // Recruit is fixed at Step 1 only — no editable Step 2-7 cells.
-      // For every other rank, render an empty fillable input for any step
-      // without a default so the user can add Step 6/7 values if a future
-      // contract introduces them.
       const recruitOnlyStep1 = rank === "Firefighter Recruit";
       for (let s = 1; s <= 7; s++) {
         const key = `${rank}|${s}`;
-        const val = state.pay_grid[key];
+        const val = gridRates[key];
         if (val != null && val !== "") {
           html += `<td><input type="number" step="0.01" data-paygrid-key="${escapeAttr(key)}" value="${escapeAttr(val)}"></td>`;
         } else if (recruitOnlyStep1 && s > 1) {
@@ -1029,6 +1101,51 @@
       html += "</tr>";
     }
     html += "</tbody>";
+    el.innerHTML = html;
+  }
+
+  // ---- Render: pay grid section (sidebar cards) -----------------------
+
+  function renderPayGridSection() {
+    const el = document.getElementById("paygrid-section");
+    if (!el) return;
+    const grids = (state.pay_grids || []).slice().sort((a, b) => a.effective_date.localeCompare(b.effective_date));
+    const today = new Date().toISOString().slice(0, 10);
+    let html = "";
+    for (let i = 0; i < grids.length; i++) {
+      const g = grids[i];
+      const nextEff = i + 1 < grids.length ? grids[i + 1].effective_date : null;
+      const coverageLabel = nextEff
+        ? `${g.effective_date} → ${nextEff}`
+        : `${g.effective_date} → ongoing`;
+      html += `<div class="pg-card">`;
+      html += `<div class="pg-card-row">`;
+      html += `<span class="pg-coverage">${escapeHtml(coverageLabel)}</span>`;
+      html += `<div class="pg-card-actions">`;
+      html += `<button class="btn small" data-pg-edit="${i}">Edit rates…</button>`;
+      if (grids.length > 1) {
+        html += `<button class="btn small danger" data-pg-remove="${i}">Remove</button>`;
+      }
+      html += `</div></div></div>`;
+
+      // Add-grid panel (or button)
+      if (addPanelState && addPanelState.afterIdx === i) {
+        const ap = addPanelState;
+        html += `<div class="pg-add-panel open">`;
+        html += `<div class="pg-add-options">`;
+        html += `<label><input type="radio" name="pg-add-opt" value="copy_pct" ${ap.option === "copy_pct" ? "checked" : ""}> Copy + <input type="number" id="pg-add-pct" value="${escapeAttr(ap.pct || "3.5")}" min="0" max="30" step="0.1" style="width:4rem;">%</label>`;
+        html += `<label><input type="radio" name="pg-add-opt" value="copy" ${ap.option === "copy" ? "checked" : ""}> Copy as-is</label>`;
+        html += `<label><input type="radio" name="pg-add-opt" value="blank" ${ap.option === "blank" ? "checked" : ""}> Blank</label>`;
+        html += `</div>`;
+        html += `<div class="field" style="margin-top:.4rem;"><label>Effective date</label><input type="date" id="pg-add-date" value="${escapeAttr(ap.date || "")}"></div>`;
+        html += `<div class="pg-add-btns">`;
+        html += `<button class="btn small" data-pg-add-create="${i}">Create</button>`;
+        html += `<button class="btn small" data-pg-add-cancel>Cancel</button>`;
+        html += `</div></div>`;
+      } else {
+        html += `<button class="btn small pg-add-btn" data-pg-add-open="${i}">+ Add pay grid</button>`;
+      }
+    }
     el.innerHTML = html;
   }
 
@@ -1054,6 +1171,14 @@
 
   // ---- Render: promotion paths -----------------------------------------
 
+  function ageYM(d, birthDate) {
+    let years = d.year - birthDate.year;
+    let months = d.month - birthDate.month;
+    if (d.day < birthDate.day) months -= 1;
+    if (months < 0) { years -= 1; months += 12; }
+    return months === 0 ? `${years}y` : `${years}y ${months}m`;
+  }
+
   function renderPaths() {
     const el = document.getElementById("paths");
     el.innerHTML = state.paths.map((path, i) => renderPath(path, i)).join("");
@@ -1068,41 +1193,53 @@
         .map((r) => `<option value="${r}"${p.new_rank === r ? " selected" : ""}>${r}</option>`).join("");
       return `<div class="promo">
         <select data-promo-rank data-path="${i}" data-promo="${j}">${ranks}</select>
-        <input type="text" data-promo-date data-path="${i}" data-promo="${j}"
+        <input type="date" data-promo-date data-path="${i}" data-promo="${j}"
                value="${escapeAttr(p.effective_date || "")}"
-               placeholder="YYYY-MM-DD"
-               inputmode="numeric" maxlength="10" autocomplete="off"
-               title="Type the promotion date as YYYY-MM-DD (e.g. 2028-10-01). Invalid dates are highlighted in red.">
+               autocomplete="off">
         <button class="btn small" data-remove-promo data-path="${i}" data-promo="${j}">×</button>
       </div>`;
     }).join("");
 
     const dv = path.retirement_type === "deferred_vested";
     const dvBlock = dv ? `
-      <div class="dv-fields">
-        <div class="field" style="grid-column: 1 / -1;">
-          <label>Separation date <span class="help" data-tip="Date you separate from service. YOS and FC are frozen as of this date. Pension itself starts at the age chosen in the retirement-age slider — one grid row per age, each with its own early-reduction factor.">ⓘ</span></label>
-          <input type="text" data-dv-sep data-path="${i}"
+      <div class="dv-sep-section">
+        <div class="field">
+          <label>Separation date <span class="help" data-tip="Date you leave service. YOS and FC are frozen here. Each row in the grid shows the pension outcome if you start collecting at that age — the 7%/yr early-penalty phases out as you wait toward age 57, where it reaches 0%.">ⓘ</span></label>
+          <input type="date" data-dv-sep data-path="${i}"
                  value="${escapeAttr(path.separation_date || "")}"
-                 placeholder="YYYY-MM-DD"
-                 inputmode="numeric" maxlength="10" autocomplete="off">
+                 autocomplete="off">
         </div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:.2rem;">Promotions must precede this date · Penalty-free collection starts at age 57</div>
       </div>` : "";
 
-    const removeBtn = i === 0 ? "" : `<button class="btn small danger" data-remove-path="${i}">Remove</button>`;
+    const exactDates = path.exact_retirement_dates || [];
+    const birthDate = isValidIsoDate(state.personal.birth_date) ? fc.parseIsoDate(state.personal.birth_date) : null;
+    const exactDateChips = exactDates.map(ds => {
+      const ageLabel = (birthDate && isValidIsoDate(ds)) ? ` · ${ageYM(fc.parseIsoDate(ds), birthDate)}` : "";
+      return `<div class="exact-date-chip">
+        <span>${escapeHtml(ds)}${ageLabel}</span>
+        <button class="remove-exact-date" data-path="${i}" data-date="${escapeAttr(ds)}" aria-label="Remove ${ds}">×</button>
+      </div>`;
+    }).join("");
+    const dvExactNote = dv ? `<div class="dv-exact-note">In deferred-vested mode, these are <strong>pension-start dates</strong> — when you begin collecting, not when you separate.</div>` : "";
 
-    return `<div class="path">
-      <div class="path-header">
-        <input type="text" data-path-name="${i}" value="${escapeAttr(path.name)}">
-        ${removeBtn}
-      </div>
-      <div class="field inline">
-        <input type="checkbox" id="dv_${i}" data-dv-toggle="${i}"${dv ? " checked" : ""}>
-        <label for="dv_${i}">Deferred vested</label>
-      </div>
-      ${dvBlock}
+    return `<div class="path${dv ? " dv-mode" : ""}">
+      <div class="path-zone-label">Promotions</div>
       <div class="promotions">${promotions}</div>
       <button class="btn small" data-add-promo="${i}">+ Add promotion</button>
+      <div class="path-zone-label">Retirement type</div>
+      <div class="field inline">
+        <input type="checkbox" id="dv_${i}" data-dv-toggle="${i}"${dv ? " checked" : ""}>
+        <label for="dv_${i}"${dv ? ' style="color:var(--warn);font-weight:600;"' : ""}>Deferred vested</label>
+      </div>
+      ${dvBlock}
+      <div class="path-zone-label">Exact retirement dates</div>
+      ${dvExactNote}
+      <div class="exact-dates-list" data-path="${i}">${exactDateChips}</div>
+      <div class="exact-date-add-row">
+        <input type="date" class="exact-date-input" data-path="${i}" />
+        <button class="btn small add-exact-date" data-path="${i}">+ Add date</button>
+      </div>
     </div>`;
   }
 
@@ -1120,12 +1257,10 @@
     const host = document.getElementById("grid-container");
     const meta = document.getElementById("grid-meta");
     const r = state.retirement_age_range;
-    const ages = [];
-    for (let a = r.min; a <= r.max; a++) ages.push(a);
     lastResults = [];
 
-    if (state.paths.length === 0 || ages.length === 0) {
-      host.innerHTML = `<div class="empty-hint">Add at least one promotion path and widen the retirement-age slider to see scenarios.</div>`;
+    if (!state.paths[0]) {
+      host.innerHTML = `<div class="empty-hint">Widen the retirement-age slider to see scenarios.</div>`;
       meta.textContent = "";
       return;
     }
@@ -1138,9 +1273,8 @@
 
     // Primary columns — always rendered.
     const primaryCols = [
-      H("Path", "Which promotion scenario this row belongs to (from the sidebar)."),
       H("Age", "Retirement age. Row is computed as if you retire on your Nth birthday."),
-      H("Retire date", "Your Nth birthday, computed from the birth date."),
+      H("Retire date", "For active paths: your Nth birthday. For deferred-vested (DV) paths: pension start date — when you begin collecting after separation."),
       H("Final rank/step", "Rank and step at retirement, after all promotions and step progression on this path."),
       H("YOS", "Years of Service at retirement (or separation for deferred-vested), by calendar anniversaries."),
       H("FC (3yr)", "Final Compensation: average of the highest 3 consecutive years-of-service windows by base pay. The SJFD plan uses this method."),
@@ -1174,103 +1308,161 @@
     }
     html += `<tr>${primaryCols.join("")}${ssaCols.join("")}${finalCols.join("")}</tr></thead><tbody>`;
 
-    state.paths.forEach((path, pi) => {
-      const isDV = path.retirement_type === "deferred_vested";
-      const validation = revalidatePath(pi);
-      const pathLabel = escapeHtml(path.name) + (isDV ? ' <span class="pill cap" title="Deferred vested — YOS/FC frozen at separation; pension starts at the row\'s age.">DV</span>' : "");
+    const path = state.paths[0];
+    const isDV = path.retirement_type === "deferred_vested";
+    const validation = revalidatePath(0);
+    const birthDate = isValidIsoDate(state.personal.birth_date) ? fc.parseIsoDate(state.personal.birth_date) : null;
 
-      ages.forEach((age, ai) => {
-        const idx = lastResults.length;
-        rowCount++;
+    // Build sorted row specs: age-based rows + exact retirement date rows.
+    const rowSpecs = [];
+    for (let a = r.min; a <= r.max; a++) {
+      const d = birthDate ? fc.addYears(birthDate, a) : null;
+      rowSpecs.push({ type: "age", age: a, date: d });
+    }
+    for (const ds of (path.exact_retirement_dates || [])) {
+      if (isValidIsoDate(ds) && birthDate) {
+        rowSpecs.push({ type: "exact", dateStr: ds, date: fc.parseIsoDate(ds) });
+      }
+    }
+    if (birthDate) {
+      rowSpecs.sort((a, b) => {
+        if (!a.date) return -1;
+        if (!b.date) return 1;
+        return fc.compareDates(a.date, b.date);
+      });
+    }
 
-        // Preflight: DV paths need a separation date; dates must not conflict.
-        let dvError = null;
-        if (isDV) {
-          if (!path.separation_date || !isValidIsoDate(path.separation_date)) {
-            dvError = "Set a valid separation date for this deferred-vested path.";
-          } else if (validation.anyError) {
-            dvError = "Fix the highlighted date(s) on this path (promotion after separation, or separation before hire).";
-          } else {
-            // Pension start (age's birthday) must be on or after separation.
-            const birth = state.personal.birth_date;
-            if (isValidIsoDate(birth)) {
-              const bd = fc.parseIsoDate(birth);
-              const ps = fc.addYears(bd, age);
-              if (fc.compareDates(ps, fc.parseIsoDate(path.separation_date)) < 0) {
-                dvError = `Pension start at age ${age} (${fc.isoDate(ps)}) would be before separation (${path.separation_date}).`;
-              }
-            }
+    if (rowSpecs.length === 0) {
+      host.innerHTML = `<div class="empty-hint">Widen the retirement-age slider or add an exact retirement date to see scenarios.</div>`;
+      meta.textContent = "";
+      return;
+    }
+
+    // Context bar for DV scenarios.
+    if (isDV && path.separation_date && isValidIsoDate(path.separation_date)) {
+      const birth = state.personal.birth_date;
+      let penaltyFreeStr = "";
+      if (isValidIsoDate(birth)) {
+        penaltyFreeStr = fc.isoDate(fc.addYears(fc.parseIsoDate(birth), 57));
+      }
+      html += `<tr class="dv-context-bar">
+        <td colspan="${totalCols}">Deferred vested · Separation: ${escapeHtml(path.separation_date)} · YOS &amp; FC frozen at separation · Penalty-free from age 57${penaltyFreeStr ? " (" + escapeHtml(penaltyFreeStr) + ")" : ""}</td>
+      </tr>`;
+    }
+
+    rowSpecs.forEach((spec) => {
+      const isExact = spec.type === "exact";
+      const age = spec.age != null ? spec.age : (birthDate && spec.date ? (() => {
+        let a = spec.date.year - birthDate.year;
+        if (fc.compareDates(spec.date, fc.addYears(birthDate, a)) < 0) a -= 1;
+        return a;
+      })() : null);
+      const ageCellContent = isExact
+        ? `${ageYM(spec.date, birthDate)}<span class="age-ym-label">${spec.dateStr}</span>`
+        : String(age);
+      const exactDate = isExact ? spec.date : null;
+
+      const idx = lastResults.length;
+      rowCount++;
+
+      // Preflight: DV paths need a separation date; dates must not conflict.
+      let dvError = null;
+      if (isDV) {
+        if (!path.separation_date || !isValidIsoDate(path.separation_date)) {
+          dvError = "Set a valid separation date for this deferred-vested scenario.";
+        } else if (validation.anyError) {
+          dvError = "Fix the highlighted date(s) (promotion after separation, or separation before hire).";
+        } else if (birthDate) {
+          const ps = isExact ? spec.date : fc.addYears(birthDate, age);
+          if (fc.compareDates(ps, fc.parseIsoDate(path.separation_date)) < 0) {
+            dvError = `Pension start ${fc.isoDate(ps)} would be before separation (${path.separation_date}).`;
           }
         }
+      }
 
-        if (dvError) {
-          lastResults.push({ path, age, result: { error: dvError } });
-          html += `<tr${ai === 0 ? ' class="path-start"' : ""} data-result-idx="${idx}">
-            <td class="path-cell">${ai === 0 ? pathLabel : ""}</td>
-            <td>${age}</td>
-            <td colspan="${totalCols - 2}"><span class="pill warn">${escapeHtml(dvError)}</span></td>
-          </tr>`;
-          return;
-        }
-
-        const result = runScenario(path, age);
-        lastResults.push({ path, age, result });
-
-        if (result.error) {
-          html += `<tr${ai === 0 ? ' class="path-start"' : ""} data-result-idx="${idx}">
-            <td class="path-cell">${ai === 0 ? pathLabel : ""}</td>
-            <td>${age}</td>
-            <td colspan="${totalCols - 2}"><span class="pill danger">Error:</span> ${escapeHtml(result.error)}</td>
-          </tr>`;
-          return;
-        }
-
-        const hasWarn = result.warnings && result.warnings.length > 0;
-        const warnPill = hasWarn
-          ? `<span class="pill warn" title="${escapeAttr(result.warnings.join(' · '))}">${escapeHtml(result.warnings.length + ' warning' + (result.warnings.length > 1 ? 's' : ''))}</span>`
-          : "";
-
-        // Primary pension cell (single column, units-aware).
-        const primaryPension = hasWarn
-          ? `<td>${warnPill}</td>`
-          : `<td>${money(asUnits(result.annual_pension_3yr))}</td>`;
-
-        // SSA cells (only when SSA enabled). Stash result on entry for audit.
-        let ssaCells = "";
-        let ssResult = null;
-        if (showSsa) {
-          ssResult = computeSsForResult(result);
-          lastResults[lastResults.length - 1].ssResult = ssResult;
-          const ssAnnual = ssResult.annual_benefit_at_claiming;
-          const netAnnual = hasWarn ? null : (result.annual_pension_3yr || new Decimal(0)).plus(ssAnnual);
-          ssaCells = `<td>${money(asUnits(ssAnnual))}</td>`;
-          ssaCells += netAnnual ? `<td>${money(asUnits(netAnnual))}</td>` : `<td>${warnPill}</td>`;
-        }
-
-        // Final-method cells (only when toggle on).
-        let finalCells = "";
-        if (showFinal) {
-          finalCells = `<td class="final-col final-col-first">${money(result.fc_final.annual_fc)}</td>`;
-          finalCells += hasWarn
-            ? `<td class="final-col">${warnPill}</td>`
-            : `<td class="final-col">${money(asUnits(result.annual_pension_final))}</td>`;
-        }
-
-        html += `<tr${ai === 0 ? ' class="path-start"' : ""} data-result-idx="${idx}">
-          <td class="path-cell">${ai === 0 ? pathLabel : ""}</td>
-          <td>${age}</td>
-          <td>${fmtDate(result.retirement_date)}</td>
-          <td>${escapeHtml(result.final_rank)} · ${result.final_step}</td>
-          <td>${result.yos_at_retirement._dp !== undefined ? result.yos_at_retirement.toFixed(2) : result.yos_at_retirement.toString()}</td>
-          <td>${money(result.fc_3yr.annual_fc)}</td>
-          <td>${pct(result.benefit_pct_detail.final_pct)}</td>
-          <td>${result.cap_reached ? '<span class="pill cap">cap</span>' : '<span class="muted">—</span>'}</td>
-          <td>${result.early_reduction.years_before_57 > 0 ? pct(result.early_reduction.reduction_pct) : '<span class="muted">—</span>'}</td>
-          ${primaryPension}
-          ${ssaCells}
-          ${finalCells}
+      if (dvError) {
+        lastResults.push({ path, age, ageLabel: ageCellContent, exactDate: isExact ? spec.dateStr : null, result: { error: dvError } });
+        html += `<tr${isExact ? ' class="exact-date-row"' : ""} data-result-idx="${idx}">
+          <td>${ageCellContent}</td>
+          <td colspan="${totalCols - 1}"><span class="pill warn">${escapeHtml(dvError)}</span></td>
         </tr>`;
-      });
+        return;
+      }
+
+      const result = isExact
+        ? (() => { try { return fc.computeRetirementScenario(buildScenarioInputs(path, null, exactDate)); } catch(e) { return { error: e.message }; } })()
+        : runScenario(path, age);
+      lastResults.push({ path, age, ageLabel: ageCellContent, exactDate: isExact ? spec.dateStr : null, result });
+
+      if (result.error) {
+        html += `<tr${isExact ? ' class="exact-date-row"' : ""} data-result-idx="${idx}">
+          <td>${ageCellContent}</td>
+          <td colspan="${totalCols - 1}"><span class="pill danger">Error:</span> ${escapeHtml(result.error)}</td>
+        </tr>`;
+        return;
+      }
+
+      const hasWarn = result.warnings && result.warnings.length > 0;
+      const warnPill = hasWarn
+        ? `<span class="pill warn" title="${escapeAttr(result.warnings.join(' · '))}">${escapeHtml(result.warnings.length + ' warning' + (result.warnings.length > 1 ? 's' : ''))}</span>`
+        : "";
+
+      const isPenaltyFree = isDV && !hasWarn && result.early_reduction.months_before_57 === 0;
+
+      // Primary pension cell (single column, units-aware).
+      const primaryPension = hasWarn
+        ? `<td>${warnPill}</td>`
+        : `<td>${money(asUnits(result.annual_pension_3yr))}</td>`;
+
+      // SSA cells (only when SSA enabled). Stash result on entry for audit.
+      let ssaCells = "";
+      let ssResult = null;
+      if (showSsa) {
+        ssResult = computeSsForResult(result);
+        lastResults[lastResults.length - 1].ssResult = ssResult;
+        const ssAnnual = ssResult.annual_benefit_at_claiming;
+        const netAnnual = hasWarn ? null : (result.annual_pension_3yr || new Decimal(0)).plus(ssAnnual);
+        ssaCells = `<td>${money(asUnits(ssAnnual))}</td>`;
+        ssaCells += netAnnual ? `<td>${money(asUnits(netAnnual))}</td>` : `<td>${warnPill}</td>`;
+      }
+
+      // Final-method cells (only when toggle on).
+      let finalCells = "";
+      if (showFinal) {
+        finalCells = `<td class="final-col final-col-first">${money(result.fc_final.annual_fc)}</td>`;
+        finalCells += hasWarn
+          ? `<td class="final-col">${warnPill}</td>`
+          : `<td class="final-col">${money(asUnits(result.annual_pension_final))}</td>`;
+      }
+
+      // Penalty cell: "0% ✓" in green for penalty-free DV rows; "—" for active at 57+.
+      const penaltyCell = result.early_reduction.months_before_57 > 0
+        ? pct(result.early_reduction.reduction_pct)
+        : (isPenaltyFree ? '<span class="penalty-free-cell">0% ✓</span>' : '<span class="muted">—</span>');
+
+      // Retire date cell: annotate as "pension start" for DV scenarios.
+      const retireDateCell = isDV
+        ? `${fmtDate(result.retirement_date)}<span class="pension-start-note">pension start</span>`
+        : fmtDate(result.retirement_date);
+
+      const rowClasses = [
+        isPenaltyFree ? "dv-penalty-free" : "",
+        isExact ? "exact-date-row" : "",
+      ].filter(Boolean).join(" ");
+
+      html += `<tr${rowClasses ? ` class="${rowClasses}"` : ""} data-result-idx="${idx}">
+        <td>${ageCellContent}</td>
+        <td>${retireDateCell}</td>
+        <td>${escapeHtml(result.final_rank)} · ${result.final_step}</td>
+        <td>${result.yos_at_retirement._dp !== undefined ? result.yos_at_retirement.toFixed(2) : result.yos_at_retirement.toString()}</td>
+        <td>${money(result.fc_3yr.annual_fc)}</td>
+        <td>${pct(result.benefit_pct_detail.final_pct)}</td>
+        <td>${result.cap_reached ? '<span class="pill cap">cap</span>' : '<span class="muted">—</span>'}</td>
+        <td>${penaltyCell}</td>
+        ${primaryPension}
+        ${ssaCells}
+        ${finalCells}
+      </tr>`;
     });
     html += "</tbody></table>";
     host.innerHTML = html;
@@ -1283,7 +1475,15 @@
     const entry = lastResults[idx];
     if (!entry) return;
     const { path, age, result } = entry;
-    document.getElementById("drawer-title").textContent = `${path.name} · age ${age}`;
+    let drawerTitle;
+    if (entry.exactDate) {
+      const bd = isValidIsoDate(state.personal.birth_date) ? fc.parseIsoDate(state.personal.birth_date) : null;
+      const ageStr = (bd && isValidIsoDate(entry.exactDate)) ? ` · ${ageYM(fc.parseIsoDate(entry.exactDate), bd)}` : "";
+      drawerTitle = `${entry.exactDate}${ageStr}`;
+    } else {
+      drawerTitle = `Age ${age}`;
+    }
+    document.getElementById("drawer-title").textContent = drawerTitle;
     document.getElementById("drawer-body").innerHTML = renderAudit(path, age, result);
     document.getElementById("drawer").classList.add("open");
     document.getElementById("drawer").setAttribute("aria-hidden", "false");
@@ -1318,12 +1518,42 @@
       `<tr><td class="nowrap">${fmtDate(s.start)} → ${fmtDate(s.end)}</td><td>${escapeHtml(s.event)}</td><td>${escapeHtml(s.rank)}</td><td class="num">${s.step}</td><td class="num">${money(s.biweekly)}</td><td class="num">${money(s.annual)}</td></tr>`
     ).join("");
 
+    // Separator row injected at the end of the salary timeline for DV scenarios.
+    const dvTimelineSep = (r.inputs.retirement_type === "deferred_vested" && r.separation_date)
+      ? `<tr class="dv-timeline-sep"><td colspan="6">─── ${fmtDate(r.separation_date)} · Separation from service · Pay and step progression end here ───</td></tr>`
+      : "";
+
     const colaRows = (r.cola_rows_3yr || []).map((c) =>
       `<tr><td class="num">${c.age}</td><td class="num">${c.year}</td><td class="num">${money(c.annual_pension)}</td><td class="num">${money(c.monthly_pension)}</td></tr>`
     ).join("");
 
+    // DV summary block — shown at the top of the audit drawer for deferred-vested scenarios.
+    let dvSummaryHtml = "";
+    if (r.inputs.retirement_type === "deferred_vested" && r.separation_date) {
+      const bd = r.inputs.birth_date;
+      const sd = r.separation_date;
+      const sepAge = sd.year - bd.year - ((sd.month < bd.month || (sd.month === bd.month && sd.day < bd.day)) ? 1 : 0);
+      const penaltyFreeDate = fc.addYears(bd, 57);
+      const yearsToWait = Math.max(0, 57 - er.retirement_age);
+      const psAgeLabel = ` · ${ageYM(r.retirement_date, bd)}`;
+      dvSummaryHtml = `
+        <div class="dv-audit-summary">
+          <h3>Deferred Vested</h3>
+          <div class="kv">
+            <div class="k">Left service</div><div class="v">${fmtDate(sd)} · age ${sepAge}</div>
+            <div class="k">FC frozen at</div><div class="v">${money(r.fc_3yr.annual_fc)}</div>
+            <div class="k">Pension start</div><div class="v">${fmtDate(r.retirement_date)}${psAgeLabel}</div>
+            <div class="k">Early penalty</div><div class="v">${er.months_before_57 > 0
+              ? `${pct(er.reduction_pct)} (${er.months_before_57} mo before age 57)`
+              : '<span style="color:var(--ok);font-weight:600;">None</span>'}</div>
+            <div class="k">Penalty-free from</div><div class="v"><strong>${fmtDate(penaltyFreeDate)} (age 57)</strong>${yearsToWait > 0 ? ` · <span style="color:var(--text-muted);">${yearsToWait} yr${yearsToWait === 1 ? "" : "s"} after separation</span>` : ' <span style="color:var(--ok);">✓</span>'}</div>
+          </div>
+        </div>`;
+    }
+
     return `
       ${warningsHtml}
+      ${dvSummaryHtml}
       <div class="group">
         <h3>Snapshot</h3>
         <div class="kv">
@@ -1354,9 +1584,9 @@
 
       <div class="group">
         <h3>Early retirement reduction</h3>
-        ${er.years_before_57 > 0
-          ? `<div class="formula">Retire at ${er.retirement_age}, which is ${er.years_before_57} year${er.years_before_57 === 1 ? "" : "s"} before 57. Reduction = ${er.years_before_57} × 7% = ${pct(er.reduction_pct)}. Factor = ${er.factor.toFixed(4)}.</div>`
-          : `<div class="formula">No reduction (retiring at age ${er.retirement_age}, ≥ 57).</div>`}
+        ${er.months_before_57 > 0
+          ? `<div class="formula">${r.inputs.retirement_type === "deferred_vested" ? "Pension starts" : "Retiring"} ${fmtDate(er.retirement_date)}, which is ${er.months_before_57} month${er.months_before_57 === 1 ? "" : "s"} (${(er.months_before_57 / 12).toFixed(2)} yrs) before age 57. Reduction = ${er.months_before_57}/12 × 7% = ${pct(er.reduction_pct)}. Factor = ${er.factor.toFixed(4)}.</div>`
+          : `<div class="formula">No reduction (${r.inputs.retirement_type === "deferred_vested" ? "pension starts" : "retiring"} ${fmtDate(er.retirement_date)}, at or after age 57).</div>`}
       </div>
 
       <div class="group">
@@ -1383,13 +1613,33 @@
         <h3>Salary timeline</h3>
         <table>
           <thead><tr><th>Period</th><th>Event</th><th>Rank</th><th class="num">Step</th><th class="num">Bi-weekly</th><th class="num">Annual</th></tr></thead>
-          <tbody>${timelineRows || '<tr><td colspan="6" class="muted">No segments</td></tr>'}</tbody>
+          <tbody>${timelineRows || '<tr><td colspan="6" class="muted">No segments</td></tr>'}${dvTimelineSep}</tbody>
         </table>
       </div>
 
-      ${colaRows ? `<div class="group"><h3>COLA projection (3yr FC)</h3>
-        <table><thead><tr><th class="num">Age</th><th class="num">Year</th><th class="num">Annual</th><th class="num">Monthly</th></tr></thead>
-        <tbody>${colaRows}</tbody></table></div>` : ""}
+      ${colaRows ? (() => {
+        const [cm, cd] = r.inputs.cola_effective_month_day;
+        const rd = r.retirement_date;
+        const candidate = { year: rd.year, month: cm, day: cd };
+        const firstColaDate = fc.compareDates(candidate, rd) > 0
+          ? candidate
+          : { year: candidate.year + 1, month: cm, day: cd };
+        let firstColaMonths = (firstColaDate.year - rd.year) * 12 + (firstColaDate.month - rd.month);
+        if (firstColaDate.day < rd.day) firstColaMonths -= 1;
+        firstColaMonths = Math.max(0, firstColaMonths);
+        const rateN = Number(r.inputs.cola_rate.toString());
+        const ratePct = (rateN * 100).toFixed(1);
+        const firstPct = (firstColaMonths / 12 * rateN * 100).toFixed(2);
+        const colaNote = firstColaMonths === 12
+          ? `First COLA (${fmtDate(firstColaDate)}): full ${ratePct}% — retired on or before Feb 1.`
+          : firstColaMonths === 0
+            ? `First COLA (${fmtDate(firstColaDate)}): 0% — less than 1 full month retired before Feb 1. Full ${ratePct}% applies from ${fmtDate({ year: firstColaDate.year + 1, month: cm, day: cd })}.`
+            : `First COLA (${fmtDate(firstColaDate)}): prorated — ${firstColaMonths} months retired × ${ratePct}% ÷ 12 = ${firstPct}%. Full ${ratePct}% applies from ${fmtDate({ year: firstColaDate.year + 1, month: cm, day: cd })}.`;
+        return `<div class="group"><h3>COLA projection (3yr FC)</h3>
+          <div class="formula" style="margin-bottom:.5rem;">${colaNote}</div>
+          <table><thead><tr><th class="num">Age</th><th class="num">Year</th><th class="num">Annual</th><th class="num">Monthly</th></tr></thead>
+          <tbody>${colaRows}</tbody></table></div>`;
+      })() : ""}
 
       ${state.ssa && state.ssa.enabled ? renderSsaAudit(r) : ""}
     `;
@@ -1467,7 +1717,7 @@
     const showFinal = !!state.show_final_method;
     const showSsa = !!(state.ssa && state.ssa.enabled);
     const headers = [
-      "Path", "Retirement Age", "Retirement Date", "Final Rank", "Final Step",
+      "Retirement Age", "Retirement Date", "Final Rank", "Final Step",
       "YOS", "FC 3yr", "Benefit %", "Cap Reached", "Early Penalty %",
       "Annual Pension (3yr)", "Monthly Pension (3yr)",
       ...(showSsa ? ["SS Annual", "SS Monthly", "Net Annual", "Net Monthly"] : []),
@@ -1476,19 +1726,19 @@
     ];
     const rows = lastResults.map(({ path, age, result: r }) => {
       if (r.error) {
-        const blanks = Array(headers.length - 3).fill("");
-        return [path.name, age, ...blanks, "ERROR: " + r.error];
+        const blanks = Array(headers.length - 2).fill("");
+        return [age, ...blanks, "ERROR: " + r.error];
       }
       const warn = (r.warnings || []).join(" | ");
       const primary = [
-        path.name, age,
+        age,
         fmtDate(r.retirement_date),
         r.final_rank, r.final_step,
         r.yos_at_retirement._dp !== undefined ? r.yos_at_retirement.toFixed(4) : r.yos_at_retirement.toString(),
         r.fc_3yr.annual_fc.toFixed(2),
         (Number(r.benefit_pct_detail.final_pct.toString()) * 100).toFixed(2) + "%",
         r.cap_reached ? "Yes" : "No",
-        r.early_reduction.years_before_57 > 0 ? (Number(r.early_reduction.reduction_pct.toString()) * 100).toFixed(2) + "%" : "",
+        r.early_reduction.months_before_57 > 0 ? (Number(r.early_reduction.reduction_pct.toString()) * 100).toFixed(2) + "%" : "",
         r.annual_pension_3yr.toFixed(2),
         r.monthly_pension_3yr.toFixed(2),
       ];
@@ -1535,7 +1785,6 @@
     document.getElementById("current_rank").addEventListener("change", (e) => { state.personal.current_rank = e.target.value; updateRecruitHint(); scheduleGridOnly(); });
     document.getElementById("current_step").addEventListener("input", (e) => { state.personal.current_step = Math.max(1, Number(e.target.value) || 1); scheduleGridOnly(); });
     document.getElementById("current_step_arrival_date").addEventListener("change", (e) => { state.personal.current_step_arrival_date = e.target.value; scheduleGridOnly(); });
-    document.getElementById("gwi_pct").addEventListener("input", (e) => { state.rates.gwi_rate = (Number(e.target.value || 0) / 100).toFixed(4); scheduleGridOnly(); });
     document.getElementById("cola_pct").addEventListener("input", (e) => {
       state.rates.cola_rate = (Number(e.target.value || 0) / 100).toFixed(4);
       if (!state.show_cola) {
@@ -1548,23 +1797,115 @@
       }
       scheduleGridOnly();
     });
-    document.getElementById("pay_grid_effective_date").addEventListener("change", (e) => { state.pay_grid_effective_date = e.target.value; scheduleGridOnly(); });
     document.getElementById("show_cola").addEventListener("change", (e) => { state.show_cola = e.target.checked; scheduleGridOnly(); });
     document.getElementById("toggle_final").addEventListener("change", (e) => { state.show_final_method = e.target.checked; scheduleGridOnly(); });
 
-    // Pay grid (delegated; scheduleGridOnly preserves input focus during typing).
+    // Pay grid modal — cell edits (delegated; scheduleGridOnly preserves input focus during typing).
     document.getElementById("paygrid").addEventListener("input", (e) => {
       const key = e.target.getAttribute("data-paygrid-key");
       if (!key) return;
-      state.pay_grid[key] = e.target.value;
-      scheduleGridOnly();
+      const grids = (state.pay_grids || []).slice().sort((a, b) => a.effective_date.localeCompare(b.effective_date));
+      const g = grids[editingPayGridIdx] || grids[0];
+      if (g) { g.rates[key] = e.target.value; scheduleGridOnly(); }
     });
 
     // Pay-grid modal open/close
     const paygridBackdrop = document.getElementById("paygrid-backdrop");
-    document.getElementById("open_paygrid").addEventListener("click", () => paygridBackdrop.classList.add("open"));
     document.getElementById("close_paygrid").addEventListener("click", () => paygridBackdrop.classList.remove("open"));
     paygridBackdrop.addEventListener("click", (e) => { if (e.target === paygridBackdrop) paygridBackdrop.classList.remove("open"); });
+
+    // Pay-grid section (sidebar): delegated handler for edit/remove/add-panel actions.
+    document.getElementById("paygrid-section").addEventListener("click", (e) => {
+      const grids = (state.pay_grids || []).slice().sort((a, b) => a.effective_date.localeCompare(b.effective_date));
+
+      // Edit rates button → open modal for that grid
+      const editBtn = e.target.closest("[data-pg-edit]");
+      if (editBtn) {
+        editingPayGridIdx = Number(editBtn.getAttribute("data-pg-edit"));
+        renderPayGrid();
+        paygridBackdrop.classList.add("open");
+        return;
+      }
+
+      // Remove button → silently remove grid (only if >1 grid)
+      const removeBtn = e.target.closest("[data-pg-remove]");
+      if (removeBtn && grids.length > 1) {
+        const idx = Number(removeBtn.getAttribute("data-pg-remove"));
+        state.pay_grids = grids.filter((_, i) => i !== idx);
+        if (editingPayGridIdx >= state.pay_grids.length) editingPayGridIdx = state.pay_grids.length - 1;
+        addPanelState = null;
+        scheduleRender();
+        return;
+      }
+
+      // Open add-panel button
+      const addOpenBtn = e.target.closest("[data-pg-add-open]");
+      if (addOpenBtn) {
+        const idx = Number(addOpenBtn.getAttribute("data-pg-add-open"));
+        addPanelState = { afterIdx: idx, option: "copy_pct", pct: "3.5", date: "" };
+        renderPayGridSection();
+        return;
+      }
+
+      // Add-panel radio change
+      const radio = e.target.closest("input[name='pg-add-opt']");
+      if (radio && addPanelState) {
+        addPanelState.option = radio.value;
+        renderPayGridSection();
+        return;
+      }
+
+      // Cancel add-panel
+      const cancelBtn = e.target.closest("[data-pg-add-cancel]");
+      if (cancelBtn) {
+        addPanelState = null;
+        renderPayGridSection();
+        return;
+      }
+
+      // Create new grid
+      const createBtn = e.target.closest("[data-pg-add-create]");
+      if (createBtn && addPanelState) {
+        const dateInput = document.getElementById("pg-add-date");
+        const pctInput = document.getElementById("pg-add-pct");
+        const newDate = dateInput ? dateInput.value : addPanelState.date;
+        if (!newDate) { alert("Please enter an effective date for the new pay grid."); return; }
+        const pct = pctInput ? Number(pctInput.value || "0") : Number(addPanelState.pct || "0");
+        const sourceIdx = addPanelState.afterIdx;
+        const srcGrid = grids[sourceIdx];
+
+        let newRates = {};
+        if (addPanelState.option === "blank") {
+          // Start with default grid structure (all empty strings) so rank/step keys exist.
+          for (const k of Object.keys(srcGrid.rates)) newRates[k] = "";
+        } else if (addPanelState.option === "copy") {
+          newRates = Object.assign({}, srcGrid.rates);
+        } else {
+          // copy_pct: apply percentage increase to every non-empty value.
+          const factor = 1 + pct / 100;
+          for (const [k, v] of Object.entries(srcGrid.rates)) {
+            if (v !== "" && v != null) {
+              newRates[k] = (Number(v) * factor).toFixed(2);
+            } else {
+              newRates[k] = v;
+            }
+          }
+        }
+
+        state.pay_grids = [...grids, { effective_date: newDate, rates: newRates }]
+          .sort((a, b) => a.effective_date.localeCompare(b.effective_date));
+        addPanelState = null;
+        scheduleRender();
+        return;
+      }
+    });
+
+    // Sync add-panel inputs back to addPanelState on change (date + pct).
+    document.getElementById("paygrid-section").addEventListener("input", (e) => {
+      if (!addPanelState) return;
+      if (e.target.id === "pg-add-date") { addPanelState.date = e.target.value; return; }
+      if (e.target.id === "pg-add-pct") { addPanelState.pct = e.target.value; return; }
+    });
 
     // Display-units toggle
     document.getElementById("display_units").addEventListener("change", (e) => {
@@ -1687,11 +2028,6 @@
     document.getElementById("paths").addEventListener("change", handlePathInput);
     document.getElementById("paths").addEventListener("click", handlePathClick);
 
-    document.getElementById("add_path").addEventListener("click", () => {
-      state.paths.push({ name: `Path ${state.paths.length + 1}`, retirement_type: "active", separation_date: null, pension_start_date: null, promotions: [] });
-      scheduleRender();
-    });
-
     // Actions
     document.getElementById("reset").addEventListener("click", resetAll);
     document.getElementById("export_csv").addEventListener("click", exportCsv);
@@ -1787,12 +2123,10 @@
 
   function handlePathInput(e) {
     const t = e.target;
-    const pathIdx = Number(t.getAttribute("data-path") || t.getAttribute("data-path-name") || t.getAttribute("data-dv-toggle"));
+    const pathIdx = Number(t.getAttribute("data-path") || t.getAttribute("data-dv-toggle") || 0);
     let isStructural = false;
 
-    if (t.hasAttribute("data-path-name")) {
-      state.paths[Number(t.getAttribute("data-path-name"))].name = t.value;
-    } else if (t.hasAttribute("data-promo-rank")) {
+    if (t.hasAttribute("data-promo-rank")) {
       state.paths[pathIdx].promotions[Number(t.getAttribute("data-promo"))].new_rank = t.value;
     } else if (t.hasAttribute("data-promo-date")) {
       const v = t.value.trim();
@@ -1827,9 +2161,25 @@
       const j = Number(t.getAttribute("data-promo"));
       state.paths[i].promotions.splice(j, 1);
       scheduleRender();
-    } else if (t.hasAttribute("data-remove-path")) {
-      const i = Number(t.getAttribute("data-remove-path"));
-      if (state.paths.length > 1) state.paths.splice(i, 1);
+    } else if (t.classList.contains("add-exact-date")) {
+      const pi = Number(t.getAttribute("data-path"));
+      const input = document.querySelector(`.exact-date-input[data-path="${pi}"]`);
+      const ds = input ? input.value : "";
+      if (!ds || !isValidIsoDate(ds)) return;
+      const path = state.paths[pi];
+      if (!path) return;
+      const existing = path.exact_retirement_dates || [];
+      if (!existing.includes(ds)) {
+        state.paths[pi].exact_retirement_dates = [...existing, ds].sort();
+        scheduleRender();
+      }
+      if (input) input.value = "";
+    } else if (t.classList.contains("remove-exact-date")) {
+      const pi = Number(t.getAttribute("data-path"));
+      const ds = t.getAttribute("data-date");
+      const path = state.paths[pi];
+      if (!path) return;
+      state.paths[pi].exact_retirement_dates = (path.exact_retirement_dates || []).filter(d => d !== ds);
       scheduleRender();
     }
   }
@@ -1846,9 +2196,7 @@
     document.getElementById("current_rank").value = state.personal.current_rank;
     document.getElementById("current_step").value = state.personal.current_step;
     document.getElementById("current_step_arrival_date").value = state.personal.current_step_arrival_date;
-    document.getElementById("gwi_pct").value = (Number(state.rates.gwi_rate) * 100).toFixed(2);
     document.getElementById("cola_pct").value = (Number(state.rates.cola_rate) * 100).toFixed(2);
-    document.getElementById("pay_grid_effective_date").value = state.pay_grid_effective_date;
     document.getElementById("show_cola").checked = !!state.show_cola;
     document.getElementById("toggle_final").checked = !!state.show_final_method;
     document.getElementById("display_units").value = state.display_units || "annual";
@@ -1982,6 +2330,8 @@
 
   let fullRenderPending = false;
   let gridRenderPending = false;
+  let editingPayGridIdx = 0;   // which pay grid the modal is currently editing
+  let addPanelState = null;    // null | { afterIdx, option, pct, date }
 
   // Full render rebuilds the sidebar (destroys and recreates path inputs / pay-grid inputs);
   // only trigger on structural mutations (add/remove path, add/remove promotion, reset, load).
@@ -2012,6 +2362,7 @@
   function renderAll() {
     renderSummary();
     renderPayGrid();
+    renderPayGridSection();
     renderAges();
     renderPaths();
     renderGrid();

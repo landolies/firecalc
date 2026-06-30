@@ -46,6 +46,10 @@ class ScenarioInputs:
     gwi_effective_month_day: tuple[int, int] = (7, 1)
     cola_effective_month_day: tuple[int, int] = (2, 1)
 
+    # Multiple pay grids (replaces pay_grid + pay_grid_effective_date + gwi_rate when non-empty).
+    # List of (effective_date, PayGrid) sorted by effective_date ascending.
+    pay_grids: list[tuple[date, "PayGrid"]] = field(default_factory=list)
+
     # Scenario
     retirement_age: int = 57
     promotions: list[PromotionEvent] = field(default_factory=list)
@@ -106,10 +110,10 @@ class BenefitPctDetail:
 
 @dataclass
 class EarlyReductionDetail:
-    retirement_age: int
-    years_before_57: int    # max(0, 57 - retirement_age)
-    reduction_pct: Decimal  # years_before_57 * 0.07
-    factor: Decimal         # 1 - reduction_pct
+    retirement_date: date        # date pension starts (active) or DV pension-start date
+    months_before_57: int        # full calendar months before 57th birthday (0 if ≥ 57)
+    reduction_pct: Decimal       # months_before_57 / 12 * 0.07
+    factor: Decimal              # 1 − reduction_pct (≥ 0)
 
 
 @dataclass

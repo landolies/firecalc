@@ -84,13 +84,7 @@ def _landing_step(
     gwi_month: int,
     gwi_day: int,
 ) -> tuple[int, bool]:
-    """
-    Lowest step in new_rank whose GWI-adjusted bi-weekly on promotion_date
-    is at least 5% above pre_promotion_biweekly.
-
-    Returns (step, ok). When no step in the new rank meets the 5% threshold,
-    falls back to max_step and ok=False so the caller can warn.
-    """
+    """Lowest step ≥ 5% above pre_promotion_biweekly using GWI-adjusted rates."""
     threshold = pre_promotion_biweekly * Decimal("1.05")
     max_step = pay_grid.max_step(new_rank)
     for step in range(1, max_step + 1):
@@ -101,6 +95,40 @@ def _landing_step(
         if adjusted >= threshold:
             return step, True
     return max_step, False
+
+
+def _landing_step_direct(
+    new_rank: str,
+    pre_promotion_biweekly: Decimal,
+    pay_grid: PayGrid,
+) -> tuple[int, bool]:
+    """Lowest step ≥ 5% above pre_promotion_biweekly using direct (non-GWI) rates."""
+    threshold = pre_promotion_biweekly * Decimal("1.05")
+    max_step = pay_grid.max_step(new_rank)
+    for step in range(1, max_step + 1):
+        base = pay_grid.get(new_rank, step)
+        if base is None:
+            continue
+        if _round2(base) >= threshold:
+            return step, True
+    return max_step, False
+
+
+def _active_pay_grid(pay_grids: list[tuple[date, "PayGrid"]], target: date) -> "PayGrid":
+    """Return the grid whose effective_date is ≤ target, or the first grid if all are later."""
+    active = pay_grids[0][1]
+    for eff_date, grid in pay_grids:
+        if eff_date <= target:
+            active = grid
+    return active
+
+
+def _next_grid_change_after(pay_grids: list[tuple[date, "PayGrid"]], cursor: date) -> Optional[date]:
+    """First grid effective_date strictly after cursor, or None."""
+    for eff_date, _ in pay_grids:
+        if eff_date > cursor:
+            return eff_date
+    return None
 
 
 def build_salary_timeline(
@@ -121,6 +149,30 @@ def build_salary_timeline(
 
     gm, gd = inputs.gwi_effective_month_day
     grid_eff = inputs.pay_grid_effective_date
+
+    # Multi-grid path (pay_grids overrides pay_grid + gwi_rate).
+    use_pay_grids = bool(inputs.pay_grids)
+    if use_pay_grids:
+        _sorted_grids = sorted(inputs.pay_grids, key=lambda x: x[0])
+
+        def _get_bw(r: str, s: int, at: date) -> Decimal:
+            ag = _active_pay_grid(_sorted_grids, at)
+            base = ag.get(r, s)
+            if base is None:
+                raise ValueError(f"No pay defined for ({r!r}, step {s})")
+            return _round2(base)
+
+        def _get_landing(new_rank: str, pre_bw: Decimal, at: date) -> tuple[int, bool]:
+            return _landing_step_direct(new_rank, pre_bw, _active_pay_grid(_sorted_grids, at))
+    else:
+        def _get_bw(r: str, s: int, at: date) -> Decimal:
+            base = inputs.pay_grid.get(r, s)
+            if base is None:
+                raise ValueError(f"No pay defined for ({r!r}, step {s})")
+            return _adjusted_biweekly(base, grid_eff, at, inputs.gwi_rate, gm, gd)
+
+        def _get_landing(new_rank: str, pre_bw: Decimal, at: date) -> tuple[int, bool]:
+            return _landing_step(new_rank, pre_bw, inputs.pay_grid, grid_eff, at, inputs.gwi_rate, gm, gd)
 
     # Sort & validate promotions
     promotions: list[PromotionEvent] = sorted(
@@ -192,13 +244,21 @@ def build_salary_timeline(
         # What's the soonest upcoming event?
         candidates: list[tuple[date, str]] = []
 
-        # Next GWI
-        next_gwi = _next_gwi_after(cursor, gm, gd)
-        if next_gwi < end_date:
-            candidates.append((next_gwi, "gwi"))
+        # Next GWI (legacy single-grid path only)
+        if not use_pay_grids:
+            next_gwi = _next_gwi_after(cursor, gm, gd)
+            if next_gwi < end_date:
+                candidates.append((next_gwi, "gwi"))
+
+        # Next pay-grid change (multi-grid path only)
+        if use_pay_grids:
+            next_gc = _next_grid_change_after(_sorted_grids, cursor)
+            if next_gc is not None and next_gc < end_date:
+                candidates.append((next_gc, "pay_grid_change"))
 
         # Next step increase (only if not at top step)
-        max_st = inputs.pay_grid.max_step(rank)
+        _current_grid = _active_pay_grid(_sorted_grids, cursor) if use_pay_grids else inputs.pay_grid
+        max_st = _current_grid.max_step(rank)
         if step < max_st:
             # Step k arrived on: _add_years(step_clock, k-1)
             # Next step (k+1) arrives on: _add_years(step_clock, k)
@@ -221,10 +281,7 @@ def build_salary_timeline(
         )
 
         # Emit segment [cursor, next_event_date)
-        base_rate = inputs.pay_grid.get(rank, step)
-        if base_rate is None:
-            raise ValueError(f"No pay defined for ({rank!r}, step {step})")
-        bw = _adjusted_biweekly(base_rate, grid_eff, cursor, inputs.gwi_rate, gm, gd)
+        bw = _get_bw(rank, step, cursor)
         periods.append(PayPeriod(
             start=cursor,
             end=next_event_date,
@@ -238,16 +295,12 @@ def build_salary_timeline(
         # Determine which events fire on next_event_date
         firing = {label for d, label in candidates if d == next_event_date}
 
-        # Apply events (promotion takes priority over step; GWI is independent)
+        # Apply events (promotion takes priority; grid-change and GWI are non-structural)
         if "promotion" in firing:
-            pre_bw = _adjusted_biweekly(
-                inputs.pay_grid.get(rank, step),
-                grid_eff, next_event_date, inputs.gwi_rate, gm, gd,
-            )
+            pre_bw = _get_bw(rank, step, next_event_date)
             p = promo_queue.pop(0)
             rank = p.new_rank
-            step, ok = _landing_step(rank, pre_bw, inputs.pay_grid, grid_eff,
-                                      next_event_date, inputs.gwi_rate, gm, gd)
+            step, ok = _get_landing(rank, pre_bw, next_event_date)
             if not ok and warnings is not None:
                 warnings.append(
                     f"Promotion to {rank} on {next_event_date.isoformat()} violates the "
@@ -258,6 +311,15 @@ def build_salary_timeline(
                 )
             step_clock = _add_years(next_event_date, -(step - 1))
             event_label = "promotion"
+        elif use_pay_grids:
+            if "pay_grid_change" in firing and "step_increase" in firing:
+                step += 1
+                event_label = "pay_grid_change+step"
+            elif "pay_grid_change" in firing:
+                event_label = "pay_grid_change"
+            else:
+                step += 1
+                event_label = "step_increase"
         else:
             if "step_increase" in firing and "gwi" in firing:
                 step += 1
@@ -272,10 +334,7 @@ def build_salary_timeline(
 
     # Emit the tail segment
     if cursor < end_date:
-        base_rate = inputs.pay_grid.get(rank, step)
-        if base_rate is None:
-            raise ValueError(f"No pay defined for ({rank!r}, step {step})")
-        bw = _adjusted_biweekly(base_rate, grid_eff, cursor, inputs.gwi_rate, gm, gd)
+        bw = _get_bw(rank, step, cursor)
         periods.append(PayPeriod(
             start=cursor,
             end=end_date,
